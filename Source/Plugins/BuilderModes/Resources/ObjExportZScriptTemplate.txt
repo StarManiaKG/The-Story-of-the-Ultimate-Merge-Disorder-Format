@@ -1,0 +1,21 @@
+﻿Class {ActorName} : Actor {
+	Default {
+		Radius {PropRadius};
+		Height {PropHeight};
+		{FlagNoGravity}
+		{FlagSpawnOnCeiling}
+		{FlagSolid}
+		{FlagInvulnerable}
+		{FlagNoDamage}
+		{FlagShootable}
+		{FlagNotAutoAimed}
+		{FlagNeverTarget}
+		{FlagDontThrust}
+	}
+
+	States {
+		Spawn:
+			{Sprite} A -1;
+			Stop;
+	}
+}
