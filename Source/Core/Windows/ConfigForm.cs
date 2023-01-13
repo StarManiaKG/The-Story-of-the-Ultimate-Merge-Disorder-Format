@@ -17,15 +17,17 @@
 #region ================== Namespaces
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CodeImp.DoomBuilder.Config;
 using CodeImp.DoomBuilder.Data;
 using CodeImp.DoomBuilder.Editing;
 using CodeImp.DoomBuilder.GZBuilder.Data;
+using CodeImp.DoomBuilder.IO;
 
 #endregion
 
@@ -39,6 +41,7 @@ namespace CodeImp.DoomBuilder.Windows
 		private List<DefinedTextureSet> copiedsets;
 		private bool preventchanges;
 		private bool reloadresources;
+		private readonly int initialformheight;
 
 		//mxd. "Copy/Paste" stuff
 		private ConfigurationInfo configinfocopy;
@@ -53,7 +56,8 @@ namespace CodeImp.DoomBuilder.Windows
 			
 			// Initialize
 			InitializeComponent();
-			CodeImp.DoomBuilder.General.ApplyMonoListViewFix(listtextures);
+			this.initialformheight = Height;
+			General.ApplyMonoListViewFix(listtextures);
 
 			#if NO_WIN32
 			// Linux doesn't require .exe or .bat file extensions
@@ -138,8 +142,9 @@ namespace CodeImp.DoomBuilder.Windows
 
 				// Set defaults
 				configinfo.ApplyDefaults(gameconfig);
-				
+
 				// Fill resources list
+				configdata.GameConfiguration = gameconfig;
 				configdata.EditResourceLocationList(configinfo.Resources);
 				
 				// Go for all nodebuilder save items
@@ -583,9 +588,10 @@ namespace CodeImp.DoomBuilder.Windows
 		// Texture Set selected/deselected
 		private void listtextures_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			edittextureset.Enabled = (listtextures.SelectedItems.Count > 0);
-			removetextureset.Enabled = (listtextures.SelectedItems.Count > 0);
-			copytexturesets.Enabled = (listtextures.SelectedItems.Count > 0);
+			edittextureset.Enabled = listtextures.SelectedItems.Count > 0;
+			removetextureset.Enabled = listtextures.SelectedItems.Count > 0;
+			copytexturesets.Enabled = listtextures.SelectedItems.Count > 0;
+			exporttexturesets.Enabled = listtextures.SelectedItems.Count > 0;
 		}
 		
 		// Doubleclicking a texture set
@@ -844,7 +850,191 @@ namespace CodeImp.DoomBuilder.Windows
 			if(listconfigs.SelectedItems.Count > 0) listconfigs.SelectedItems[0].EnsureVisible();
 		}
 
-#region ============= Copy/Paste context menu (mxd)
+		/// <summary>
+		/// Imports texture sets from a configuration file.
+		/// </summary>
+		/// <param name="sender">The sender</param>
+		/// <param name="e">The event arguments</param>
+		private void importtexturesets_Click(object sender, EventArgs e)
+		{
+			if (importtexturesetdialog.ShowDialog() != DialogResult.OK)
+				return;
+
+			int numnewsets = 0;
+			int numupdatedsets = 0;
+			int numnewfilters = 0;
+			bool foundsets = false;
+			Configuration cfg;
+
+			try
+			{
+				cfg = new Configuration(importtexturesetdialog.FileName, true);
+			}
+			catch (FileNotFoundException ex)
+			{
+				MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+
+			if (cfg.ErrorResult)
+			{
+				string errordesc = "Error configuration file on line " + cfg.ErrorLine + ": " + cfg.ErrorDescription;
+				MessageBox.Show(errordesc, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+
+				// Create a map for texture set names, so that we can easily add new filters to them
+				Dictionary<string, DefinedTextureSet> texturesetmap = new Dictionary<string, DefinedTextureSet>();
+			foreach (DefinedTextureSet dts in configinfo.TextureSets)
+			{
+				// In theory there could be multiple texture sets with the same name, just take the first one
+				if (!texturesetmap.ContainsKey(dts.Name))
+					texturesetmap[dts.Name] = dts;
+			}
+
+			// We're crawling through the configuration ourself instead of using the constructor of the
+			// DefinedTextureSet since we can't know if the configuration contains anything valid. Also
+			// we want to make sure that we don't add the same texture sets (and filters) multiple times
+			// when importing the same config file over and over again
+			foreach (DictionaryEntry rootde in cfg.Root)
+			{
+				string rootkey = rootde.Key.ToString();
+
+				if (!rootkey.ToLowerInvariant().StartsWith("set"))
+					continue;
+
+				if (!(rootde.Value is ICollection))
+					continue;
+
+				string setname = string.Empty;
+				List<string> setfilters = new List<string>();
+
+				foreach (DictionaryEntry de in cfg.ReadSetting(rootkey, new Hashtable()))
+				{
+					string key = de.Key.ToString();
+
+					if (key.ToLowerInvariant() == "name")
+						setname = cfg.ReadSetting($"{rootkey}.name", string.Empty);
+					else
+					{
+						if (Regex.IsMatch(key, @"^(filter\d+)$", RegexOptions.IgnoreCase))
+						{
+							string filter = cfg.ReadSetting($"{rootkey}.{key}", string.Empty);
+
+							if (string.IsNullOrWhiteSpace(filter))
+								continue;
+
+							setfilters.Add(filter);
+						}
+					}
+				}
+
+				if (setfilters.Count == 0)
+					continue;
+
+				foundsets = true;
+
+				// Either update an existing texture set...
+				if (texturesetmap.ContainsKey(setname))
+				{
+					bool updatedfilters = false;
+					foreach (string filter in setfilters)
+					{
+						// Only add the new filter if it does not yet exist in the texture set
+						if (!texturesetmap[setname].Filters.Contains(filter))
+						{
+							texturesetmap[setname].Filters.Add(filter);
+							numnewfilters++;
+							updatedfilters = true;
+						}
+					}
+
+					if (updatedfilters)
+						numupdatedsets++;
+				}
+				else // ... or create a new one
+				{
+					DefinedTextureSet s = new DefinedTextureSet(setname);
+					s.Filters.AddRange(setfilters);
+					configinfo.TextureSets.Add(s);
+					ListViewItem item = listtextures.Items.Add(s.Name);
+					item.Tag = s;
+					item.ImageIndex = 0;
+
+					numnewsets++;
+					numnewfilters += setfilters.Count;
+				}
+
+				configinfo.Changed = true;
+			}
+
+			if (numnewsets > 0 || numupdatedsets > 0)
+			{
+				listtextures.Sort();
+				reloadresources = true;
+
+				List<string> messages = new List<string>();
+
+				if (numnewsets > 0) messages.Add($"Imported {numnewsets} new texture sets.");
+				if (numupdatedsets > 0) messages.Add($"Updated {numupdatedsets} texture sets.");
+				messages.Add($"Added {numnewfilters} filters to new or existing texture sets.");
+
+				MessageBox.Show(string.Join(Environment.NewLine, messages), "Import successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
+			else if (foundsets) // Nothing was added, but the config file did contain texture sets
+			{
+				MessageBox.Show("No new set, or sets to update found in the configuration file.", "Nothing to import", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
+			else // Nothing that could potentially be imported found in the config file
+			{
+				MessageBox.Show($"No texture sets to import found in the configuration file.", "Import unsuccessful", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
+		}
+
+		/// <summary>
+		/// Exports the selected texture sets into a configuration file.
+		/// </summary>
+		/// <param name="sender">The sender</param>
+		/// <param name="e">The event arguments</param>
+		private void exporttexturesets_Click(object sender, EventArgs e)
+		{
+			if (listtextures.SelectedItems.Count == 0)
+			{
+				MessageBox.Show("Please select texture sets to export.", "Nothing selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return;
+			}
+
+			if (exporttexturesetdialog.ShowDialog() != DialogResult.OK)
+				return;
+
+			Configuration cfg = new Configuration(true);
+			int count = 1;
+			int numexportedsets = 0;
+			int numexportedfilters = 0;
+
+			foreach (ListViewItem item in listtextures.SelectedItems)
+			{
+				if (item.Tag is DefinedTextureSet dts)
+				{
+					dts.WriteToConfig(cfg, $"set{count}");
+					count++;
+					numexportedsets++;
+					numexportedfilters += dts.Filters.Count;
+				}
+			}
+
+			if (cfg.SaveConfiguration(exporttexturesetdialog.FileName))
+			{
+				MessageBox.Show($"Exported {numexportedsets} texture set{(numexportedsets != 0 ? "s" : "")} with {numexportedfilters} filter{(numexportedfilters != 0 ? "s" : "")}", "Export successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
+			else
+			{
+				MessageBox.Show("Failed to write configuration file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
+
+
+		#region ============= Copy/Paste context menu (mxd)
 
 		private void copypastemenu_Opening(object sender, System.ComponentModel.CancelEventArgs e) 
 		{
@@ -938,6 +1128,12 @@ namespace CodeImp.DoomBuilder.Windows
 			General.Interface.DisplayStatus(StatusType.Info, "Pasted color presets from \"" + configinfocopy.Name + "\"");
 		}
 
-#endregion
-	}
+        #endregion
+
+        private void configdata_OnWarningsChanged(int size)
+        {
+			Height = initialformheight + size;
+			Refresh();
+        }
+    }
 }

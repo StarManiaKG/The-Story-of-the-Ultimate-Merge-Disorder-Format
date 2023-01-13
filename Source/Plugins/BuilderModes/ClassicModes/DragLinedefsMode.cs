@@ -45,8 +45,8 @@ namespace CodeImp.DoomBuilder.BuilderModes
 
 		#region ================== Variables
 
-		private ICollection<Linedef> selectedlines;
-		private ICollection<Linedef> unselectedlines;
+		private ICollection<Linedef> draglines;
+		private ICollection<Linedef> unmovinglines;
 
 		#endregion
 
@@ -57,21 +57,27 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		#region ================== Constructor / Disposer
 
 		// Constructor to start dragging immediately
-		public DragLinedefsMode(Vector2D dragstartmappos)
+		public DragLinedefsMode(Vector2D dragstartmappos, ICollection<Linedef> lines)
 		{
 			// Mark what we are dragging
 			General.Map.Map.ClearAllMarks(false);
-			General.Map.Map.MarkSelectedLinedefs(true, true);
+
+			draglines = new List<Linedef>(lines.Count);
+			foreach(Linedef ld in lines)
+			{
+				ld.Marked = true;
+				draglines.Add(ld);
+			}
+
 			ICollection<Vertex> verts = General.Map.Map.GetVerticesFromLinesMarks(true);
-			foreach(Vertex v in verts) v.Marked = true;
-			
+			foreach (Vertex v in verts) v.Marked = true;
+
 			// Get line collections
-			selectedlines = General.Map.Map.GetSelectedLinedefs(true);
-			unselectedlines = General.Map.Map.GetSelectedLinedefs(false);
+			unmovinglines = General.Map.Map.GetSelectedLinedefs(false);
 
 			// Initialize
 			base.StartDrag(dragstartmappos);
-			undodescription = (selectedlines.Count == 1 ? "Drag linedef" : "Drag " + selectedlines.Count + " linedefs"); //mxd
+			undodescription = (draglines.Count == 1 ? "Drag linedef" : "Drag " + draglines.Count + " linedefs"); //mxd
 			
 			// We have no destructor
 			GC.SuppressFinalize(this);
@@ -94,28 +100,6 @@ namespace CodeImp.DoomBuilder.BuilderModes
 
 		#region ================== Methods
 		
-		// Disenagaging
-		public override void OnDisengage()
-		{
-			// Select vertices from lines selection
-			General.Map.Map.ClearSelectedVertices();
-			ICollection<Vertex> verts = General.Map.Map.GetVerticesFromLinesMarks(true);
-			foreach(Vertex v in verts) v.Selected = true;
-
-			// Perform normal disengage
-			base.OnDisengage();
-
-			// Clear vertex selection
-			General.Map.Map.ClearSelectedVertices();
-			
-			// When not cancelled
-			if(!cancelled)
-			{
-				// If only a single linedef was selected, deselect it now
-				if(selectedlines.Count == 1) General.Map.Map.ClearSelectedLinedefs();
-			}
-		}
-
 		// This redraws the display
 		public override void OnRedrawDisplay()
 		{
@@ -143,8 +127,16 @@ namespace CodeImp.DoomBuilder.BuilderModes
 			if(renderer.StartPlotter(true))
 			{
 				// Render lines and vertices
-				renderer.PlotLinedefSet(unselectedlines);
-				renderer.PlotLinedefSet(selectedlines);
+				renderer.PlotLinedefSet(unmovinglines);
+
+				foreach (Linedef ld in draglines)
+				{
+					if (ld.Selected)
+						renderer.PlotLinedef(ld, General.Colors.Selection);
+					else
+						renderer.PlotLinedef(ld, General.Colors.Highlight);
+				}
+
 				renderer.PlotVerticesSet(General.Map.Map.Vertices);
 
 				// Draw the dragged item highlighted

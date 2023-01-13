@@ -88,11 +88,18 @@ namespace CodeImp.DoomBuilder.ZDoom
 
 						if(_pname == _pstruct.ClassName.ToLowerInvariant())
 						{
-							Parser.ReportError("Class \"" + _pstruct.ClassName + "\" is trying to inherit from itself. Class is being skipped.");
+							Parser.ReportError("Fatal: Class \"" + _pstruct.ClassName + "\" is trying to inherit from itself.");
 							return false;
 						}
 
+                        string _cname = _pstruct.ClassName;
+
                         Parser.allclasses.TryGetValue(_pname, out _pstruct);
+                        if (_pstruct == null)
+                        {
+                            Parser.ReportError("Fatal: Class \"" + _cname + "\" is trying to inherit from \"" + _pname + "\" which does not exist.");
+                            return false;
+                        }
                     }
                     else _pstruct = null;
                 }
@@ -186,6 +193,9 @@ namespace CodeImp.DoomBuilder.ZDoom
         // [ZZ] custom tokenizer class
         internal ZScriptTokenizer tokenizer;
 
+        //
+        public bool NoWarnings = false;
+
         #endregion
 
         #region ================== Properties
@@ -209,6 +219,12 @@ namespace CodeImp.DoomBuilder.ZDoom
         /// mxd. All actors defined in the loaded DECORATE structures. This includes actors not supported in the current game.
         /// </summary>
         internal Dictionary<string, ActorStructure> AllActorsByClass { get { return archivedactors; } }
+
+
+        /// <summary>
+        /// This is used to find out what classes were parsed from specific archive
+        /// </summary>
+        public HashSet<string> LastClasses { get; internal set; }
 
         #endregion
 
@@ -249,10 +265,10 @@ namespace CodeImp.DoomBuilder.ZDoom
             string localtextresourcepath = textresourcepath; //mxd
             ZScriptTokenizer localtokenizer = tokenizer; // [ZZ]
 
-            //INFO: ZDoom DECORATE include paths can't be relative ("../actor.txt") 
-            //or absolute ("d:/project/actor.txt") 
+            //INFO: ZDoom DECORATE include paths can't be relative ("../actor.txt")
+            //or absolute ("d:/project/actor.txt")
             //or have backward slashes ("info\actor.txt")
-            //include paths are relative to the first parsed entry, not the current one 
+            //include paths are relative to the first parsed entry, not the current one
             //also include paths may or may not be quoted
             //mxd. Sanity checks
             if (string.IsNullOrEmpty(filename))
@@ -271,13 +287,33 @@ namespace CodeImp.DoomBuilder.ZDoom
                 return false;
             }
 
-            //mxd. Relative paths are not supported
-            if (filename.StartsWith(RELATIVE_PATH_MARKER) || filename.StartsWith(CURRENT_FOLDER_PATH_MARKER) ||
-                filename.StartsWith(ALT_RELATIVE_PATH_MARKER) || filename.StartsWith(ALT_CURRENT_FOLDER_PATH_MARKER))
-            {
-                ReportError("Relative include paths are not supported by ZDoom");
-                return false;
-            }
+			// [JD] Relative paths are supported by GZDoom since 4.8.0
+			if (filename.StartsWith(RELATIVE_PATH_MARKER) || filename.StartsWith(CURRENT_FOLDER_PATH_MARKER) ||
+				filename.StartsWith(ALT_RELATIVE_PATH_MARKER) || filename.StartsWith(ALT_CURRENT_FOLDER_PATH_MARKER))
+			{
+				List<string> pathTokens = localsourcename.Split('\\', '/').ToList();	// take full path of current source file, split to individual folders
+				pathTokens.RemoveAt(pathTokens.Count - 1);			// remove filename itself
+				pathTokens.AddRange(filename.Split('\\', '/'));			// add relative path
+				pathTokens.RemoveAll(token => token.Equals(".", StringComparison.InvariantCulture));	// remove all "." folders from the path
+
+				for (int i = 0; i < pathTokens.Count; i++)
+				{
+					if (pathTokens[i].Equals("..", StringComparison.InvariantCulture))	// for each "..": remove them and previous folder from the path
+					{
+						if (i == 0)	// cannot have ".." at start of full path
+						{
+							ReportError("Relative path escaping archive");
+							return false;
+						}
+
+						pathTokens.RemoveAt(i);
+						pathTokens.RemoveAt(i - 1);
+						i -= 2;
+					}
+				}
+
+				filename = string.Join("/", pathTokens);	// combine the included file path
+			}
 
             //mxd. Backward slashes are not supported
             if (filename.Contains("\\"))
@@ -313,6 +349,13 @@ namespace CodeImp.DoomBuilder.ZDoom
             return true;
         }
 
+        protected internal override void LogWarning(string message, int linenumber)
+        {
+            if (NoWarnings)
+                return;
+            base.LogWarning(message, linenumber);
+        }
+
         // read in an expression as a token list.
         internal List<ZScriptToken> ParseExpression(bool betweenparen = false)
         {
@@ -340,7 +383,7 @@ namespace CodeImp.DoomBuilder.ZDoom
                     datastream.Position = cpos;
                     return ol;
                 }
-                
+
                 if (token.Type == ZScriptTokenType.OpenParen)
                 {
                     nestingLevel++;
@@ -361,10 +404,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 
         internal bool SkipBlock(bool eatSemicolon = true)
         {
-            List<ZScriptToken> ol = new List<ZScriptToken>();
-            //
             int nestingLevel = 0;
-            //
             long cpos = datastream.Position;
             ZScriptToken token = tokenizer.ExpectToken(ZScriptTokenType.OpenCurly);
             if (token == null || !token.IsValid)
@@ -402,14 +442,72 @@ namespace CodeImp.DoomBuilder.ZDoom
                         return false;
                     }
                 }
-
-                ol.Add(token);
             }
 
             // there is POTENTIALLY a semicolon after the class definition. it's not supposed to be there, but it's acceptable (GZDoom.pk3 has this)
             cpos = datastream.Position;
             ZScriptToken tailtoken = tokenizer.ReadToken();
             if (tailtoken == null || !eatSemicolon || tailtoken.Type != ZScriptTokenType.Semicolon)
+                datastream.Position = cpos;
+
+            return true;
+        }
+
+        internal bool SkipClassBlock()
+        {
+            int nestingLevel = 0;
+            long cpos = datastream.Position;
+            ZScriptToken token = tokenizer.ExpectToken(ZScriptTokenType.OpenCurly, ZScriptTokenType.Semicolon);
+            bool semico = token.Type == ZScriptTokenType.Semicolon;
+            if (token == null || !token.IsValid)
+            {
+                ReportError("Expected { or ;, got " + ((Object)token ?? "<null>").ToString());
+                return false;
+            }
+
+            // parse everything between { and } or ; and eof
+            nestingLevel = 1;
+            while (nestingLevel > 0)
+            {
+                cpos = datastream.Position;
+                token = tokenizer.ReadToken(true);
+                //LogWarning(token.ToString());
+                if (token == null)
+                {
+                    if (semico)
+                    {
+                        nestingLevel--;
+                        break;
+                    }
+                    else
+                    {
+                        ReportError("Expected a token");
+                        return false;
+                    }
+                }
+
+                if (token.Type != ZScriptTokenType.Invalid)
+                    continue;
+
+                if (token.Value == "{")
+                {
+                    nestingLevel++;
+                }
+                else if (token.Value == "}")
+                {
+                    nestingLevel--;
+                    if (nestingLevel < 0)
+                    {
+                        ReportError("Closing parenthesis without an opening one");
+                        return false;
+                    }
+                }
+            }
+
+            // there is POTENTIALLY a semicolon after the class definition. it's not supposed to be there, but it's acceptable (GZDoom.pk3 has this)
+            cpos = datastream.Position;
+            ZScriptToken tailtoken = tokenizer.ReadToken();
+            if (tailtoken == null || tailtoken.Type != ZScriptTokenType.Semicolon)
                 datastream.Position = cpos;
 
             return true;
@@ -735,7 +833,7 @@ namespace CodeImp.DoomBuilder.ZDoom
                         return false;
                     }
                 }
-                else if (token.Type == ZScriptTokenType.OpenCurly)
+                else if (token.Type == ZScriptTokenType.Semicolon || token.Type == ZScriptTokenType.OpenCurly)
                 {
                     datastream.Position--;
                     break;
@@ -747,7 +845,7 @@ namespace CodeImp.DoomBuilder.ZDoom
             long cpos = datastream.Position;
             //List<ZScriptToken> classblocktokens = ParseBlock(false);
             //if (classblocktokens == null) return false;
-            if (!SkipBlock()) return false;
+            if (!SkipClassBlock()) return false;
 
             string log_inherits = ((tok_parentname != null) ? "inherits " + tok_parentname.Value : "");
             if (tok_replacename != null) log_inherits += ((log_inherits.Length > 0) ? ", " : "") + "replaces " + tok_replacename.Value;
@@ -768,7 +866,8 @@ namespace CodeImp.DoomBuilder.ZDoom
 
 				allclasses.Add(cls.ClassName.ToLowerInvariant(), cls);
 				allclasseslist.Add(cls);
-			}
+                LastClasses.Add(cls.ClassName.ToLowerInvariant());
+            }
 			else if(!isstruct && extend)
 			{
 				string clskey = tok_classname.Value.ToLowerInvariant();
@@ -816,6 +915,8 @@ namespace CodeImp.DoomBuilder.ZDoom
         // Returns false on errors
         public override bool Parse(TextResourceData data, bool clearerrors)
         {
+            if (clearerrors) LastClasses = new HashSet<string>();
+
             //mxd. Already parsed?
             if (!base.AddTextResource(data))
             {
@@ -846,22 +947,17 @@ namespace CodeImp.DoomBuilder.ZDoom
                                                            ZScriptTokenType.Preprocessor);
 
 				if (token == null) // EOF reached
-				{
-					// Now parse all included files
-					foreach(string include in includes)
-					{
-						if (!ParseInclude(include))
-							return false;
-					}
-
 					break;
-				}
 
                 if (!token.IsValid)
                 {
                     ReportError("Expected preprocessor statement, const, enum or class declaraction, got " + token);
                     return false;
                 }
+
+                // If $GZDB_SKIP is encountered we stop parsing. Not that we can't "return" here yet, because the includes still have to be parsed
+                if (token.Type == ZScriptTokenType.LineComment && token.Value.Trim().ToLowerInvariant() == "$gzdb_skip")
+                    break;
 
                 // toplevel tokens allowed are only Preprocessor and Identifier.
                 switch (token.Type)
@@ -876,9 +972,6 @@ namespace CodeImp.DoomBuilder.ZDoom
                             string cmtval = token.Value.TrimStart();
                             if (cmtval.Length <= 0 || cmtval[0] != '$')
                                 break;
-                            // check for $GZDB_SKIP
-                            if (cmtval.Trim().ToLowerInvariant() == "$gzdb_skip")
-                                return true;
                             // if we are in a region, read property using function from ZScriptActorStructure
                             if (regions.Count > 0)
                                 ZScriptActorStructure.ParseGZDBComment(regions.Last().Properties, cmtval);
@@ -1014,6 +1107,13 @@ namespace CodeImp.DoomBuilder.ZDoom
                 }
             }
 
+            // Now parse all included files
+            foreach (string include in includes)
+            {
+                if (!ParseInclude(include))
+                    return false;
+            }
+
             return true;
         }
 
@@ -1098,7 +1198,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 								}
 
 								// [ZZ] inherit arguments from game configuration
-								//      
+								//
 								if (!actor.props.ContainsKey("$clearargs"))
 								{
 									for (int i = 0; i < 5; i++)
@@ -1155,6 +1255,10 @@ namespace CodeImp.DoomBuilder.ZDoom
 
 							if (!actor.flags.ContainsKey("solid") && mixincls.Actor.flags.ContainsKey("solid"))
 								actor.flags["solid"] = true;
+
+							// user_ variables
+							foreach (string uservarname in mixincls.Actor.uservars.Keys)
+								actor.uservars[uservarname] = mixincls.Actor.uservars[uservarname];
 						}
 					}
 
@@ -1188,7 +1292,12 @@ namespace CodeImp.DoomBuilder.ZDoom
 
 							// user_ variables
 							foreach (string uservarname in extenseionactor.uservars.Keys)
+							{
 								actor.uservars[uservarname] = extenseionactor.uservars[uservarname];
+
+								if (extenseionactor.uservar_defaults.ContainsKey(uservarname))
+									actor.uservar_defaults[uservarname] = extenseionactor.uservar_defaults[uservarname];
+							}
 						}
 					}
 				}

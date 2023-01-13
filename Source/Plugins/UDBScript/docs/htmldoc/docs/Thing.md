@@ -37,7 +37,14 @@ There are some restrictions, though:
 
 * it only works for fields that are not in the base UDMF standard, since those are handled directly in the respective class
 * it does not work for flags. While they are technically also UDMF fields, they are handled in the `flags` field of the respective class (where applicable)
-* JavaScript does not distinguish between integer and floating point numbers, it only has floating point numbers (of double precision). For fields where UDB knows that they are integers this it not a problem, since it'll automatically convert the floating point numbers to integers (dropping the fractional part). However, if you need to specify an integer value for an unknown or custom field you have to work around this limitation, using the `UniValue` class:
+* JavaScript does not distinguish between integer and floating point numbers, it only has floating point numbers (of double precision). For fields where UDB knows that they are integers this it not a problem, since it'll automatically convert the floating point numbers to integers (dropping the fractional part). However, if you need to specify an integer value for an unknown or custom field you have to work around this limitation:
+Version 5 and later:
+You can use a `BigInt`. This is done by appending a `n` to the number. Note that this is just a convenient way to define whole numbers, it still only supports 32 bit integers:
+
+```js
+s.fields.user_myintfield = 25n; // Sets the 'user_myintfield' field to an integer value of 25
+```
+In version 4 and earlier you have to use the `UniValue` class:
 
 ```js
 s.fields.user_myintfield = new UDB.UniValue(0, 25); // Sets the 'user_myintfield' field to an integer value of 25
@@ -115,7 +122,7 @@ Type of the `Thing`.
 Clears all flags.
 
 ---
-### copyPropertiesTo(t)
+### copyPropertiesTo(t: Thing)
 Copies the properties from this `Thing` to another.
 #### Parameters
 * t: The `Thing` to copy the properties to
@@ -125,7 +132,7 @@ Copies the properties from this `Thing` to another.
 Deletes the `Thing`.
 
 ---
-### distanceTo(pos)
+### distanceTo(pos: object)
 Gets the distance between this `Thing` and the given point. The point can be either a `Vector2D` or an array of numbers.
 
 ```js
@@ -138,7 +145,7 @@ t.distanceToSq([ 32, 64 ]);
 Distance to `pos`
 
 ---
-### distanceToSq(pos)
+### distanceToSq(pos: object)
 Gets the squared distance between this `Thing` and the given point.
 The point can be either a `Vector2D` or an array of numbers.
 

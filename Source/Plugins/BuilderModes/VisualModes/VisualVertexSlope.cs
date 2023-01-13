@@ -314,6 +314,13 @@ namespace CodeImp.DoomBuilder.VisualModes
 				}
 			}
 
+			// Can't pivot around itself
+			if (pivothandle == this)
+			{
+				General.Interface.DisplayStatus(Windows.StatusType.Warning, "Slope handle to modify can't be the same as the pivot handle");
+				return;
+			}
+
 			// User didn't set a pivot handle, try to find the smart pivot handle
 			if (pivothandle == null)
 				pivothandle = GetSmartPivotHandle();
@@ -321,10 +328,6 @@ namespace CodeImp.DoomBuilder.VisualModes
 			// Still no pivot handle, cancle
 			if (pivothandle == null)
 				return;
-
-			mode.CreateUndo("Change slope");
-
-			Plane originalplane = level.plane;
 
 			Vector3D p1, p2, p3;
 
@@ -336,18 +339,27 @@ namespace CodeImp.DoomBuilder.VisualModes
 				p3 = pivothandle.GetPivotPoint();
 				Vector2D perp = new Line2D(vertex.Position, p3).GetPerpendicular();
 
-				p1 = new Vector3D(vertex.Position, originalplane.GetZ(vertex.Position) + amount);
-				p2 = new Vector3D(vertex.Position + perp, originalplane.GetZ(vertex.Position + perp) + amount);
+				p1 = new Vector3D(vertex.Position, level.plane.GetZ(vertex.Position) + amount);
+				p2 = new Vector3D(vertex.Position + perp, level.plane.GetZ(vertex.Position + perp) + amount);
 			}
 			else // VisualSidedefSlope
 			{
 				List<Vector3D> pivotpoints = ((VisualSidedefSlope)pivothandle).GetPivotPoints();
-				p1 = new Vector3D(vertex.Position, originalplane.GetZ(vertex.Position) + amount);
+				p1 = new Vector3D(vertex.Position, level.plane.GetZ(vertex.Position) + amount);
 				p2 = pivotpoints[0];
 				p3 = pivotpoints[1];
 			}
 
 			Plane plane = new Plane(p1, p2, p3, true);
+
+			// Completely vertical planes are not possible
+			if (Math.Abs(plane.a) == 1.0 || Math.Abs(plane.b) == 1.0)
+			{
+				General.Interface.DisplayStatus(Windows.StatusType.Warning, "Resulting plane is completely vertical, which is impossible. Aborting");
+				return;
+			}
+
+			mode.CreateUndo("Change slope");
 
 			// Apply slope to surfaces
 			foreach (SectorLevel l in levels)

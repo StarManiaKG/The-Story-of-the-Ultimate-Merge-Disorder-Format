@@ -550,7 +550,8 @@ namespace CodeImp.DoomBuilder.BuilderModes
 				{
 					for (int i = 0; i < ti.Args.Length; i++)
 					{
-						if ((ti.Args[i].Type == (int)UniversalType.SectorTag ||
+						if (actionargs[i] != 0 && // Ignore all args that reference tag 0, since that are likely the majority of all elements
+							(ti.Args[i].Type == (int)UniversalType.SectorTag ||
 							ti.Args[i].Type == (int)UniversalType.LinedefTag ||
 							ti.Args[i].Type == (int)UniversalType.ThingTag))
 						{

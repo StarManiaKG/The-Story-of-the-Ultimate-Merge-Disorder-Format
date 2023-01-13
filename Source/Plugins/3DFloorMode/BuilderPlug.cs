@@ -181,6 +181,7 @@ namespace CodeImp.DoomBuilder.ThreeDFloorMode
 			// TMP
 			drawlines = new List<Line3D>();
 			drawpoints = new List<Vector3D>();
+
 		}
 
 		// This is called when the plugin is terminated
@@ -935,7 +936,7 @@ namespace CodeImp.DoomBuilder.ThreeDFloorMode
 			// Bind the 3D floors to the selected sectors
 			foreach (List<Sector> sectors in sectorGroups)
 			{
-				if (General.Map.UDMF == true)
+				if (General.Map.UDMF == true && General.Map.Config.SectorMultiTag)
 				{
 					foreach (Sector s in sectors)
 					{
@@ -962,7 +963,7 @@ namespace CodeImp.DoomBuilder.ThreeDFloorMode
 
 					}
 				}
-				else
+				else // No sector multi tagging support
 				{
 					int newtag;
 

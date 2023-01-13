@@ -38,11 +38,19 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 {
 	class DataWrapper
 	{
+		#region ================== Constructors
+
+		internal DataWrapper() { }
+
+		#endregion
+
+		#region ================== Methods
+
 		/// <summary>
 		/// Returns an `Array` of all texture names.
 		/// </summary>
 		/// <returns>`Array` of all texture names</returns>
-		public static string[] getTextureNames()
+		public string[] getTextureNames()
 		{
 			return General.Map.Data.TextureNames.ToArray();
 		}
@@ -52,7 +60,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// </summary>
 		/// <param name="name">Texture name to check</param>
 		/// <returns>`true` if the texture exists, `false` if it doesn't</returns>
-		public static bool textureExists(string name)
+		public bool textureExists(string name)
 		{
 			return General.Map.Data.GetTextureExists(name);
 		}
@@ -62,7 +70,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// </summary>
 		/// <param name="name">Texture name to get the info for</param>
 		/// <returns>`ImageInfo` object containing information about the texture</returns>
-		public static ImageInfo getTextureInfo(string name)
+		public ImageInfo getTextureInfo(string name)
 		{
 			return new ImageInfo(General.Map.Data.GetTextureImage(name));
 		}
@@ -71,7 +79,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// Returns an `Array`of all flat names.
 		/// </summary>
 		/// <returns>`Array` of all flat names</returns>
-		public static string[] getFlatNames()
+		public string[] getFlatNames()
 		{
 			return General.Map.Data.FlatNames.ToArray();
 		}
@@ -81,7 +89,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// </summary>
 		/// <param name="name">Flat name to check</param>
 		/// <returns>`true` if the flat exists, `false` if it doesn't</returns>
-		public static bool flatExists(string name)
+		public bool flatExists(string name)
 		{
 			return General.Map.Data.GetFlatExists(name);
 		}
@@ -91,9 +99,11 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// </summary>
 		/// <param name="name">Flat name to get the info for</param>
 		/// <returns>`ImageInfo` object containing information about the flat</returns>
-		public static ImageInfo getFlatInfo(string name)
+		public ImageInfo getFlatInfo(string name)
 		{
 			return new ImageInfo(General.Map.Data.GetFlatImage(name));
 		}
+
+		#endregion
 	}
 }

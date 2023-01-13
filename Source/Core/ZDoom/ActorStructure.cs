@@ -319,13 +319,21 @@ namespace CodeImp.DoomBuilder.ZDoom
 		/// </summary>
 		public bool CheckActorSupported()
 		{
-			// Check if we want to include this actor
-			string includegames = General.Map.Config.DecorateGames.ToLowerInvariant();
-			bool includeactor = (props["game"].Count == 0);
-			foreach(string g in props["game"])
-				includeactor |= includegames.Contains(g);
-			
-			return includeactor;
+			// Only check if a map is opened. Otherwise we run into problems with the resource checker
+			if (General.Map != null)
+			{
+				// Check if we want to include this actor
+				string includegames = General.Map.Config.DecorateGames.ToLowerInvariant();
+				bool includeactor = (props["game"].Count == 0);
+				foreach (string g in props["game"])
+					includeactor |= includegames.Contains(g);
+
+				return includeactor;
+			}
+			else
+			{
+				return true;
+			}
 		}
 		
 		/// <summary>

@@ -30,7 +30,7 @@ namespace CodeImp.DoomBuilder.TagRange
 		{
 			this.toolstrip = new System.Windows.Forms.ToolStrip();
 			this.seperator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.tagrangebutton = new System.Windows.Forms.ToolStripButton();
+			this.tagrangebutton = new CodeImp.DoomBuilder.Controls.ToolStripActionButton();
 			this.seperator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolstrip.SuspendLayout();
 			this.SuspendLayout();
@@ -91,7 +91,7 @@ namespace CodeImp.DoomBuilder.TagRange
 		#endregion
 
 		private System.Windows.Forms.ToolStrip toolstrip;
-		private System.Windows.Forms.ToolStripButton tagrangebutton;
+		private CodeImp.DoomBuilder.Controls.ToolStripActionButton tagrangebutton;
 		private System.Windows.Forms.ToolStripSeparator seperator2;
 		private System.Windows.Forms.ToolStripSeparator seperator1;
 	}

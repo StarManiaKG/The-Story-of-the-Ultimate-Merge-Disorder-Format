@@ -348,6 +348,13 @@ namespace CodeImp.DoomBuilder.VisualModes
 				}
 			}
 
+			// Can't pivot around itself
+			if(pivothandle == this)
+			{
+				General.Interface.DisplayStatus(Windows.StatusType.Warning, "Slope handle to modify can't be the same as the pivot handle");
+				return;
+			}
+
 			// User didn't set a pivot handle, try to find the smart pivot handle
 			if(pivothandle == null)
 				pivothandle = GetSmartPivotHandle();
@@ -356,17 +363,21 @@ namespace CodeImp.DoomBuilder.VisualModes
 			if (pivothandle == null)
 				return;
 
-			mode.CreateUndo("Change slope");
-
-			Plane originalplane = level.plane;
-			Plane pivotplane = ((BaseVisualSlope)pivothandle).Level.plane;
-
 			// Build a new plane. p1 and p2 are the points of the slope handle that is modified, with the changed amound added; p3 is on the line of the pivot handle
-			Vector3D p1 = new Vector3D(sidedef.Line.Start.Position, originalplane.GetZ(sidedef.Line.Start.Position) + amount);
-			Vector3D p2 = new Vector3D(sidedef.Line.End.Position, originalplane.GetZ(sidedef.Line.End.Position) + amount);
+			Vector3D p1 = new Vector3D(sidedef.Line.Start.Position, level.plane.GetZ(sidedef.Line.Start.Position) + amount);
+			Vector3D p2 = new Vector3D(sidedef.Line.End.Position, level.plane.GetZ(sidedef.Line.End.Position) + amount);
 			Vector3D p3 = pivothandle.GetPivotPoint();
 
 			Plane plane = new Plane(p1, p2, p3, true);
+
+			// Completely vertical planes are not possible. This can for example happen when trying to pivot around the slope handle on the opposite side of a line
+			if (Math.Abs(plane.a) == 1.0 || Math.Abs(plane.b) == 1.0)
+			{
+				General.Interface.DisplayStatus(Windows.StatusType.Warning, "Resulting plane is completely vertical, which is impossible. Aborting");
+				return;
+			}
+
+			mode.CreateUndo("Change slope");
 
 			// Apply slope to surfaces
 			foreach (SectorLevel l in levels)

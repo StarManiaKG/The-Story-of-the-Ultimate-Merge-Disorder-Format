@@ -125,24 +125,16 @@ namespace CodeImp.DoomBuilder.BuilderModes
 			// Disable groups?
 			if(!enable)
 			{
-				ceiltexgroup.Enabled = false;
-				floortexgroup.Enabled = false;
-				ceiltexall.Enabled = false;
-				floortexall.Enabled = false;
+				pinfloortextures.Enabled = false;
+				pinceilingtextures.Enabled = false;
 				return;
 			}
 
 			// Update checkboxes
 			preventchanges = true;
 
-			floortexoffset.Checked = mode.TransformFloorOffsets;
-			ceiltexoffset.Checked = mode.TransformCeilingOffsets;
-			floortexrotation.Checked = mode.RotateFloorOffsets;
-			ceiltexrotation.Checked = mode.RotateCeilingOffsets;
-			floortexscale.Checked = mode.ScaleFloorOffsets;
-			ceiltexscale.Checked = mode.ScaleCeilingOffsets;
-			floortexall.Checked = (mode.TransformFloorOffsets && mode.RotateFloorOffsets && mode.ScaleFloorOffsets);
-			ceiltexall.Checked = (mode.TransformCeilingOffsets && mode.RotateCeilingOffsets && mode.ScaleCeilingOffsets);
+			pinfloortextures.Checked = mode.PinFloorTextures;
+			pinceilingtextures.Checked = mode.PinCeilingTextures;
 
 			preventchanges = false;
 		}
@@ -156,34 +148,6 @@ namespace CodeImp.DoomBuilder.BuilderModes
 			preventchanges = false;
 		}
 
-		//mxd
-		private void UpdateAllFloorTransformsCheckbox()
-		{
-			preventchanges = true;
-
-			int i = 0;
-			if(floortexoffset.Checked) i++;
-			if(floortexrotation.Checked) i++;
-			if(floortexscale.Checked) i++;
-			floortexall.Checked = (i == 3);
-
-			preventchanges = false;
-		}
-
-		//mxd
-		private void UpdateAllCeilingTransformsCheckbox() 
-		{
-			preventchanges = true;
-
-			int i = 0;
-			if(ceiltexoffset.Checked) i++;
-			if(ceiltexrotation.Checked) i++;
-			if(ceiltexscale.Checked) i++;
-			ceiltexall.Checked = (i == 3);
-
-			preventchanges = false;
-		}
-		
 		#endregion
 		
 		#region ================== Events
@@ -288,94 +252,6 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		}
 
 		//mxd
-		private void floortexoffset_CheckedChanged(object sender, EventArgs e)
-		{
-			if(preventchanges) return;
-			mode.TransformFloorOffsets = floortexoffset.Checked;
-			UpdateAllFloorTransformsCheckbox();
-			General.Interface.FocusDisplay();
-		}
-
-		//mxd
-		private void ceiltexoffset_CheckedChanged(object sender, EventArgs e) 
-		{
-			if(preventchanges) return;
-			mode.TransformCeilingOffsets = ceiltexoffset.Checked;
-			UpdateAllCeilingTransformsCheckbox();
-			General.Interface.FocusDisplay();
-		}
-
-		//mxd
-		private void floortexrotation_CheckedChanged(object sender, EventArgs e) 
-		{
-			if(preventchanges) return;
-			mode.RotateFloorOffsets = floortexrotation.Checked;
-			UpdateAllFloorTransformsCheckbox();
-			General.Interface.FocusDisplay();
-		}
-
-		//mxd
-		private void ceiltexrotation_CheckedChanged(object sender, EventArgs e) 
-		{
-			if(preventchanges) return;
-			mode.RotateCeilingOffsets = ceiltexrotation.Checked;
-			UpdateAllCeilingTransformsCheckbox();
-			General.Interface.FocusDisplay();
-		}
-
-		//mxd
-		private void floortexscale_CheckedChanged(object sender, EventArgs e)
-		{
-			if(preventchanges) return;
-			mode.ScaleFloorOffsets = floortexscale.Checked;
-			UpdateAllFloorTransformsCheckbox();
-			General.Interface.FocusDisplay();
-		}
-
-		//mxd
-		private void ceiltexscale_CheckedChanged(object sender, EventArgs e)
-		{
-			if(preventchanges) return;
-			mode.ScaleCeilingOffsets = ceiltexscale.Checked;
-			UpdateAllCeilingTransformsCheckbox();
-			General.Interface.FocusDisplay();
-		}
-
-		//mxd
-		private void floortexall_CheckedChanged(object sender, EventArgs e) 
-		{
-			if(preventchanges) return;
-			preventchanges = true;
-
-			floortexoffset.Checked = floortexall.Checked;
-			floortexrotation.Checked = floortexall.Checked;
-			floortexscale.Checked = floortexall.Checked;
-
-			mode.TransformFloorOffsets = floortexoffset.Checked;
-			mode.RotateFloorOffsets = floortexrotation.Checked;
-			mode.ScaleFloorOffsets = floortexscale.Checked;
-
-			preventchanges = false;
-		}
-
-		//mxd
-		private void ceiltexall_CheckedChanged(object sender, EventArgs e) 
-		{
-			if(preventchanges) return;
-			preventchanges = true;
-
-			ceiltexoffset.Checked = ceiltexall.Checked;
-			ceiltexrotation.Checked = ceiltexall.Checked;
-			ceiltexscale.Checked = ceiltexall.Checked;
-
-			mode.TransformCeilingOffsets = ceiltexoffset.Checked;
-			mode.RotateCeilingOffsets = ceiltexrotation.Checked;
-			mode.ScaleCeilingOffsets = ceiltexscale.Checked;
-
-			preventchanges = false;
-		}
-
-		//mxd
 		private void preciseposition_CheckedChanged(object sender, EventArgs e) 
 		{
 			if(preventchanges) return;
@@ -389,7 +265,27 @@ namespace CodeImp.DoomBuilder.BuilderModes
 			if(preventchanges || heightmode.SelectedIndex == -1) return;
 			mode.SectorHeightAdjustMode = (EditSelectionMode.HeightAdjustMode)heightmode.SelectedIndex;
 		}
-		
+
 		#endregion
+
+		private void cbPinFloorTextures_CheckedChanged(object sender, EventArgs e)
+		{
+			if (preventchanges) return;
+			preventchanges = true;
+
+			mode.PinFloorTextures = pinfloortextures.Checked;
+
+			preventchanges = false;
+		}
+
+		private void pinceilingtextures_CheckedChanged(object sender, EventArgs e)
+		{
+			if (preventchanges) return;
+			preventchanges = true;
+
+			mode.PinCeilingTextures = pinceilingtextures.Checked;
+
+			preventchanges = false;
+		}
 	}
 }

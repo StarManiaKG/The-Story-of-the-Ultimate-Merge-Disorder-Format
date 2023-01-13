@@ -42,6 +42,11 @@ using System.Runtime.CompilerServices;
 
 namespace CodeImp.DoomBuilder.BuilderModes
 {
+	internal class ToastMessages
+	{
+		public static readonly string VISUALSLOPING = "visualsloping";
+	}
+
 	public class BuilderPlug : Plug
 	{
 		#region ================== API Declarations
@@ -249,8 +254,11 @@ namespace CodeImp.DoomBuilder.BuilderModes
 
 			//mxd
 			General.Actions.BindMethods(this);
+
+			// Register toasts
+			General.ToastManager.RegisterToast(ToastMessages.VISUALSLOPING, "Visual sloping", "Toasts related to visual sloping");
 		}
-		
+
 		// Disposer
 		public override void Dispose()
 		{

@@ -43,8 +43,8 @@ namespace CodeImp.DoomBuilder.CommentsPanel
 			// 
 			// optionsgroup
 			// 
-			this.optionsgroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.optionsgroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.optionsgroup.Controls.Add(this.clickselects);
 			this.optionsgroup.Controls.Add(this.filtermode);
 			this.optionsgroup.Location = new System.Drawing.Point(3, 561);
@@ -81,9 +81,9 @@ namespace CodeImp.DoomBuilder.CommentsPanel
 			this.grid.AllowUserToDeleteRows = false;
 			this.grid.AllowUserToResizeColumns = false;
 			this.grid.AllowUserToResizeRows = false;
-			this.grid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.grid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.grid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
 			this.grid.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
 			this.grid.BackgroundColor = System.Drawing.SystemColors.Window;
@@ -112,8 +112,8 @@ namespace CodeImp.DoomBuilder.CommentsPanel
 			this.grid.Size = new System.Drawing.Size(250, 465);
 			this.grid.StandardTab = true;
 			this.grid.TabIndex = 6;
-			this.grid.MouseDown += new System.Windows.Forms.MouseEventHandler(this.grid_MouseDown);
 			this.grid.Leave += new System.EventHandler(this.grid_Leave);
+			this.grid.MouseDown += new System.Windows.Forms.MouseEventHandler(this.grid_MouseDown);
 			this.grid.MouseUp += new System.Windows.Forms.MouseEventHandler(this.grid_MouseUp);
 			// 
 			// iconcolumn
@@ -134,7 +134,7 @@ namespace CodeImp.DoomBuilder.CommentsPanel
 			// 
 			// updatetimer
 			// 
-			this.updatetimer.Interval = 2000;
+			this.updatetimer.Interval = 750;
 			this.updatetimer.Tick += new System.EventHandler(this.updatetimer_Tick);
 			// 
 			// contextmenu
@@ -192,8 +192,8 @@ namespace CodeImp.DoomBuilder.CommentsPanel
 			// 
 			// addcomment
 			// 
-			this.addcomment.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.addcomment.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.addcomment.Location = new System.Drawing.Point(6, 45);
 			this.addcomment.Name = "addcomment";
 			this.addcomment.Size = new System.Drawing.Size(232, 31);
@@ -204,8 +204,8 @@ namespace CodeImp.DoomBuilder.CommentsPanel
 			// 
 			// addcommentgroup
 			// 
-			this.addcommentgroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.addcommentgroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.addcommentgroup.Controls.Add(this.addcommenttext);
 			this.addcommentgroup.Controls.Add(this.addcomment);
 			this.addcommentgroup.Location = new System.Drawing.Point(3, 471);
@@ -216,8 +216,8 @@ namespace CodeImp.DoomBuilder.CommentsPanel
 			// 
 			// addcommenttext
 			// 
-			this.addcommenttext.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.addcommenttext.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.addcommenttext.Location = new System.Drawing.Point(6, 19);
 			this.addcommenttext.Name = "addcommenttext";
 			this.addcommenttext.Size = new System.Drawing.Size(232, 20);
@@ -238,6 +238,7 @@ namespace CodeImp.DoomBuilder.CommentsPanel
 			this.Controls.Add(this.optionsgroup);
 			this.Name = "CommentsDocker";
 			this.Size = new System.Drawing.Size(250, 657);
+			this.VisibleChanged += new System.EventHandler(this.CommentsDocker_VisibleChanged);
 			this.optionsgroup.ResumeLayout(false);
 			this.optionsgroup.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();

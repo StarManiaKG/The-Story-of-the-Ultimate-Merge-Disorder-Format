@@ -45,8 +45,8 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		private TypeReference queryoptions;
 		private ExpandoObject scriptoptions;
 
-		private TypeReference angle2d;
-		private TypeReference data;
+		private Angle2DWrapper angle2d;
+		private DataWrapper data;
 		private TypeReference line2d;
 		private MapWrapper map;
 		private TypeReference univalue;
@@ -58,6 +58,10 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		private TypeReference sidedef;
 		private TypeReference thing;
 		private TypeReference vertex;
+
+		// Version 5
+		private TypeReference plane;
+		private TypeReference blockmap;
 
 		private IProgress<int> progress;
 		private IProgress<string> status;
@@ -106,7 +110,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// let rad = UDB.Angle2D.degToRad(46);
 		/// ```
 		/// </summary>
-		public TypeReference Angle2D
+		public Angle2DWrapper Angle2D
 		{
 			get
 			{
@@ -120,7 +124,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// let hasfireblu = UDB.Data.textureExists('FIREBLU1');
 		/// ```
 		/// </summary>
-		public TypeReference Data
+		public DataWrapper Data
 		{
 			get
 			{
@@ -186,10 +190,10 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 
 		/// <summary>
 		/// Instantiable class that contains methods related to three-dimensional vectors. See [Vector3D](Vector3D.md) for more information.
-		/// </summary>
 		/// ```js
 		/// let v = new UDB.Vector3D(32, 64, 128);
 		/// ```
+		/// </summary>
 		public TypeReference Vector3D
 		{
 			get
@@ -204,6 +208,30 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		public TypeReference Thing { get { return thing; } }
 		public TypeReference Vertex { get { return vertex; } }
 
+		/// <summary>
+		/// Instantiable class that contains methods related to a three-dimensional Plane. See [Plane](Plane.md) for more information.
+		/// </summary>
+		[UDBScriptSettings(MinVersion = 5)]
+		public TypeReference Plane
+		{
+			get
+			{
+				return plane;
+			}
+		}
+
+		/// <summary>
+		/// Instantiable class that contains methods related to blockmaps. See [BlockMap][BlockMap.md) for more information.
+		/// </summary>
+		[UDBScriptSettings(MinVersion = 5)]
+		public TypeReference BlockMap
+		{
+			get
+			{
+				return blockmap;
+			}
+		}
+
 		#endregion
 
 		#region ================== Constructors
@@ -214,8 +242,8 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 			queryoptions = TypeReference.CreateTypeReference(engine, typeof(QueryOptions));
 			scriptoptions = scriptinfo.GetScriptOptionsObject();
 
-			angle2d = TypeReference.CreateTypeReference(engine, typeof(Angle2DWrapper));
-			data = TypeReference.CreateTypeReference(engine, typeof(DataWrapper));
+			angle2d = new Angle2DWrapper();
+			data = new DataWrapper();
 			line2d = TypeReference.CreateTypeReference(engine, typeof(Line2DWrapper));
 			map = new MapWrapper();
 			univalue = TypeReference.CreateTypeReference(engine, typeof(CodeImp.DoomBuilder.Map.UniValue));
@@ -229,6 +257,10 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 			sidedef = TypeReference.CreateTypeReference(engine, typeof(SidedefWrapper));
 			thing = TypeReference.CreateTypeReference(engine, typeof(ThingWrapper));
 			vertex = TypeReference.CreateTypeReference(engine, typeof(VertexWrapper));
+
+			// Version 5
+			plane = TypeReference.CreateTypeReference(engine, typeof(PlaneWrapper));
+			blockmap = TypeReference.CreateTypeReference(engine, typeof(BlockMapWrapper));
 
 			this.progress = progress;
 			this.status = status;

@@ -172,11 +172,6 @@ namespace CodeImp.DoomBuilder.ColorPicker
 					deselectelement.Selected = false;						
 				}
 			} 
-			else 
-			{
-				form.Dispose();
-				form = null;
-			}
 
 			General.Interface.RedrawDisplay();
 		}
@@ -184,8 +179,6 @@ namespace CodeImp.DoomBuilder.ColorPicker
 		private void form_FormClosed(object sender, FormClosedEventArgs e) 
 		{
 			formLocation = form.Location;
-			form.Dispose();
-			form = null;
 		}
 	}
 }

@@ -85,5 +85,14 @@ namespace CodeImp.DoomBuilder.TagExplorer
 			if(tagExplorer != null && action.Name == "builder_deleteitem")
 				tagExplorer.UpdateTreeSoon();
 		}
+
+		/// <summary>
+		/// Checks if the currently active docker is the Tag Explorer docker.
+		/// </summary>
+		/// <returns>true if the Tag Explorer docker is active, otherwise false</returns>
+		public bool IsDockerActive()
+		{
+			return General.Interface.ActiveDockerTabName == docker.Title;
+		}
 	}
 }

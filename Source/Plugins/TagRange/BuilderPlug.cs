@@ -16,10 +16,12 @@
 
 #region ================== Namespaces
 
+using System.Windows.Forms;
 using CodeImp.DoomBuilder.Windows;
 using CodeImp.DoomBuilder.Editing;
 using CodeImp.DoomBuilder.Plugins;
 using CodeImp.DoomBuilder.Actions;
+using CodeImp.DoomBuilder.BuilderModes;
 
 #endregion
 
@@ -77,8 +79,22 @@ namespace CodeImp.DoomBuilder.TagRange
 		{
 			TagRangeForm f = new TagRangeForm();
 			f.Setup();
-			if(f.SelectionCount > 0)
-				f.ShowDialog(General.Interface);
+			if (f.SelectionCount > 0)
+			{
+				if (f.ShowDialog(General.Interface) == DialogResult.OK)
+				{
+					if (General.Editing.Mode is BaseClassicMode mode)
+					{
+						// Bit of a hack to make sectors mode update the sector labels, otherwise the new tags will not be
+						// displayed when selection numbering is disabled.
+						// See https://github.com/jewalky/UltimateDoomBuilder/issues/795
+						mode.OnViewSelectionNumbersChanged(BuilderModes.BuilderPlug.Me.ViewSelectionNumbers);
+
+						// Redraw to make the updated labels to show up
+						General.Interface.RedrawDisplay();
+					}
+				}
+			}
 			else
 				General.Interface.DisplayStatus(StatusType.Warning, "This action requires a selection!"); //mxd
 			f.Dispose();

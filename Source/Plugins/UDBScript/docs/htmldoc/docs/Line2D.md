@@ -3,7 +3,7 @@
 ## Constructors
 
 ---
-### Line2D(v1, v2)
+### Line2D(v1: object, v2: object)
 Creates a new `Line2D` from two points.
 
 ```js
@@ -16,7 +16,17 @@ let line2 = new UDB.Line2D([ 32, 64 ], [ 96, 128 ]);
 ## Static methods
 
 ---
-### areIntersecting(a1, a2, b1, b2, bounded=true)
+### areIntersecting(line1: Line2D, line2: Line2D, bounded: bool)
+Checks if two lines intersect. If `bounded` is set to `true` (default) the finite length of the lines is used, otherwise the infinite length of the lines is used.
+#### Parameters
+* line1: First `Line2D`
+* line2: Second `Line2D`
+* bounded: `true` to use finite length of lines, `false` to use infinite length of lines
+#### Return value
+`true` if the lines intersect, `false` if they do not
+
+---
+### areIntersecting(a1: object, a2: object, b1: object, b2: object, bounded: bool)
 Checks if two lines defined by their start and end points intersect. If `bounded` is set to `true` (default) the finite length of the lines is used, otherwise the infinite length of the lines is used.
 #### Parameters
 * a1: First point of first line
@@ -28,17 +38,7 @@ Checks if two lines defined by their start and end points intersect. If `bounded
 `true` if the lines intersect, `false` if they do not
 
 ---
-### areIntersecting(line1, line2, bounded=true)
-Checks if two lines intersect. If `bounded` is set to `true` (default) the finite length of the lines is used, otherwise the infinite length of the lines is used.
-#### Parameters
-* line1: First `Line2D`
-* line2: Second `Line2D`
-* bounded: `true` to use finite length of lines, `false` to use infinite length of lines
-#### Return value
-`true` if the lines intersect, `false` if they do not
-
----
-### getCoordinatesAt(v1, v2, u)
+### getCoordinatesAt(v1: object, v2: object, u: double)
 Returns the coordinate on a line defined by its start and end points as `Vector2D`.
 #### Parameters
 * v1: First point of the line
@@ -48,7 +48,7 @@ Returns the coordinate on a line defined by its start and end points as `Vector2
 Point on the line as `Vector2D`
 
 ---
-### getDistanceToLine(v1, v2, p, bounded=true)
+### getDistanceToLine(v1: object, v2: object, p: object, bounded: bool)
 Returns the shortest distance from point `p` to the line defined by its start and end points. If `bounded` is set to `true` (default) the finite length of the lines is used, otherwise the infinite length of the lines is used.
 #### Parameters
 * v1: First point of the line
@@ -59,7 +59,7 @@ Returns the shortest distance from point `p` to the line defined by its start an
 The shortest distance to the line
 
 ---
-### getDistanceToLineSq(v1, v2, p, bounded = true)
+### getDistanceToLineSq(v1: object, v2: object, p: object, bounded: bool)
 Returns the shortest square distance from point `p` to the line defined by its start and end points. If `bounded` is set to `true` (default) the finite length of the lines is used, otherwise the infinite length of the lines is used.
 #### Parameters
 * v1: First point of the line
@@ -70,7 +70,7 @@ Returns the shortest square distance from point `p` to the line defined by its s
 The shortest square distance to the line
 
 ---
-### getIntersectionPoint(a1, a2, b1, b2, bounded = true)
+### getIntersectionPoint(a1: object, a2: object, b1: object, b2: object, bounded: bool)
 Returns the intersection point of two lines as `Vector2D`. If the lines do not intersect the `x` and `y` properties of the `Vector2D` are `NaN`. If `bounded` is set to `true` (default) the finite length of the lines is used, otherwise the infinite length of the lines is used.
 #### Parameters
 * a1: First point of first line
@@ -82,7 +82,7 @@ Returns the intersection point of two lines as `Vector2D`. If the lines do not i
 The intersection point as `Vector2D`
 
 ---
-### getNearestOnLine(v1, v2, p)
+### getNearestOnLine(v1: object, v2: object, p: object)
 Returns the offset coordinate on the line nearest to the given point. `0.0` being on the first point, `1.0` being on the second point, and `u = 0.5` being in the middle between the points.
 #### Parameters
 * v1: First point of the line
@@ -92,7 +92,7 @@ Returns the offset coordinate on the line nearest to the given point. `0.0` bein
 The offset value relative to the first point of the line.
 
 ---
-### getSideOfLine(v1, v2, p)
+### getSideOfLine(v1: object, v2: object, p: object)
 Returns which the of the line defined by its start and end point a given point is on.
 #### Parameters
 * v1: First point of the line
@@ -124,7 +124,7 @@ Returns the angle of the `Line2D` in radians.
 Angle of `Line2D` in radians
 
 ---
-### getCoordinatesAt(u)
+### getCoordinatesAt(u: double)
 Returns the coordinates on the line, where `u` is the position between the first and second point, `u = 0.0` being on the first point, `u = 1.0` being on the second point, and `u = 0.5` being in the middle between the points.
 #### Parameters
 * u: Position on the line, between 0.0 and 1.0
@@ -132,7 +132,7 @@ Returns the coordinates on the line, where `u` is the position between the first
 Position on the line as `Vector2D`
 
 ---
-### getIntersectionPoint(a1, a2, bounded = true)
+### getIntersectionPoint(a1: object, a2: object, bounded: bool)
 Returns the intersection point of of the given line defined by its start and end points with this line as `Vector2D`. If the lines do not intersect the `x` and `y` properties of the `Vector2D` are `NaN`. If `bounded` is set to `true` (default) the finite length of the lines is used, otherwise the infinite length of the lines is used.
 #### Parameters
 * a1: First point of first line
@@ -142,7 +142,7 @@ Returns the intersection point of of the given line defined by its start and end
 The intersection point as `Vector2D`
 
 ---
-### getIntersectionPoint(ray, bounded=true)
+### getIntersectionPoint(ray: Line2D, bounded: bool)
 Returns the intersection point of of the given line with this line as `Vector2D`. If the lines do not intersect the `x` and `y` properties of the `Vector2D` are `NaN`. If `bounded` is set to `true` (default) the finite length of the lines is used, otherwise the infinite length of the lines is used.
 #### Parameters
 * ray: Other `Line2D` to get the intersection point from
@@ -163,7 +163,7 @@ Returns the perpendicular of this line as `Vector2D`.
 Perpendicular of this line as `Vector2D`
 
 ---
-### getSideOfLine(p)
+### getSideOfLine(p: object)
 Returns which the of the line defined by its start and end point a given point is on.
 #### Parameters
 * p: Point to check
@@ -171,7 +171,16 @@ Returns which the of the line defined by its start and end point a given point i
 `< 0` if `p` is on the front (right) side, `> 0` if `p` is on the back (left) side, `== 0` if `p` in on the line
 
 ---
-### isIntersecting(a1, a2, bounded = true)
+### isIntersecting(ray: Line2D, bounded: bool)
+Checks if the given `Line2D` intersects this line. If `bounded` is set to `true` (default) the finite length of the lines is used, otherwise the infinite length of the lines is used.
+#### Parameters
+* ray: `Line2D` to check against
+* bounded: `true` (default) to use finite length of lines, `false` to use infinite length of lines
+#### Return value
+`true` if lines intersect, `false` if they do not intersect
+
+---
+### isIntersecting(a1: object, a2: object, bounded: bool)
 Checks if the given line intersects this line. If `bounded` is set to `true` (default) the finite length of the lines is used, otherwise the infinite length of the lines is used.
 #### Parameters
 * a1: First point of the line to check against
@@ -179,12 +188,3 @@ Checks if the given line intersects this line. If `bounded` is set to `true` (de
 * bounded: `true` (default) to use finite length of lines, `false` to use infinite length of lines
 #### Return value
 `true` if the lines intersect, `false` if they do not
-
----
-### isIntersecting(ray, bounded=true)
-Checks if the given `Line2D` intersects this line. If `bounded` is set to `true` (default) the finite length of the lines is used, otherwise the infinite length of the lines is used.
-#### Parameters
-* ray: `Line2D` to check against
-* bounded: `true` (default) to use finite length of lines, `false` to use infinite length of lines
-#### Return value
-`true` if lines intersect, `false` if they do not intersect

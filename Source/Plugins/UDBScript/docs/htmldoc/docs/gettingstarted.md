@@ -58,6 +58,19 @@ You can open a context menu for each script by right-clicking on it. In the cont
 
 ## Writing scripts
 
+### Type information file (udbscript.d.ts)
+
+UDBScript comes with a type information called `udbscript.d.ts` located in the `UDBScript` directory in the UDB installation directory. This file contains information about the available classes, methods, and their parameters. This makes writing scripts more comfortable if you are using an text editor that can interpret this file, such as Visual Studio Code.
+
+To use the file it has to be referenced at the very top of the script file:
+```js
+/// <reference path="../udbscript.d.ts" />
+```
+Depending on where your script is located you have to change the path to the file.
+
+!!! attention
+    `.d.ts` files are originally for the TypeScript programming language, which is a superset of JavaScript. UDBScript does *not* support TypeScript, it merely provides a definition file to make writing scripts easier.
+
 ### Script metadata
 
 Scripts can contain metadata at the top of the file to provide information about the script as well as available script options. The metadata is specified as JavaScript template strings, i.e. strings enclosed by backticks (`` ` ``). The template string has to start with a `#`, followed by a command, followed by the payload, followed by a `;`.

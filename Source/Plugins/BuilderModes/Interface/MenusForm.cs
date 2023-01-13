@@ -18,6 +18,7 @@
 
 using System;
 using System.Windows.Forms;
+using CodeImp.DoomBuilder.Controls;
 using CodeImp.DoomBuilder.Editing;
 using CodeImp.DoomBuilder.Windows;
 
@@ -70,26 +71,26 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		public ToolStripSeparator SeparatorSectors1 { get { return separatorsectors1; } }
 		public ToolStripSeparator SeparatorSectors2 { get { return separatorsectors2; } } //mxd
 		public ToolStripSeparator SeparatorSectors3 { get { return separatorsectors3; } } //mxd
-		public ToolStripButton MakeGradientBrightness { get { return buttonbrightnessgradient; } }
-		public ToolStripButton MakeGradientFloors { get { return buttonfloorgradient; } }
-		public ToolStripButton MakeGradientCeilings { get { return buttonceilinggradient; } }
-		public ToolStripButton FlipSelectionV { get { return buttonflipselectionv; } }
-		public ToolStripButton FlipSelectionH { get { return buttonflipselectionh; } }
-		public ToolStripButton CurveLinedefs { get { return buttoncurvelinedefs; } }
-		public ToolStripButton CopyProperties { get { return buttoncopyproperties; } }
-		public ToolStripButton PasteProperties { get { return buttonpasteproperties; } }
-		public ToolStripButton PastePropertiesOptions { get { return buttonpastepropertiesoptions; } } //mxd
+		public ToolStripActionButton MakeGradientBrightness { get { return buttonbrightnessgradient; } }
+		public ToolStripActionButton MakeGradientFloors { get { return buttonfloorgradient; } }
+		public ToolStripActionButton MakeGradientCeilings { get { return buttonceilinggradient; } }
+		public ToolStripActionButton FlipSelectionV { get { return buttonflipselectionv; } }
+		public ToolStripActionButton FlipSelectionH { get { return buttonflipselectionh; } }
+		public ToolStripActionButton CurveLinedefs { get { return buttoncurvelinedefs; } }
+		public ToolStripActionButton CopyProperties { get { return buttoncopyproperties; } }
+		public ToolStripActionButton PasteProperties { get { return buttonpasteproperties; } }
+		public ToolStripActionButton PastePropertiesOptions { get { return buttonpastepropertiesoptions; } } //mxd
 		public ToolStripSeparator SeparatorCopyPaste { get { return seperatorcopypaste; } }
 		public ToolStripComboBox GradientModeMenu { get { return gradientModeMenu; } } //mxd
 		public ToolStripComboBox GradientInterpolationMenu { get { return gradientInterpolationMenu; } } //mxd
 		public ToolStripButton MarqueSelectTouching { get { return buttonMarqueSelectTouching; } } //mxd
-		public ToolStripButton AlignThingsToWall { get { return buttonAlignThingsToWall; } } //mxd
+		public ToolStripActionButton AlignThingsToWall { get { return buttonAlignThingsToWall; } } //mxd
 		public ToolStripButton TextureOffsetLock { get { return buttonTextureOffsetLock; } } //mxd
 		public ToolStripButton TextureOffset3DFloorLock { get { return buttonTextureOffset3DFloorLock; } } 
-		public ToolStripButton SyncronizeThingEditButton { get { return syncthingteditbutton; } } //mxd
+		public ToolStripActionButton SyncronizeThingEditButton { get { return syncthingteditbutton; } } //mxd
 		public ToolStripMenuItem SyncronizeThingEditSectorsItem { get { return syncthingeditsectorsitem; } } //mxd
 		public ToolStripMenuItem SyncronizeThingEditLinedefsItem { get { return syncthingeditlinedefsitem; } } //mxd
-		public ToolStripButton MakeDoor { get { return buttonMakeDoor; } } //mxd
+		public ToolStripActionButton MakeDoor { get { return buttonMakeDoor; } } //mxd
 
 		//mxd. Thing mode radii buttons
 		public ToolStripMenuItem ItemLightRadii { get { return itemlightradii; } }

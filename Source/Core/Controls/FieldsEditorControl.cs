@@ -417,7 +417,7 @@ namespace CodeImp.DoomBuilder.Controls
 		}
 
 		//mxd
-		public void ApplyUserVars(Dictionary<string, UniversalType> vars, UniFields tofields)
+		public void ApplyUserVars(Dictionary<string, UniversalType> vars, Dictionary<string, object> vardefaults, UniFields tofields)
 		{
 			// Apply user variables when target map element contains user var definition and the value is not default
 			foreach(DataGridViewRow row in fieldslist.Rows)
@@ -434,8 +434,11 @@ namespace CodeImp.DoomBuilder.Controls
 					// Skip field when mixed values
 					if(newvalue == null) continue;
 
-					// Remove field
-					if(newvalue.Equals(frow.TypeHandler.GetDefaultValue()))
+					object typedefault = frow.TypeHandler.GetDefaultValue();
+					object userdefault = vardefaults.ContainsKey(frow.Name) ? vardefaults[frow.Name] : typedefault;
+
+					// Remove field, but only if the type's default value is the same as the user var's default value
+					if (newvalue.Equals(typedefault) && typedefault.Equals(userdefault))
 					{
 						if(tofields.ContainsKey(frow.Name)) tofields.Remove(frow.Name);
 					}
@@ -980,6 +983,50 @@ namespace CodeImp.DoomBuilder.Controls
 				FieldsEditorRow frow = (row as FieldsEditorRow);
 				if(frow != null && frow.RowType == FieldsEditorRowType.FIXED) frow.Visible = showfixedfields;
 			}
+		}
+
+		/// <summary>
+		/// Removes an field by its name.
+		/// </summary>
+		/// <param name="name">Name of the field to remove</param>
+		public void RemoveField(string name)
+		{
+			int index = -1;
+
+			foreach(DataGridViewRow dgvr in fieldslist.Rows)
+			{
+				if(dgvr.Cells[0].Value.ToString().ToLowerInvariant() == name.ToLowerInvariant())
+				{
+					index = dgvr.Index;
+					break;
+				}
+			}
+
+			if (index >= 0)
+				fieldslist.Rows.RemoveAt(index);
+		}
+
+		/// <summary>
+		/// Removes all user vars that have their default values.
+		/// </summary>
+		public void RemoveUserVarsWithDefaultValue()
+		{
+			List<int> removeindices = new List<int>();
+
+			// Go through all rows and find the ones to remove. We can't remove them immediately since that would
+			// change the collection while the loop is going through it.
+			foreach (DataGridViewRow dgvr in fieldslist.Rows)
+			{
+				if(dgvr is FieldsEditorRow frow)
+				{
+					if (frow.RowType == FieldsEditorRowType.USERVAR && frow.Info != null && frow.TypeHandler.GetValue().Equals(frow.Info.Default))
+						removeindices.Add(dgvr.Index);
+				}
+			}
+
+			// Remove rows. Do it from behind since otherwise the indices would not match
+			for (int i = removeindices.Count - 1; i >= 0; i--)
+				fieldslist.Rows.RemoveAt(removeindices[i]);
 		}
 		
 		#endregion

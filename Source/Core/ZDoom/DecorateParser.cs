@@ -35,7 +35,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 		public delegate void IncludeDelegate(DecorateParser parser, string includefile);
 		
 		public IncludeDelegate OnInclude;
-		
+
 		#endregion
 		
 		#region ================== Constants
@@ -64,11 +64,14 @@ namespace CodeImp.DoomBuilder.ZDoom
 
 		//mxd. Disposing. Is that really needed?..
 		private bool isdisposed;
-		
+
+		//
+		public bool NoWarnings = false;
+
 		#endregion
-		
+
 		#region ================== Properties
-		
+
 		/// <summary>
 		/// All actors that are supported by the current game.
 		/// </summary>
@@ -93,10 +96,15 @@ namespace CodeImp.DoomBuilder.ZDoom
 		/// mxd. Custom DamageTypes (http://zdoom.org/wiki/Damage_types).
 		/// </summary>
 		public IEnumerable<string> DamageTypes { get { return damagetypes; } }
+
+		/// <summary>
+		/// This is used to find out what classes were parsed from specific archive
+		/// </summary>
+		public HashSet<string> LastClasses { get; internal set; }
 		#endregion
-		
+
 		#region ================== Constructor / Disposer
-		
+
 		// Constructor
 		public DecorateParser(Dictionary<string, ActorStructure> _zscriptactors)
 		{
@@ -124,15 +132,24 @@ namespace CodeImp.DoomBuilder.ZDoom
 				isdisposed = true;
 			}
 		}
-		
+
 		#endregion
 
 		#region ================== Parsing
+
+		protected internal override void LogWarning(string message, int linenumber)
+		{
+			if (NoWarnings)
+				return;
+			base.LogWarning(message, linenumber);
+		}
 
 		// This parses the given decorate stream
 		// Returns false on errors
 		public override bool Parse(TextResourceData data, bool clearerrors)
 		{
+			if (clearerrors) LastClasses = new HashSet<string>();
+
 			//mxd. Already parsed?
 			if(!base.AddTextResource(data))
 			{
@@ -172,6 +189,8 @@ namespace CodeImp.DoomBuilder.ZDoom
 							// Read actor structure
 							ActorStructure actor = new DecorateActorStructure(this, (regions.Count > 0 ? regions[regions.Count - 1] : null));
 							if(this.HasError) return false;
+
+							LastClasses.Add(actor.ClassName.ToLowerInvariant());
 						
 							// Add the actor
 							archivedactors[actor.ClassName.ToLowerInvariant()] = actor;

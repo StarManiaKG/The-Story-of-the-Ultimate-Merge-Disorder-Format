@@ -295,7 +295,7 @@ namespace CodeImp.DoomBuilder.ThreeDFloorMode
 			sector.Fields["comment"] = new UniValue(UniversalType.String, "[!]DO NOT DELETE! This sector is managed by the 3D floor plugin.");
 
 			// With multiple tag support in UDMF only one tag is needed, so bind it right away
-			if (General.Map.UDMF == true)
+			if (General.Map.UDMF == true && General.Map.Config.SectorMultiTag)
 			{
 				if (isnew || forcenewtag)
 				{

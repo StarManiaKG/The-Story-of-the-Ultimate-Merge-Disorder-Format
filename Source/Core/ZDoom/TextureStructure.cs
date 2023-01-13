@@ -33,7 +33,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 		#region ================== Variables
 
 		// Declaration
-		private readonly string typename;
+		private readonly TextureNamespace texturenamespace;
 		private readonly string name;
 		private readonly string virtualpath; //mxd
 		private readonly int width;
@@ -55,7 +55,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 
 		#region ================== Properties
 
-		public string TypeName { get { return typename; } }
+		public TextureNamespace TextureNamespace { get { return texturenamespace; } }
 		public string Name { get { return name; } }
 		public int Width { get { return width; } }
 		public int Height { get { return height; } }
@@ -72,11 +72,11 @@ namespace CodeImp.DoomBuilder.ZDoom
 		#region ================== Constructor / Disposer
 
 		// Constructor
-		internal TextureStructure(TexturesParser parser, string typename, string virtualpath)
+		internal TextureStructure(TexturesParser parser, TextureNamespace texturenamespace, string virtualpath)
 		{
 			// Initialize
-			this.typename = typename;
 			this.virtualpath = virtualpath;
+			this.texturenamespace = texturenamespace;
 			patches = new List<PatchStructure>(4);
 			xscale = 0.0f;
 			yscale = 0.0f;
@@ -86,19 +86,19 @@ namespace CodeImp.DoomBuilder.ZDoom
 
 			// First token is the texture name
 			parser.SkipWhitespace(true);
-			if(!parser.ReadTextureName(out name, typename)) return; //mxd
+			if(!parser.ReadTextureName(out name, texturenamespace)) return; //mxd
 
 			//mxd. It can also be "optional" keyword.
 			if(name.ToLowerInvariant() == "optional")
 			{
 				optional = true;
 				parser.SkipWhitespace(true);
-				if(!parser.ReadTextureName(out name, typename)) return; //mxd
+				if(!parser.ReadTextureName(out name, texturenamespace)) return; //mxd
 			}
 
 			if(string.IsNullOrEmpty(name))
 			{
-				parser.ReportError("Expected " + typename + " name");
+				parser.ReportError("Expected " + texturenamespace + " name");
 				return;
 			}
 
@@ -249,7 +249,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 			float scaley = ((yscale == 0.0f) ? General.Map.Config.DefaultTextureScale : 1f / yscale);
 
 			// Make texture
-			TEXTURESImage tex = new TEXTURESImage(name, virtualpath, width, height, scalex, scaley, worldpanning, typename == "flat", optional, nulltexture);
+			TEXTURESImage tex = new TEXTURESImage(name, virtualpath, width, height, scalex, scaley, worldpanning, texturenamespace, optional, nulltexture);
 
 			// Add patches
 			foreach(PatchStructure p in patches) tex.AddPatch(new TexturePatch(p));//mxd

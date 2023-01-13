@@ -1,3 +1,5 @@
+/// <reference path="../../../udbscript.d.ts" />
+
 `#version 4`;
 `#name Triangulate Sectors`;
 `#description Triangulates the selected or highlighted sectors into new sectors. Note that the triangulation will not "be beautiful", and that the sectors with islands may cause problems.`;

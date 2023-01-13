@@ -47,7 +47,14 @@ There are some restrictions, though:
 
 * it only works for fields that are not in the base UDMF standard, since those are handled directly in the respective class
 * it does not work for flags. While they are technically also UDMF fields, they are handled in the `flags` field of the respective class (where applicable)
-* JavaScript does not distinguish between integer and floating point numbers, it only has floating point numbers (of double precision). For fields where UDB knows that they are integers this it not a problem, since it'll automatically convert the floating point numbers to integers (dropping the fractional part). However, if you need to specify an integer value for an unknown or custom field you have to work around this limitation, using the `UniValue` class:
+* JavaScript does not distinguish between integer and floating point numbers, it only has floating point numbers (of double precision). For fields where UDB knows that they are integers this it not a problem, since it'll automatically convert the floating point numbers to integers (dropping the fractional part). However, if you need to specify an integer value for an unknown or custom field you have to work around this limitation:
+Version 5 and later:
+You can use a `BigInt`. This is done by appending a `n` to the number. Note that this is just a convenient way to define whole numbers, it still only supports 32 bit integers:
+
+```js
+s.fields.user_myintfield = 25n; // Sets the 'user_myintfield' field to an integer value of 25
+```
+In version 4 and earlier you have to use the `UniValue` class:
 
 ```js
 s.fields.user_myintfield = new UDB.UniValue(0, 25); // Sets the 'user_myintfield' field to an integer value of 25
@@ -112,7 +119,7 @@ The `Sector`'s tag.
 ## Methods
 
 ---
-### addTag(tag)
+### addTag(tag: int)
 Adds a tag to the `Sector`. UDMF only. Supported game configurations only.
 #### Parameters
 * tag: Tag to add
@@ -124,7 +131,7 @@ Adds a tag to the `Sector`. UDMF only. Supported game configurations only.
 Clears all flags.
 
 ---
-### copyPropertiesTo(s)
+### copyPropertiesTo(s: Sector)
 Copies the properties from this `Sector` to another.
 #### Parameters
 * s: the `Sector` to copy the properties to
@@ -146,6 +153,24 @@ Gets the floor's slope vector.
 The floor's slope normal as a `Vector3D`
 
 ---
+<span style="float:right;font-weight:normal;font-size:66%">Version: 5</span>
+<span style="float:right;font-weight:normal;font-size:66%">Version: 5</span>
+### getLabelPositions()
+Returns an `Array` of `Vector2D` of label positions for the `Sector`. This are the positions where for example selection number or tags are shown.
+
+This example adds an imp to the label position of each sector in the map:
+
+```js
+UDB.Map.getSectors().forEach(s => {
+	const positions = s.getLabelPositions();
+	if(positions.length > 0)
+		UDB.Map.createThing(positions[0], 3001);
+});
+```
+#### Return value
+`Array` of `Vector2D` of all label positions
+
+---
 ### getSidedefs()
 Returns an `Array` of all `Sidedef`s of the `Sector`.
 #### Return value
@@ -164,7 +189,7 @@ Gets an array of `Vector2D` arrays, representing the vertices of the triangulate
 Array of `Vector2D` arrays
 
 ---
-### intersect(p)
+### intersect(p: object)
 Checks if the given point is in this `Sector` or not. The given point can be a `Vector2D` or an `Array` of two numbers.
 
 ```js
@@ -180,13 +205,13 @@ if(s.intersect([ 32, 64 ]))
 `true` if the point is in the `Sector`, `false` if it isn't
 
 ---
-### join(other)
+### join(other: Sector)
 Joins this `Sector` with another `Sector`. Lines shared between the sectors will not be removed.
 #### Parameters
 * other: Sector to join with
 
 ---
-### removeTag(tag)
+### removeTag(tag: int)
 Removes a tag from the `Sector`. UDMF only. Supported game configurations only.
 #### Parameters
 * tag: Tag to remove
@@ -194,13 +219,13 @@ Removes a tag from the `Sector`. UDMF only. Supported game configurations only.
 `true` when the tag was removed successfully, `false` when the tag did not exist
 
 ---
-### setCeilingSlope(normal)
+### setCeilingSlope(normal: object)
 Sets the ceiling's slope vector. The vector has to be normalized.
 #### Parameters
 * normal: The new slope vector as `Vector3D`
 
 ---
-### setFloorSlope(normal)
+### setFloorSlope(normal: object)
 Sets the floor's slope vector. The vector has to be normalized.
 #### Parameters
 * normal: The new slope vector as `Vector3D`

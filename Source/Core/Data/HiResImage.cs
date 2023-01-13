@@ -102,7 +102,7 @@ namespace CodeImp.DoomBuilder.Data
 			virtualname = overridden.VirtualName;
 			displayname = overridden.DisplayName;
 
-			isFlat = overridden.IsFlat;
+			texturenamespace = overridden.TextureNamespace;
 			hasLongName = overridden.HasLongName;
 			overridesettingsapplied = true;
 
@@ -137,7 +137,7 @@ namespace CodeImp.DoomBuilder.Data
 				MemoryStream mem = new MemoryStream(membytes);
 				mem.Seek(0, SeekOrigin.Begin);
 
-				bitmap = ImageDataFormat.TryLoadImage(mem, (isFlat ? ImageDataFormat.DOOMFLAT : ImageDataFormat.DOOMPICTURE), General.Map.Data.Palette);
+				bitmap = ImageDataFormat.TryLoadImage(mem, (texturenamespace == TextureNamespace.FLAT) ? ImageDataFormat.DOOMFLAT : ImageDataFormat.DOOMPICTURE, General.Map.Data.Palette);
 
 				// Not loaded?
 				if(bitmap == null)

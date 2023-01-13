@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using CodeImp.DoomBuilder.Actions;
 using CodeImp.DoomBuilder.Config;
@@ -182,14 +183,11 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		private bool usepreciseposition; //mxd
 
 		//mxd. Texture modification
-		private static bool transformflooroffsets;
-		private static bool transformceiloffsets;
-		private static bool rotateflooroffsets;
-		private static bool rotateceiloffsets;
-		private static bool scaleflooroffsets;
-		private static bool scaleceiloffsets;
+		private static bool pinfloortextures;
+		private static bool pinceilingtextures;
 		private Vector2D selectioncenter;
 		private Vector2D selectionbasecenter;
+		private Vector2D referencepoint;
 		
 		// Modifying Modes
 		private ModifyMode mode;
@@ -230,13 +228,9 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		//mxd. Modification
 		internal bool UsePrecisePosition { get { return usepreciseposition; } set { usepreciseposition = value; } }
 
-		//mxd. Texture offset properties
-		internal bool TransformFloorOffsets { get { return transformflooroffsets; } set { transformflooroffsets = value; UpdateAllChanges(); } }
-		internal bool TransformCeilingOffsets { get { return transformceiloffsets; } set { transformceiloffsets = value; UpdateAllChanges(); } }
-		internal bool RotateFloorOffsets { get { return rotateflooroffsets; } set { rotateflooroffsets = value; UpdateAllChanges(); } }
-		internal bool RotateCeilingOffsets { get { return rotateceiloffsets; } set { rotateceiloffsets = value; UpdateAllChanges(); } }
-		internal bool ScaleFloorOffsets { get { return scaleflooroffsets; } set { scaleflooroffsets = value; UpdateAllChanges(); } }
-		internal bool ScaleCeilingOffsets { get { return scaleceiloffsets; } set { scaleceiloffsets = value; UpdateAllChanges(); } }
+		// Texture offset properties
+		internal bool PinFloorTextures { get { return pinfloortextures; } set { pinfloortextures = value; UpdateAllChanges(); } }
+		internal bool PinCeilingTextures { get { return pinceilingtextures; } set { pinceilingtextures = value; UpdateAllChanges(); } }
 
 		//mxd. Height offset mode
 		internal HeightAdjustMode SectorHeightAdjustMode { get { return heightadjustmode; } set { heightadjustmode = value; } }
@@ -888,8 +882,8 @@ namespace CodeImp.DoomBuilder.BuilderModes
 				group.Key.Fields.BeforeFieldsChange();
 
 				// Apply transforms
-				UpdateTextureTransform(group.Key.Fields, group.Value.Ceiling, transformceiloffsets, rotateceiloffsets, scaleceiloffsets);
-				UpdateTextureTransform(group.Key.Fields, group.Value.Floor, transformflooroffsets, rotateflooroffsets, scaleflooroffsets);
+				UpdateTextureTransform(group.Key.Fields, group.Value.Ceiling /*, transformceiloffsets, rotateceiloffsets, scaleceiloffsets */);
+				UpdateTextureTransform(group.Key.Fields, group.Value.Floor /*, transformflooroffsets, rotateflooroffsets, scaleflooroffsets */);
 
 				// Update cache
 				group.Key.UpdateNeeded = true;
@@ -901,46 +895,27 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		}
 
 		//mxd. This updates texture transforms in given UniFields
-		private void UpdateTextureTransform(UniFields fields, SurfaceTextureInfo si, bool transformoffsets, bool rotateoffsets, bool scaleoffsets)
+		private void UpdateTextureTransform(UniFields fields, SurfaceTextureInfo si /*, bool transformoffsets, bool rotateoffsets, bool scaleoffsets */)
 		{
-			// Get offset-ready values
-			double texrotation = Angle2D.PI2 - rotation;
-
-			// Update texture offsets
-			if (transformoffsets)
+			if ((si.Part == "floor" && pinfloortextures) || (si.Part == "ceiling" && pinceilingtextures))
 			{
-				double trotation = rotateoffsets ? (si.Rotation + texrotation) : (si.Rotation);
-				Vector2D offset = selectioncenter.GetRotated(trotation);
+				double texrotation = Angle2D.PI2 - rotation;
 
-				fields["xpanning" + si.Part] = new UniValue(UniversalType.Float, Math.Round(-offset.x, General.Map.FormatInterface.VertexDecimals));
-				fields["ypanning" + si.Part] = new UniValue(UniversalType.Float, Math.Round(offset.y, General.Map.FormatInterface.VertexDecimals));
+				double trotation = texrotation + si.Rotation;
+				Vector2D o = ((referencepoint - selectionbasecenter).GetRotated(-trotation) + selectionbasecenter + this.offset - this.baseoffset).GetRotated(trotation);
 
+				fields["xpanning" + si.Part] = new UniValue(UniversalType.Float, Math.Round(-o.x + si.Offset.x, General.Map.FormatInterface.VertexDecimals));
+				fields["ypanning" + si.Part] = new UniValue(UniversalType.Float, Math.Round(o.y + si.Offset.y, General.Map.FormatInterface.VertexDecimals));
+				fields["rotation" + si.Part] = new UniValue(UniversalType.Float, General.ClampAngle(Math.Round(Angle2D.RadToDeg(trotation), General.Map.FormatInterface.VertexDecimals)));
 			}
-			// Restore texture offsets
-			else 
+			else
 			{
+				// Reset values
 				fields["xpanning" + si.Part] = new UniValue(UniversalType.Float, si.Offset.x);
 				fields["ypanning" + si.Part] = new UniValue(UniversalType.Float, si.Offset.y);
-			}
-
-			// Update rotation
-			if(rotateoffsets)
-				fields["rotation" + si.Part] = new UniValue(UniversalType.AngleDegreesFloat, General.ClampAngle(Math.Round(Angle2D.RadToDeg(si.Rotation + texrotation), General.Map.FormatInterface.VertexDecimals)));
-			// Restore rotation
-			else 
 				fields["rotation" + si.Part] = new UniValue(UniversalType.AngleDegreesFloat, Angle2D.RadToDeg(si.Rotation));
-
-			// Update scale
-			if(scaleoffsets)
-			{
 				fields["xscale" + si.Part] = new UniValue(UniversalType.Float, Math.Round(si.Scale.x * scale.x, General.Map.FormatInterface.VertexDecimals));
 				fields["yscale" + si.Part] = new UniValue(UniversalType.Float, Math.Round(-si.Scale.y * scale.y, General.Map.FormatInterface.VertexDecimals));
-			}
-			// Restore scale
-			else 
-			{
-				fields["xscale" + si.Part] = new UniValue(UniversalType.Float, si.Scale.x);
-				fields["yscale" + si.Part] = new UniValue(UniversalType.Float, -si.Scale.y);
 			}
 		}
 
@@ -1344,8 +1319,11 @@ namespace CodeImp.DoomBuilder.BuilderModes
 				Vector2D right;
 				right.x = float.MinValue;
 				right.y = float.MinValue;
-				
-				foreach(Vertex v in selectedvertices)
+
+				if(selectedvertices.Count > 0)
+					referencepoint = selectedvertices.First().Position;
+
+				foreach (Vertex v in selectedvertices)
 				{
 					// Find left-top and right-bottom
 					if(v.Position.x < offset.x) offset.x = v.Position.x;

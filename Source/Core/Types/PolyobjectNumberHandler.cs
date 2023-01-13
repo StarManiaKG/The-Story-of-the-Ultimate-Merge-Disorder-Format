@@ -31,7 +31,7 @@ namespace CodeImp.DoomBuilder.Types
 			ponumslist.Sort((a, b) => -1 * a.CompareTo(b));
 
 			// Create enum items
-			foreach(int ponum in ponums)
+			foreach(int ponum in ponumslist)
 				polist.Add(new EnumItem(ponum.ToString(), ponum.ToString()));
 
 			return polist;

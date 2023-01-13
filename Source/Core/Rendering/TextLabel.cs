@@ -467,6 +467,21 @@ namespace CodeImp.DoomBuilder.Rendering
 
 		// This (re)loads the resources
 		public void ReloadResource() { }
+
+		/// <summary>
+		/// Checks if the whole label is in the viewport.
+		/// </summary>
+		/// <returns>true if the label in in the viewport, false if it isn't</returns>
+		public bool IsInViewport()
+		{
+			(double width, double height) = texturesize.IsEmpty ? ( 0, 0 ) : (texturesize.Width, texturesize.Height);
+
+			return
+				location.x >= (General.Map.CRenderer2D.Viewport.X - width) &&
+				location.x < (General.Map.CRenderer2D.Viewport.X + General.Map.CRenderer2D.Viewport.Width + width) &&
+				location.y <= (General.Map.CRenderer2D.Viewport.Y - height) &&
+				location.y > (General.Map.CRenderer2D.Viewport.Y + General.Map.CRenderer2D.Viewport.Height + height);
+		}
 		
 		#endregion
 	}

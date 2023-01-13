@@ -26,9 +26,9 @@
 #include "GLIndexBuffer.h"
 #include "GLTexture.h"
 
-RenderDevice* GLBackend::NewRenderDevice(void* disp, void* window)
+RenderDevice* GLBackend::NewRenderDevice(void* disp, void* window, bool debug)
 {
-	GLRenderDevice* device = new GLRenderDevice(disp, window);
+	GLRenderDevice* device = new GLRenderDevice(disp, window, debug);
 	if (!device->Context)
 	{
 		delete device;

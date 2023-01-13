@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using CodeImp.DoomBuilder.Config;
 using CodeImp.DoomBuilder.Data;
 
 #endregion
@@ -68,7 +69,7 @@ namespace CodeImp.DoomBuilder.IO
 		#region ================== Constructor / Disposer
 
 		// Constructor to fill list from directory and optionally subdirectories
-		public DirectoryFilesList(string path, bool subdirectories)
+		public DirectoryFilesList(string path, GameConfiguration config, bool subdirectories)
 		{
 			path = Path.GetFullPath(path);
 			string[] files = Directory.GetFiles(path, "*", subdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
@@ -85,25 +86,28 @@ namespace CodeImp.DoomBuilder.IO
 					continue;
 				}
 
-				if(General.Map.Config.IgnoredFileExtensions.Contains(e.extension)) continue;
-
-				bool skipfolder = false;
-				foreach(string ef in General.Map.Config.IgnoredDirectoryNames)
+				if (config != null)
 				{
-					if(e.path.StartsWith(ef + Path.DirectorySeparatorChar))
+					if (config.IgnoredFileExtensions.Contains(e.extension)) continue;
+
+					bool skipfolder = false;
+					foreach (string ef in config.IgnoredDirectoryNames)
 					{
-						skipfolder = true;
-						break;
+						if (e.path.StartsWith(ef + Path.DirectorySeparatorChar))
+						{
+							skipfolder = true;
+							break;
+						}
 					}
+					if (skipfolder) continue;
 				}
-				if(skipfolder) continue;
 
 				AddOrReplaceEntry(e);
 			}
 		}
 
 		// Constructor for custom list
-		public DirectoryFilesList(string resourcename, ICollection<DirectoryFileEntry> sourceentries)
+		public DirectoryFilesList(string resourcename, GameConfiguration config, bool silent, ICollection<DirectoryFileEntry> sourceentries)
 		{
 			entries = new Dictionary<string, DirectoryFileEntry>(sourceentries.Count, new PathEqualityComparer());
 			wadentries = new List<string>();
@@ -115,22 +119,25 @@ namespace CodeImp.DoomBuilder.IO
 					continue;
 				}
 
-				if(General.Map.Config.IgnoredFileExtensions.Contains(e.extension)) continue;
-
-				bool skipfolder = false;
-				foreach(string ef in General.Map.Config.IgnoredDirectoryNames)
+				if (config != null)
 				{
-					if(e.path.StartsWith(ef + Path.DirectorySeparatorChar))
+					if (config.IgnoredFileExtensions.Contains(e.extension)) continue;
+
+					bool skipfolder = false;
+					foreach (string ef in config.IgnoredDirectoryNames)
 					{
-						skipfolder = true;
-						break;
+						if (e.path.StartsWith(ef + Path.DirectorySeparatorChar))
+						{
+							skipfolder = true;
+							break;
+						}
 					}
+					if (skipfolder) continue;
 				}
-				if(skipfolder) continue;
 
 				if(entries.ContainsKey(e.filepathname))
 				{
-					General.ErrorLogger.Add(ErrorType.Warning, "Resource \"" + resourcename + "\" contains multiple files with the same filename. See: \"" + e.filepathname + "\"");
+					if (!silent) General.ErrorLogger.Add(ErrorType.Warning, "Resource \"" + resourcename + "\" contains multiple files with the same filename. See: \"" + e.filepathname + "\"");
 					continue;
 				}
 

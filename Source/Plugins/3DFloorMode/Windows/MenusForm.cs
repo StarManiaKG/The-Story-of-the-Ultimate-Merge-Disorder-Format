@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using CodeImp.DoomBuilder.Windows;
 using CodeImp.DoomBuilder.Map;
+using CodeImp.DoomBuilder.Controls;
 
 namespace CodeImp.DoomBuilder.ThreeDFloorMode
 {
@@ -17,12 +18,17 @@ namespace CodeImp.DoomBuilder.ThreeDFloorMode
 		public ToolStripButton CeilingSlope { get { return ceilingslope; } }
 		public ToolStripButton FloorAndCeilingSlope { get { return floorandceilingslope; } }
 		public ToolStripButton UpdateSlopes { get { return updateslopes; } }
-		public ToolStripButton RelocateControlSectors { get { return relocatecontrolsectors; } }
+		public ToolStripActionButton RelocateControlSectors { get { return relocatecontrolsectors; } }
 		public ContextMenuStrip AddSectorsContextMenu { get { return addsectorscontextmenu; } }
 
 		public MenusForm()
 		{
 			InitializeComponent();
+		}
+
+		public void UpdateToolTips()
+		{
+			relocatecontrolsectors.UpdateToolTip();
 		}
 
 		private void InvokeTaggedAction(object sender, EventArgs e)

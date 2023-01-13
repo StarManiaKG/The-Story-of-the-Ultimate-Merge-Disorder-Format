@@ -3,7 +3,7 @@
 ECHO.
 ECHO.     This build script requires the following software to be installed:
 ECHO.       - Git command-line client
-ECHO.       - Microsoft Visual Studio 2008 or newer
+ECHO.       - Microsoft Visual Studio 2019 or newer
 ECHO.       - Microsoft HTML Help compiler
 ECHO.       - 7zip
 ECHO.
@@ -13,7 +13,7 @@ ECHO.     Files in the 'GIT_Build' directory may be overwritten.
 ECHO.
 ECHO.
 
-SET STUDIODIR=c:\Program Files (x86)\Microsoft Visual Studio 14.0
+SET STUDIODIR=c:\Program Files (x86)\Microsoft Visual Studio\2019\Community
 SET HHWDIR=c:\Program Files (x86)\HTML Help Workshop
 SET SEVENZIPDIR=c:\Program Files\7-Zip
 SET ISSDIR=c:\Program Files (x86)\Inno Setup 6
@@ -132,19 +132,19 @@ IF NOT DEFINED BUILD_RELEASE GOTO PACKGIT
 
 set DEL_PATHSPEC="%DB_OUTDIR%\UltimateDoomBuilder-Setup*-%PLATFORM%.exe"
 IF EXIST %DEL_PATHSPEC% DEL /F /Q %DEL_PATHSPEC% > NUL
-"%ISSDIR%\iscc.exe" "Setup\gzbuilder_setup.iss"
+"%ISSDIR%\iscc.exe" /DUDB_arch=%PLATFORM% "Setup\UDBuilder_setup.iss"
 IF %ERRORLEVEL% NEQ 0 GOTO ERRORFAIL
 IF NOT EXIST "%DB_OUTDIR%\Setup.exe" GOTO FILEFAIL
 
 REN "%DB_OUTDIR%\Setup.exe" "UltimateDoomBuilder-Setup-R%REVISIONNUMBER%-%PLATFORM%.exe"
 
-GOTO BUILDDONE
+REM GOTO BUILDDONE
 
 :PACKGIT
 SET DEL_PATHSPEC="%DB_OUTDIR%\UltimateDoomBuilder*-%PLATFORM%.7z"
 IF EXIST %DEL_PATHSPEC% DEL /F /Q %DEL_PATHSPEC% > NUL
 IF EXIST "%DB_OUTDIR%\UDB_Updater-%PLATFORM%.7z" DEL /F /Q "%DB_OUTDIR%\UDB_Updater-%PLATFORM%.7z" > NUL
-"%SEVENZIPDIR%\7z" a %DB_OUTDIR%\udb.7z .\Build\* -xr!*.xml -xr!JetBrains.Profiler.Core.Api.dll -xr!ScintillaNET.3.5.pdb -x!Setup
+"%SEVENZIPDIR%\7z" a %DB_OUTDIR%\udb.7z .\Build\* -xr!*.xml -xr!JetBrains.Profiler.Core.Api.dll -xr!ScintillaNET.3.5.pdb -x!Setup -x!OpenGLDebug.log -x!Builder.vshost.* -x!.gitignore -x!UDBScript\Scripts\*.js
 "%SEVENZIPDIR%\7z" a %DB_OUTDIR%\UDB_Updater-%PLATFORM%.7z .\Build\Updater.exe .\Build\Updater.ini
 IF %ERRORLEVEL% NEQ 0 GOTO PACKFAIL
 IF NOT EXIST %DB_OUTDIR%\udb.7z GOTO FILEFAIL

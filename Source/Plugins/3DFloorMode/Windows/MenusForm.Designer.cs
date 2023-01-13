@@ -35,13 +35,13 @@
 			this.ceilingslope = new System.Windows.Forms.ToolStripButton();
 			this.floorandceilingslope = new System.Windows.Forms.ToolStripButton();
 			this.updateslopes = new System.Windows.Forms.ToolStripButton();
+			this.relocatecontrolsectors = new CodeImp.DoomBuilder.Controls.ToolStripActionButton();
 			this.addsectorscontextmenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.addslopeceiling = new System.Windows.Forms.ToolStripMenuItem();
 			this.addslopefloor = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.removeslopeceiling = new System.Windows.Forms.ToolStripMenuItem();
 			this.removeslopefloor = new System.Windows.Forms.ToolStripMenuItem();
-			this.relocatecontrolsectors = new System.Windows.Forms.ToolStripButton();
 			this.toolStrip1.SuspendLayout();
 			this.addsectorscontextmenu.SuspendLayout();
 			this.SuspendLayout();
@@ -103,6 +103,17 @@
 			this.updateslopes.Text = "Update slopes";
 			this.updateslopes.Click += new System.EventHandler(this.toolStripButton1_Click);
 			// 
+			// relocatecontrolsectors
+			// 
+			this.relocatecontrolsectors.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.relocatecontrolsectors.Image = ((System.Drawing.Image)(resources.GetObject("relocatecontrolsectors.Image")));
+			this.relocatecontrolsectors.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.relocatecontrolsectors.Name = "relocatecontrolsectors";
+			this.relocatecontrolsectors.Size = new System.Drawing.Size(137, 22);
+			this.relocatecontrolsectors.Tag = "relocate3dfloorcontrolsectors";
+			this.relocatecontrolsectors.Text = "Relocate control sectors";
+			this.relocatecontrolsectors.Click += new System.EventHandler(this.relocatecontrolsectors_Click);
+			// 
 			// addsectorscontextmenu
 			// 
 			this.addsectorscontextmenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -113,8 +124,8 @@
             this.removeslopefloor});
 			this.addsectorscontextmenu.Name = "addsectorscontextmenu";
 			this.addsectorscontextmenu.Size = new System.Drawing.Size(216, 98);
-			this.addsectorscontextmenu.Opening += new System.ComponentModel.CancelEventHandler(this.addsectorscontextmenu_Opening);
 			this.addsectorscontextmenu.Closing += new System.Windows.Forms.ToolStripDropDownClosingEventHandler(this.addsectorscontextmenu_Closing);
+			this.addsectorscontextmenu.Opening += new System.ComponentModel.CancelEventHandler(this.addsectorscontextmenu_Opening);
 			// 
 			// addslopeceiling
 			// 
@@ -149,17 +160,6 @@
 			this.removeslopefloor.Text = "Remove slope from floor";
 			this.removeslopefloor.Click += new System.EventHandler(this.removeSlopeFromFloorToolStripMenuItem_Click);
 			// 
-			// relocatecontrolsectors
-			// 
-			this.relocatecontrolsectors.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.relocatecontrolsectors.Image = ((System.Drawing.Image)(resources.GetObject("relocatecontrolsectors.Image")));
-			this.relocatecontrolsectors.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.relocatecontrolsectors.Name = "relocatecontrolsectors";
-			this.relocatecontrolsectors.Size = new System.Drawing.Size(137, 22);
-			this.relocatecontrolsectors.Tag = "relocate3dfloorcontrolsectors";
-			this.relocatecontrolsectors.Text = "Relocate control sectors";
-			this.relocatecontrolsectors.Click += new System.EventHandler(this.relocatecontrolsectors_Click);
-			// 
 			// MenusForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -189,6 +189,6 @@
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 		private System.Windows.Forms.ToolStripMenuItem removeslopeceiling;
 		private System.Windows.Forms.ToolStripMenuItem removeslopefloor;
-		private System.Windows.Forms.ToolStripButton relocatecontrolsectors;
+		private CodeImp.DoomBuilder.Controls.ToolStripActionButton relocatecontrolsectors;
 	}
 }

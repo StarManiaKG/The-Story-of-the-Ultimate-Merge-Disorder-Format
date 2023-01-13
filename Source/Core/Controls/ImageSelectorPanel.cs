@@ -7,6 +7,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
+using CodeImp.DoomBuilder.Data;
 
 #endregion
 
@@ -732,7 +733,7 @@ namespace CodeImp.DoomBuilder.Controls
 		private static Image GetPreview(ImageBrowserItem item, int imagesize)
 		{
 			if(!item.IsPreviewLoaded) return item.Icon.GetPreview();
-            Dictionary<int, Dictionary<long, Image>> cache = item.Icon.IsFlat ? flatcache : texturecache;
+            Dictionary<int, Dictionary<long, Image>> cache = (item.Icon.TextureNamespace == TextureNamespace.FLAT) ? flatcache : texturecache;
 
 			if(!cache.ContainsKey(imagesize)) cache.Add(imagesize, new Dictionary<long, Image>());
 

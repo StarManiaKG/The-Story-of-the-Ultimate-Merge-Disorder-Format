@@ -205,8 +205,12 @@ namespace CodeImp.DoomBuilder.UDBScript
 
 			running = false;
 
+			Text = "Script finished";
+			lbStatus.Text = "Script finished. Runtime: " + BuilderPlug.Me.ScriptRunner.GetRuntimeString();
 			btnAction.Text = "Close";
 			btnAction.Enabled = true;
+
+			SetProgress(0);
 
 			// Stop the progress bar from animating when the script finished
 			if (progressbar.Style == ProgressBarStyle.Marquee)

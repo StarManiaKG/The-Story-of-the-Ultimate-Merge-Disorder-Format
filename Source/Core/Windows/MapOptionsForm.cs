@@ -39,6 +39,7 @@ namespace CodeImp.DoomBuilder.Windows
 		private ExternalCommandSettings testprecommand;
 		private ExternalCommandSettings testpostcommand;
 		private bool prepostcommandsmodified;
+		private readonly int initialformheight;
 		
 		// Properties
 		public MapOptions Options { get { return options; } }
@@ -50,6 +51,7 @@ namespace CodeImp.DoomBuilder.Windows
 
 			// Initialize
 			InitializeComponent();
+			this.initialformheight = Height;
 
 			// Keep settings
 			this.options = options;
@@ -110,6 +112,8 @@ namespace CodeImp.DoomBuilder.Windows
 			//mxd. Still better than nothing :)
 			if(config.SelectedIndex == -1 && config.Items.Count > 0) config.SelectedIndex = 0;
 
+			// Find whatever was selected after the previous step
+
 			//mxd
 			if(General.Map != null) datalocations.StartPath = General.Map.FilePathName;
 
@@ -120,10 +124,19 @@ namespace CodeImp.DoomBuilder.Windows
 			strictpatches.Checked = options.StrictPatches;
 
 			// Fill the resources list
+			datalocations.IsMapControl = true;
+			datalocations.GameConfiguration = GetGameConfiguration();
 			datalocations.EditResourceLocationList(options.Resources);
 
 			//reloadresourceprecmd.Text = options.ReloadResourcePreCommand;
 		}
+
+		private GameConfiguration GetGameConfiguration()
+        {
+			if (config.Items.Count == 0 || config.SelectedIndex < 0) return null;
+
+			return new GameConfiguration((config.SelectedItem as ConfigurationInfo).Configuration);
+        }
 
 		// OK clicked
 		private void apply_Click(object sender, EventArgs e)
@@ -176,20 +189,6 @@ namespace CodeImp.DoomBuilder.Windows
 				return;
 			}
 			
-			// When making a new map, check if we should warn the user for missing resources
-			if(newmap)
-			{
-				General.Settings.LastUsedConfigName = configinfo.Name; //mxd
-				
-				if((locations.Count == 0) && (configinfo.Resources.Count == 0) && 
-					MessageBox.Show(this, "You are about to make a map without selecting any resources. Textures, flats and " +
-										 "sprites may not be shown correctly or may not show up at all. Do you want to continue?", Application.ProductName,
-										 MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.No)
-				{
-					return;
-				}
-			}
-
 			// Next checks are only for maps that are already opened
 			if(!newmap)
 			{
@@ -242,6 +241,7 @@ namespace CodeImp.DoomBuilder.Windows
 								{
 									// Select this item
 									config.SelectedIndex = i;
+									datalocations.GameConfiguration = GetGameConfiguration();
 								}
 							}
 							return;
@@ -345,6 +345,7 @@ namespace CodeImp.DoomBuilder.Windows
 			}
 
 			// Show resources
+			datalocations.GameConfiguration = GetGameConfiguration();
 			datalocations.FixedResourceLocationList(info.Resources);
 
 			// Update long texture names checkbox (mxd)
@@ -388,5 +389,11 @@ namespace CodeImp.DoomBuilder.Windows
 				prepostcommandsmodified = true;
 			}
 		}
-	}
+
+        private void datalocations_OnWarningsChanged(int size)
+        {
+			Height = initialformheight + size;
+			Refresh();
+		}
+    }
 }

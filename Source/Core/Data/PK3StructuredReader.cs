@@ -38,11 +38,14 @@ namespace CodeImp.DoomBuilder.Data
 		protected const string COLORMAPS_DIR = "colormaps";
 		protected const string GRAPHICS_DIR = "graphics"; //mxd
 		protected const string VOXELS_DIR = "voxels"; //mxd
-		
+
 		#endregion
 
 		#region ================== Variables
-		
+
+		// Optional setting
+		public bool Silent = false;
+
 		// Source
 		protected readonly bool roottextures;
 		protected readonly bool rootflats;
@@ -70,7 +73,7 @@ namespace CodeImp.DoomBuilder.Data
 		}
 		
 		// Call this to initialize this class
-		protected virtual void Initialize()
+		protected virtual void Initialize(GameConfiguration config)
 		{
             // [ZZ] we can have wad files already. dispose if any.
             if (wads != null) foreach (WADReader wr in wads) wr.Dispose();
@@ -80,8 +83,8 @@ namespace CodeImp.DoomBuilder.Data
 			foreach(string w in wadfiles)
 			{
 				string tempfile = CreateTempFile(w);
-				DataLocation wdl = new DataLocation(DataLocation.RESOURCE_WAD, tempfile, Path.Combine(location.GetDisplayName(), Path.GetFileName(w)), false, false, true);
-				wads.Add(new WADReader(wdl, location.type != DataLocation.RESOURCE_DIRECTORY) { ParentResource = this } );
+				DataLocation wdl = new DataLocation(DataLocation.RESOURCE_WAD, tempfile, Path.Combine(location.GetDisplayName(), Path.GetFileName(w)), false, false, true, new List<string>());
+				wads.Add(new WADReader(wdl, config, location.type != DataLocation.RESOURCE_DIRECTORY) { ParentResource = this } );
 			}
 		}
 		
@@ -144,7 +147,7 @@ namespace CodeImp.DoomBuilder.Data
 				if(stream.Length > 767) //mxd
 					palette = new Playpal(stream);
 				else
-					General.ErrorLogger.Add(ErrorType.Warning, "Warning: invalid palette \"" + foundfile + "\"");
+					if (!Silent) General.ErrorLogger.Add(ErrorType.Warning, "Warning: invalid palette \"" + foundfile + "\"");
 				stream.Dispose();
 			}
 			
@@ -175,7 +178,7 @@ namespace CodeImp.DoomBuilder.Data
 		        if(stream.Length >= 256) //mxd
 			        colormap = new ColorMap(stream, palette);
 		        else
-			        General.ErrorLogger.Add(ErrorType.Warning, "Warning: invalid colormap \"" + foundfile + "\"");
+					if (!Silent) General.ErrorLogger.Add(ErrorType.Warning, "Warning: invalid colormap \"" + foundfile + "\"");
 		        stream.Dispose();
 	        }
 			
@@ -217,7 +220,7 @@ namespace CodeImp.DoomBuilder.Data
 			if((texture1file != null) && FileExists(texture1file))
 			{
 				MemoryStream filedata = LoadFile(texture1file);
-				WADReader.LoadTextureSet("TEXTURE1", filedata, ref imgset, pnames);
+				WADReader.LoadTextureSet("TEXTURE1", filedata, ref imgset, pnames, Silent);
 				filedata.Dispose();
 			}
 
@@ -226,7 +229,7 @@ namespace CodeImp.DoomBuilder.Data
 			if((texture2file != null) && FileExists(texture2file))
 			{
 				MemoryStream filedata = LoadFile(texture2file);
-				WADReader.LoadTextureSet("TEXTURE2", filedata, ref imgset, pnames);
+				WADReader.LoadTextureSet("TEXTURE2", filedata, ref imgset, pnames, Silent);
 				filedata.Dispose();
 			}
 			
@@ -244,6 +247,9 @@ namespace CodeImp.DoomBuilder.Data
 				{
 					// Make the textures
 					foreach(TextureStructure t in cachedparsers[fullpath].Textures)
+						imgset.Add(t.MakeImage());
+
+					foreach (TextureStructure t in cachedparsers[fullpath].WallTextures)
 						imgset.Add(t.MakeImage());
 				}
 				else
@@ -279,7 +285,7 @@ namespace CodeImp.DoomBuilder.Data
 				if(string.IsNullOrEmpty(Path.GetFileNameWithoutExtension(f)))
 				{
 					// Can't load image without name
-					General.ErrorLogger.Add(ErrorType.Error, "Can't load an unnamed HiRes texture from \"" + Path.Combine(this.location.GetDisplayName(), HIRES_DIR) + "\". Please consider giving names to your resources.");
+					if (!Silent) General.ErrorLogger.Add(ErrorType.Error, "Can't load an unnamed HiRes texture from \"" + Path.Combine(this.location.GetDisplayName(), HIRES_DIR) + "\". Please consider giving names to your resources.");
 				}
 				else
 				{
@@ -810,7 +816,7 @@ namespace CodeImp.DoomBuilder.Data
 				if(string.IsNullOrEmpty(Path.GetFileNameWithoutExtension(f))) 
 				{
 					// Can't load image without name
-					General.ErrorLogger.Add(ErrorType.Error, "Can't load an unnamed texture from \"" + path + "\". Please consider giving names to your resources.");
+					if (!Silent) General.ErrorLogger.Add(ErrorType.Error, "Can't load an unnamed texture from \"" + path + "\". Please consider giving names to your resources.");
 				} 
 				else 
 				{
@@ -840,7 +846,7 @@ namespace CodeImp.DoomBuilder.Data
 			}
 			else
 			{
-				General.ErrorLogger.Add(ErrorType.Warning, "Unable to load " + type + " file \"" + fullname + "\"");
+				if (!Silent) General.ErrorLogger.Add(ErrorType.Warning, "Unable to load " + type + " file \"" + fullname + "\"");
 				return new string[0];
 			}
 		}

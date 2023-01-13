@@ -1,3 +1,5 @@
+/// <reference path="../../../udbscript.d.ts" />
+
 `#version 4`;
 
 `#name Show Map Squareness`;

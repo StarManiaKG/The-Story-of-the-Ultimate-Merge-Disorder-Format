@@ -57,11 +57,6 @@ jobs:
           fi
         done
 
-    - name: Prepare Package
-      run: |
-        # Delete unwanted files
-        rm -r Build/Setup
-
     - name: Upload Package
       uses: actions/upload-artifact@v1
       with:

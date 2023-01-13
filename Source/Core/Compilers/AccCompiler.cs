@@ -105,7 +105,7 @@ namespace CodeImp.DoomBuilder.Compilers
 				// Map SCRIPTS lump is empty. Abort the process without generating any warnings or errors. 
 				if(SourceIsMapScriptsLump && stream.Length == 0) return false;
 
-				DataLocation dl = new DataLocation(DataLocation.RESOURCE_DIRECTORY, Path.GetDirectoryName(inputfilepath), false, false, false);
+				DataLocation dl = new DataLocation(DataLocation.RESOURCE_DIRECTORY, Path.GetDirectoryName(inputfilepath), false, false, false, null);
 				//mxd. TextResourceData must point to temp path when compiling WAD lumps for lump to be recognized as map lump when reporting errors...
 				TextResourceData data = new TextResourceData(stream, dl, (SourceIsMapScriptsLump ? inputfile : sourcefile));
 				if(!parser.Parse(data, info.Files, true, AcsParserSE.IncludeType.NONE, false))

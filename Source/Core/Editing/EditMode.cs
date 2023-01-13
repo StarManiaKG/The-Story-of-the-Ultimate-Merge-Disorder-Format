@@ -260,6 +260,10 @@ namespace CodeImp.DoomBuilder.Editing
 		// Script events
 		public virtual bool OnScriptRunBegin() { return true; }
 		public virtual void OnScriptRunEnd() { }
+
+		// This should be called by global actions (i.e. that are not part of an editing mode) when they changed map elements,
+		// so that the mode can react to it (for example by rebuilding a blockmap)
+		public virtual void OnMapElementsChanged() { }
 		
 		#endregion
 	}

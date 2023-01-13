@@ -74,7 +74,8 @@ namespace CodeImp.DoomBuilder.Rendering
             // volte: classic rendering
             DeclareUniform(UniformName.drawPaletted, "drawPaletted", UniformType.Int);
             DeclareUniform(UniformName.colormapSize, "colormapSize", UniformType.Vec2i);
-            DeclareUniform(UniformName.lightLevel, "lightLevel", UniformType.Int);
+            DeclareUniform(UniformName.doomlightlevels, "doomlightlevels", UniformType.Int);
+            DeclareUniform(UniformName.sectorLightLevel, "sectorLightLevel", UniformType.Int);
 
             // 2d fsaa
             CompileShader(ShaderName.display2d_fsaa, "display2d.shader", "display2d_fsaa");
@@ -133,7 +134,7 @@ namespace CodeImp.DoomBuilder.Rendering
                 display = (IntPtr)xplatui.GetField("DisplayHandle", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
             }
 
-            Handle = RenderDevice_New(display, RenderTarget.Handle);
+            Handle = RenderDevice_New(display, RenderTarget.Handle, General.DebugRenderDevice);
             if (Handle == IntPtr.Zero)
             {
                 StringBuilder sb = new StringBuilder(4096);
@@ -570,7 +571,7 @@ namespace CodeImp.DoomBuilder.Rendering
         IntPtr Handle;
 
         [DllImport("BuilderNative", CallingConvention = CallingConvention.Cdecl)]
-        static extern IntPtr RenderDevice_New(IntPtr display, IntPtr window);
+        static extern IntPtr RenderDevice_New(IntPtr display, IntPtr window, bool debug);
 
         [DllImport("BuilderNative", CallingConvention = CallingConvention.Cdecl)]
         static extern void RenderDevice_Delete(IntPtr handle);
@@ -802,7 +803,8 @@ namespace CodeImp.DoomBuilder.Rendering
 		slopeHandleLength,
         drawPaletted,
         colormapSize,
-        lightLevel
+        sectorLightLevel,
+        doomlightlevels
     }
 
     public enum VertexFormat : int { Flat, World }

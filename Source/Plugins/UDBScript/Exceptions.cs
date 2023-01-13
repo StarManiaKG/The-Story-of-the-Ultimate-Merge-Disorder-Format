@@ -76,4 +76,16 @@ namespace CodeImp.DoomBuilder.UDBScript
 		{
 		}
 	}
+
+	[Serializable]
+	public class ScriptRuntimeException : Exception
+	{
+		public ScriptRuntimeException()
+		{
+		}
+
+		public ScriptRuntimeException(string message) : base(message)
+		{
+		}
+	}
 }

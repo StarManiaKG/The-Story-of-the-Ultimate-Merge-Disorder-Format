@@ -1,9 +1,9 @@
 # Data
 
-## Static methods
+## Methods
 
 ---
-### flatExists(name)
+### flatExists(name: string)
 Checks if a flat with the given name exists.
 #### Parameters
 * name: Flat name to check
@@ -11,7 +11,7 @@ Checks if a flat with the given name exists.
 `true` if the flat exists, `false` if it doesn't
 
 ---
-### getFlatInfo(name)
+### getFlatInfo(name: string)
 Returns an `ImageInfo` object for the given flat name.
 #### Parameters
 * name: Flat name to get the info for
@@ -25,7 +25,7 @@ Returns an `Array`of all flat names.
 `Array` of all flat names
 
 ---
-### getTextureInfo(name)
+### getTextureInfo(name: string)
 Returns an `ImageInfo` object for the given texture name.
 #### Parameters
 * name: Texture name to get the info for
@@ -39,7 +39,7 @@ Returns an `Array` of all texture names.
 `Array` of all texture names
 
 ---
-### textureExists(name)
+### textureExists(name: string)
 Checks if a texture with the given name exists.
 #### Parameters
 * name: Texture name to check

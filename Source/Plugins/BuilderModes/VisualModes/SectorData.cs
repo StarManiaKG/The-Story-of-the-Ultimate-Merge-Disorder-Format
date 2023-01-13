@@ -333,9 +333,11 @@ namespace CodeImp.DoomBuilder.BuilderModes
             floor.color = floorcolor.WithAlpha(255).ToInt();
             floor.brightnessbelow = sector.Brightness;
             floor.colorbelow = lightcolor.WithAlpha(255);
+			floor.d64color = ColorFloor;
             ceiling.color = ceilingcolor.WithAlpha(255).ToInt();
             ceiling.brightnessbelow = sector.Brightness;
             ceiling.colorbelow = lightcolor.WithAlpha(255);
+			ceiling.d64color = ColorCeiling;
 
             //mxd. Store a copy of initial settings
             floor.CopyProperties(floorbase);
@@ -630,8 +632,8 @@ namespace CodeImp.DoomBuilder.BuilderModes
 				brightness = PixelColor.FromInt(mode.CalculateBrightness(lightceiling));
 			else
 				brightness = PixelColor.FromInt(mode.CalculateBrightness(src.brightnessbelow));
-			
-			PixelColor color = PixelColor.Modulate(src.colorbelow, brightness);
+
+			PixelColor color = PixelColor.Modulate(target.d64color, PixelColor.Modulate(src.colorbelow, brightness));
 			return color.WithAlpha(255).ToInt();
 		}
 		

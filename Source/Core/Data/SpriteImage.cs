@@ -57,6 +57,8 @@ namespace CodeImp.DoomBuilder.Data
 			// Initialize
 			SetName(name);
 
+			texturenamespace = TextureNamespace.SPRITE;
+
             AllowUnload = false;
 
 			// We have no destructor

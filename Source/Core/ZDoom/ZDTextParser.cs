@@ -169,7 +169,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 		}
 		
 		// This returns true if the given character is whitespace
-		private bool IsWhitespace(char c)
+		protected internal bool IsWhitespace(char c)
 		{
 			return (whitespace.IndexOf(c) > -1);
 		}
@@ -208,8 +208,8 @@ namespace CodeImp.DoomBuilder.ZDoom
 		}
 
 		//mxd
-		internal bool ReadTextureName(out string name) { return ReadTextureName(out name, "texture"); }
-		internal bool ReadTextureName(out string name, string elementname)
+		internal bool ReadTextureName(out string name) { return ReadTextureName(out name, TextureNamespace.WALLTEXTURE); }
+		internal bool ReadTextureName(out string name, TextureNamespace texturenamespace)
 		{
 			string token = ReadToken(false);
 			name = StripQuotes(token);
@@ -218,7 +218,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 				&& name.Length > DataManager.CLASIC_IMAGE_NAME_LENGTH
 				&& name.Length == token.Length)
 			{
-				ReportError("Long " + elementname + " names must be quoted. See \"" + token + "\"");
+				ReportError("Long " + texturenamespace.ToString() + " names must be quoted. See \"" + token + "\"");
 				return false;
 			}
 
@@ -708,7 +708,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 
 		//mxd. This adds a warning to the ErrorLogger
 		protected internal void LogWarning(string message) { LogWarning(message, CompilerError.NO_LINE_NUMBER); }
-		protected internal void LogWarning(string message, int linenumber)
+		protected internal virtual void LogWarning(string message, int linenumber)
 		{
 			// Add a warning
 			int errline = (linenumber != CompilerError.NO_LINE_NUMBER 

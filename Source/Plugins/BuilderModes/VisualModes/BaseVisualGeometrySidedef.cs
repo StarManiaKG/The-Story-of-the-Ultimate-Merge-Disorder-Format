@@ -522,27 +522,65 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		//mxd
 		protected void GetLightValue(out int lightvalue, out bool lightabsolute)
 		{
-			lightabsolute = Sidedef.Fields.GetValue("lightabsolute", false);
+			string partstr = string.Empty, partstrabs = string.Empty;
+
+			if (General.Map.Config.DistinctSidedefPartBrightness)
+			{
+				switch (geometrytype)
+				{
+					case VisualGeometryType.WALL_UPPER:
+						partstr = "light_top";
+						partstrabs = "lightabsolute_top";
+						break;
+					case VisualGeometryType.WALL_LOWER:
+						partstr = "light_bottom";
+						partstrabs = "lightabsolute_bottom";
+						break;
+					case VisualGeometryType.WALL_MIDDLE:
+					case VisualGeometryType.WALL_MIDDLE_3D:
+						partstr = "light_mid";
+						partstrabs = "lightabsolute_mid";
+						break;
+				}
+			}
+
+			bool lightglobalabsolute = Sidedef.Fields.GetValue("lightabsolute", false);
+			bool lightpartabsolute = General.Map.Config.DistinctSidedefPartBrightness ? Sidedef.Fields.GetValue(partstrabs, false) : false;
+			lightabsolute = lightglobalabsolute || lightpartabsolute;
 			bool affectedbyfog = General.Map.Data.MapInfo.HasFadeColor || (Sector.Sector.HasSkyCeiling && General.Map.Data.MapInfo.HasOutsideFogColor) || Sector.Sector.Fields.ContainsKey("fadecolor");
 			bool ignorelight = affectedbyfog && !Sidedef.IsFlagSet("lightfog") && !lightabsolute;
 			lightvalue = ignorelight ? 0 : Sidedef.Fields.GetValue("light", 0); //mxd
+
+			if(ignorelight)
+			{
+				lightvalue = 0;
+			}
+			else
+			{
+				// Absolute value of upper/middle/lower always has precedence
+				if(lightpartabsolute)
+					lightvalue = Sidedef.Fields.GetValue(partstr, 0);
+				else
+					lightvalue = Sidedef.Fields.GetValue("light", 0) + (General.Map.Config.DistinctSidedefPartBrightness ? Sidedef.Fields.GetValue(partstr, 0) : 0);
+			}
+
 			if(ignorelight) lightabsolute = false;
 		}
 
 		// biwa
 		protected static double GetNewTexutreOffset(double oldValue, double offset, double textureSize)
 		{
-			return GetRoundedTextureOffset(oldValue, offset, 1.0f, textureSize);
+			return GetRoundedTextureOffset(oldValue, offset, 1.0, textureSize);
 		}
 
 		//mxd
 		protected static double GetRoundedTextureOffset(double oldValue, double offset, double scale, double textureSize) 
 		{
-			if(offset == 0f) return oldValue;
+			if(offset == 0 || offset % textureSize == 0) return oldValue;
 			double scaledOffset = offset * Math.Abs(scale);
 			double result = Math.Round(oldValue + scaledOffset);
 			if(textureSize > 0) result %= textureSize;
-			if(result == oldValue) result += (scaledOffset < 0 ? -1 : 1);
+			if(result == oldValue) result += (scaledOffset < 0 ? -1 : 1); // biwa. Why?
 			return result;
 		}
 
@@ -1550,10 +1588,19 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		public virtual void OnChangeTargetBrightness(bool up)
 		{
 			//mxd. Change UDMF wall light?
-			if(General.Map.UDMF && General.Map.Config.DistinctWallBrightness)
+			if(General.Map.UDMF && (General.Map.Config.DistinctWallBrightness || General.Map.Config.DistinctSidedefPartBrightness))
 			{
-				int light = Sidedef.Fields.GetValue("light", 0);
-				bool absolute = Sidedef.Fields.GetValue("lightabsolute", false);
+				string fieldname = "light";
+				string fieldabsolutename = "lightabsolute";
+
+				if(General.Map.Config.DistinctSidedefPartBrightness)
+				{
+					fieldname += "_" + partname;
+					fieldabsolutename += "_" + partname;
+				}
+
+				int light = Sidedef.Fields.GetValue(fieldname, 0);
+				bool absolute = Sidedef.Fields.GetValue(fieldabsolutename, false);
 				int newlight;
 
 				if(up)
@@ -1568,7 +1615,7 @@ namespace CodeImp.DoomBuilder.BuilderModes
 				Sidedef.Fields.BeforeFieldsChange();
 
 				// Apply changes
-				UniFields.SetInteger(Sidedef.Fields, "light", newlight, (absolute ? int.MinValue : 0));
+				UniFields.SetInteger(Sidedef.Fields, fieldname, newlight, (absolute ? int.MinValue : 0));
 				Tools.UpdateLightFogFlag(Sidedef);
 				mode.SetActionResult("Changed wall brightness to " + newlight + ".");
 

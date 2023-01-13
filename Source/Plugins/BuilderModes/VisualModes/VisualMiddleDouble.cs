@@ -381,7 +381,7 @@ namespace CodeImp.DoomBuilder.BuilderModes
 
 			//mxd. Don't clamp offsetY of clipped mid textures
 			bool dontClamp = (!textureloaded || (!Sidedef.IsFlagSet("wrapmidtex") && !Sidedef.Line.IsFlagSet("wrapmidtex")));
-			Sidedef.Fields["offsety_mid"] = new UniValue(UniversalType.Float, GetNewTexutreOffset(oldy, offsety, dontClamp ? -1 : Texture.Height)); // biwa
+			Sidedef.Fields["offsety_mid"] = new UniValue(UniversalType.Float, GetNewTexutreOffset(oldy, offsety, dontClamp ? double.MaxValue : Texture.Height)); // biwa
 		}
 
 		protected override Point GetTextureOffset()

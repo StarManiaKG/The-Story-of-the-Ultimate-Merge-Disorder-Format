@@ -38,11 +38,33 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 {
 	internal class MapWrapper
 	{
+		#region ================== Enums
+
+		/// <summary>
+		/// How geometry should be merged when geometry is stitched.
+		/// ```
+		/// UDB.Map.stitchGeometry(UDB.Map.MergeometryMode.MERGE);
+		/// ```
+		/// </summary>
+		/// <enum name="CLASSIC">Merge vertices only</enum>
+		/// <enum name="MERGE">Merge vertices and lines</enum>
+		/// <enum name="REPLACE">Merge vertices and lines, replacing sector geometry</enum>
+		[UDBScriptSettings(MinVersion = 5)]
+		public enum MergeGeometryMode
+		{
+			CLASSIC = Map.MergeGeometryMode.CLASSIC,
+			MERGE = Map.MergeGeometryMode.MERGE,
+			REPLACE = Map.MergeGeometryMode.REPLACE
+		}
+
+		#endregion
+
 		#region ================== Variables
 
 		private MapSet map;
 		private VisualCameraWrapper visualcamera;
 		private Vector2D mousemappos;
+		private object highlightedobject;
 
 		#endregion
 
@@ -112,6 +134,9 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 			map = General.Map.Map;
 			visualcamera = new VisualCameraWrapper();
 
+			// If the main window loses focus before the script is running General.Editing.Mode.HighlightedObject will always be null, so cache it here
+			highlightedobject = General.Editing.Mode.HighlightedObject;
+
 			if (General.Editing.Mode is ClassicMode)
 				mousemappos = ((ClassicMode)General.Editing.Mode).MouseMapPos;
 			else
@@ -131,7 +156,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				return new Vector2DWrapper(General.Map.Grid.SnappedToGrid((Vector2D)BuilderPlug.Me.GetVectorFromObject(pos, false)));
+				return new Vector2DWrapper(General.Map.Grid.SnappedToGrid(BuilderPlug.Me.GetVector3DFromObject(pos)));
 			}
 			catch (CantConvertToVectorException e)
 			{
@@ -217,11 +242,18 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <summary>
 		/// Stitches marked geometry with non-marked geometry.
 		/// </summary>
-		/// <param name="mergemode">Mode to merge by</param>
+		/// <param name="mergemode">Mode to merge by as `MergeGeometryMode`</param>
 		/// <returns>`true` if successful, `false` if failed</returns>
 		public bool stitchGeometry(MergeGeometryMode mergemode = MergeGeometryMode.CLASSIC)
 		{
-			return General.Map.Map.StitchGeometry(mergemode);
+			if(mergemode == MergeGeometryMode.CLASSIC)
+				return General.Map.Map.StitchGeometry(Map.MergeGeometryMode.CLASSIC);
+			else if(mergemode == MergeGeometryMode.MERGE)
+				return General.Map.Map.StitchGeometry(Map.MergeGeometryMode.MERGE);
+			else if(mergemode == MergeGeometryMode.REPLACE)
+				return General.Map.Map.StitchGeometry(Map.MergeGeometryMode.REPLACE);
+
+			throw BuilderPlug.Me.ScriptRunner.CreateRuntimeException("Unknown MergeGeometryMode value");
 		}
 
 		/// <summary>
@@ -266,7 +298,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v = (Vector2D)BuilderPlug.Me.GetVectorFromObject(pos, false);
+				Vector2D v = BuilderPlug.Me.GetVector3DFromObject(pos);
 				Linedef nearest = null;
 
 				if (double.IsNaN(maxrange))
@@ -295,7 +327,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v = (Vector2D)BuilderPlug.Me.GetVectorFromObject(pos, false);
+				Vector2D v = BuilderPlug.Me.GetVector3DFromObject(pos);
 				Thing nearest = null;
 
 				if (double.IsNaN(maxrange))
@@ -324,7 +356,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v = (Vector2D)BuilderPlug.Me.GetVectorFromObject(pos, false);
+				Vector2D v = BuilderPlug.Me.GetVector3DFromObject(pos);
 				Vertex nearest = null;
 
 				if (double.IsNaN(maxrange))
@@ -353,7 +385,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v = (Vector2D)BuilderPlug.Me.GetVectorFromObject(pos, false);
+				Vector2D v = BuilderPlug.Me.GetVector3DFromObject(pos);
 				Sidedef nearest = MapSet.NearestSidedef(General.Map.Map.Sidedefs, v);
 
 				if (nearest == null)
@@ -400,7 +432,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 			{
 				try
 				{
-					Vector2D v = (Vector2D)BuilderPlug.Me.GetVectorFromObject(item, false);
+					Vector2D v = BuilderPlug.Me.GetVector3DFromObject(item);
 					DrawnVertex dv = new DrawnVertex();
 					dv.pos = v;
 					dv.stitch = dv.stitchline = true;
@@ -688,7 +720,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <returns>The currently highlighted `Vertex` or `null` if no `Vertex` is highlighted</returns>
 		public VertexWrapper getHighlightedVertex()
 		{
-			Vertex v = General.Editing.Mode.HighlightedObject as Vertex;
+			Vertex v = highlightedobject as Vertex;
 
 			if (v != null)
 				return new VertexWrapper(v);
@@ -704,13 +736,13 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			if (General.Map.Map.SelectedVerticessCount > 0)
 			{
-				List<VertexWrapper> linedefs = new List<VertexWrapper>();
+				List<VertexWrapper> vertices = new List<VertexWrapper>();
 
 				foreach (Vertex v in General.Map.Map.Vertices)
 					if (v.Selected)
-						linedefs.Add(new VertexWrapper(v));
+						vertices.Add(new VertexWrapper(v));
 
-				return linedefs.ToArray();
+				return vertices.ToArray();
 			}
 			else
 			{
@@ -757,10 +789,20 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <returns>The currently highlighted `Thing` or `null` if no `Thing` is highlighted</returns>
 		public ThingWrapper getHighlightedThing()
 		{
-			Thing t = General.Editing.Mode.HighlightedObject as Thing;
+			if (General.Editing.Mode is BaseVisualMode)
+			{
+				VisualThing t = highlightedobject as VisualThing;
 
-			if (t != null)
-				return new ThingWrapper(t);
+				if (t != null)
+					return new ThingWrapper(t.Thing);
+			}
+			else
+			{
+				Thing t = highlightedobject as Thing;
+
+				if (t != null)
+					return new ThingWrapper(t);
+			}
 
 			return null;
 		}
@@ -817,14 +859,14 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			if (General.Editing.Mode is BaseVisualMode)
 			{
-				VisualSector s = General.Editing.Mode.HighlightedObject as VisualSector;
+				VisualSector s = highlightedobject as VisualSector;
 
 				if (s != null)
 					return new SectorWrapper(s.Sector);
 			}
 			else
 			{
-				Sector s = General.Editing.Mode.HighlightedObject as Sector;
+				Sector s = highlightedobject as Sector;
 
 				if (s != null)
 					return new SectorWrapper(s);
@@ -839,9 +881,9 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <returns>`Array` of `Sector`s</returns>
 		public SectorWrapper[] getSelectedOrHighlightedSectors()
 		{
-			SectorWrapper[] things = getSelectedSectors(true);
-			if (things.Length > 0)
-				return things;
+			SectorWrapper[] sectors = getSelectedSectors(true);
+			if (sectors.Length > 0)
+				return sectors;
 
 			SectorWrapper highlight = getHighlightedSector();
 			if (highlight != null)
@@ -885,14 +927,14 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			if (General.Editing.Mode is BaseVisualMode)
 			{
-				Sidedef sd = General.Editing.Mode.HighlightedObject as Sidedef;
+				Sidedef sd = highlightedobject as Sidedef;
 
 				if (sd != null)
 					return new LinedefWrapper(sd.Line);
 			}
 			else
 			{
-				Linedef ld = General.Editing.Mode.HighlightedObject as Linedef;
+				Linedef ld = highlightedobject as Linedef;
 
 				if (ld != null)
 					return new LinedefWrapper(ld);
@@ -1050,7 +1092,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v = (Vector2D)BuilderPlug.Me.GetVectorFromObject(pos, false);
+				Vector2D v = BuilderPlug.Me.GetVector3DFromObject(pos);
 				Vertex newvertex = General.Map.Map.CreateVertex(v);
 
 				if(newvertex == null)
@@ -1083,21 +1125,15 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 				if(type < 0)
 					throw BuilderPlug.Me.ScriptRunner.CreateRuntimeException("Thing type can not be negative.");
 
-				object v = BuilderPlug.Me.GetVectorFromObject(pos, true);
+				Vector2D v = BuilderPlug.Me.GetVector3DFromObject(pos);
 				Thing t = General.Map.Map.CreateThing();
 
 				if(t == null)
 					throw BuilderPlug.Me.ScriptRunner.CreateRuntimeException("Failed to create new thing.");
 
-				General.Settings.ApplyCleanThingSettings(t);
+				General.Settings.ApplyCleanThingSettings(t, type);
 
-				if (type > 0)
-					t.Type = type;
-
-				if(v is Vector2D)
-					t.Move((Vector2D)v);
-				else if(v is Vector3D)
-					t.Move((Vector3D)v);
+				t.Move(v);
 
 				t.UpdateConfiguration();
 

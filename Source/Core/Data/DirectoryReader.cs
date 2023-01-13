@@ -38,20 +38,20 @@ namespace CodeImp.DoomBuilder.Data
 		#region ================== Constructor / Disposer
 
 		// Constructor
-		public DirectoryReader(DataLocation dl, bool asreadonly) : base(dl, asreadonly)
+		public DirectoryReader(DataLocation dl, GameConfiguration config, bool asreadonly) : base(dl, asreadonly)
 		{
 			General.WriteLogLine("Opening directory resource \"" + location.location + "\"");
 			
 			// Initialize
-			files = new DirectoryFilesList(dl.location, true);
-			Initialize();
+			files = new DirectoryFilesList(dl.location, config, true);
+			Initialize(config);
 			
 			// We have no destructor
 			GC.SuppressFinalize(this);
 		}
 
 		//mxd. Don't move directory wads anywhere
-		protected override void Initialize()
+		protected override void Initialize(GameConfiguration config)
 		{
 			// Load all WAD files in the root as WAD resources
 			string[] wadfiles = GetWadFiles();
@@ -62,8 +62,8 @@ namespace CodeImp.DoomBuilder.Data
 				string wadfilepath = Path.Combine(location.location, wadfile);
 				if(General.Map.FilePathName != wadfilepath)
 				{
-					DataLocation wdl = new DataLocation(DataLocation.RESOURCE_WAD, wadfilepath, false, false, true);
-					wads.Add(new WADReader(wdl, isreadonly) { ParentResource = this } );
+					DataLocation wdl = new DataLocation(DataLocation.RESOURCE_WAD, wadfilepath, false, false, true, null);
+					wads.Add(new WADReader(wdl, config, isreadonly) { ParentResource = this } );
 				}
 			}
 		}
@@ -146,7 +146,7 @@ namespace CodeImp.DoomBuilder.Data
 			}
 			catch(Exception e)
 			{
-				General.ErrorLogger.Add(ErrorType.Error, e.GetType().Name + " while loading patch \"" + pname + "\" from directory: " + e.Message);
+				if (!Silent) General.ErrorLogger.Add(ErrorType.Error, e.GetType().Name + " while loading patch \"" + pname + "\" from directory: " + e.Message);
 			}
 
 			// Nothing found
@@ -197,7 +197,7 @@ namespace CodeImp.DoomBuilder.Data
 			}
 			catch(Exception e)
 			{
-				General.ErrorLogger.Add(ErrorType.Error, e.GetType().Name + " while loading texture \"" + pname + "\" from directory: " + e.Message);
+				if (!Silent) General.ErrorLogger.Add(ErrorType.Error, e.GetType().Name + " while loading texture \"" + pname + "\" from directory: " + e.Message);
 			}
 
 			// Nothing found
@@ -230,7 +230,7 @@ namespace CodeImp.DoomBuilder.Data
 			}
 			catch(Exception e)
 			{
-				General.ErrorLogger.Add(ErrorType.Error, e.GetType().Name + " while loading HiRes texture \"" + name + "\" from directory: " + e.Message);
+				if (!Silent) General.ErrorLogger.Add(ErrorType.Error, e.GetType().Name + " while loading HiRes texture \"" + name + "\" from directory: " + e.Message);
 			}
 
 			// Nothing found
@@ -263,7 +263,7 @@ namespace CodeImp.DoomBuilder.Data
 			}
 			catch(Exception e)
 			{
-				General.ErrorLogger.Add(ErrorType.Error, e.GetType().Name + " while loading colormap \"" + pname + "\" from directory: " + e.Message);
+				if (!Silent) General.ErrorLogger.Add(ErrorType.Error, e.GetType().Name + " while loading colormap \"" + pname + "\" from directory: " + e.Message);
 			}
 
 			// Nothing found
@@ -300,7 +300,7 @@ namespace CodeImp.DoomBuilder.Data
 			}
 			catch(Exception e)
 			{
-				General.ErrorLogger.Add(ErrorType.Error, e.GetType().Name + " while loading sprite \"" + pname + "\" from directory: " + e.Message);
+				if (!Silent) General.ErrorLogger.Add(ErrorType.Error, e.GetType().Name + " while loading sprite \"" + pname + "\" from directory: " + e.Message);
 			}
 			
 			// Nothing found
@@ -331,7 +331,7 @@ namespace CodeImp.DoomBuilder.Data
 			}
 			catch(Exception e)
 			{
-				General.ErrorLogger.Add(ErrorType.Error, e.GetType().Name + " while checking sprite \"" + pname + "\" existance in directory: " + e.Message);
+				if (!Silent) General.ErrorLogger.Add(ErrorType.Error, e.GetType().Name + " while checking sprite \"" + pname + "\" existance in directory: " + e.Message);
 			}
 			
 			// Nothing found
@@ -368,7 +368,7 @@ namespace CodeImp.DoomBuilder.Data
 			}
 			catch(Exception e)
 			{
-				General.ErrorLogger.Add(ErrorType.Error, e.GetType().Name + " while loading voxel \"" + name + "\" from directory: " + e.Message);
+				if (!Silent) General.ErrorLogger.Add(ErrorType.Error, e.GetType().Name + " while loading voxel \"" + name + "\" from directory: " + e.Message);
 			}
 
 			// Nothing found
@@ -471,7 +471,7 @@ namespace CodeImp.DoomBuilder.Data
 
 			if(casecorrectfilename == null)
 			{
-				General.ErrorLogger.Add(ErrorType.Error, "Unable to load file " + filename + ": file doesn't exist");
+				if (!Silent) General.ErrorLogger.Add(ErrorType.Error, "Unable to load file " + filename + ": file doesn't exist");
 				return null;
 			}
 
@@ -484,7 +484,7 @@ namespace CodeImp.DoomBuilder.Data
 			} 
 			catch(Exception e) 
 			{
-				General.ErrorLogger.Add(ErrorType.Error, "Unable to load file: " + e.Message);
+				if (!Silent) General.ErrorLogger.Add(ErrorType.Error, "Unable to load file: " + e.Message);
 			}
 			return s;
 		}
@@ -504,7 +504,7 @@ namespace CodeImp.DoomBuilder.Data
 			}
 			catch(Exception e)
 			{
-				General.ErrorLogger.Add(ErrorType.Error, "Unable to save file: " + e.Message);
+				if (!Silent) General.ErrorLogger.Add(ErrorType.Error, "Unable to save file: " + e.Message);
 				return false;
 			}
 

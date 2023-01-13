@@ -244,6 +244,8 @@ namespace CodeImp.DoomBuilder.TagRange
 				storedstep = rangestep.GetResult(1);
 				storedrelative = relativemode.Checked;
 
+				DialogResult = DialogResult.OK;
+
 				//We are done here.
 				this.Close();
 			}

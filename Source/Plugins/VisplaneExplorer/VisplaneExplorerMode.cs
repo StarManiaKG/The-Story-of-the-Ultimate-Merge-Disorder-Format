@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Runtime.InteropServices;
+using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using CodeImp.DoomBuilder.Data;
 using CodeImp.DoomBuilder.Editing;
 using CodeImp.DoomBuilder.Geometry;
+using CodeImp.DoomBuilder.IO;
 using CodeImp.DoomBuilder.Map;
 using CodeImp.DoomBuilder.Rendering;
 using CodeImp.DoomBuilder.Windows;
@@ -227,6 +229,50 @@ namespace CodeImp.DoomBuilder.Plugins.VisplaneExplorer
 			}
 		}
 
+		/// <summary>
+		/// Checks if the given map is valid for the Visplane Explorer Mode. Specifically it may not have
+		/// ZDBSP nodes. See https://github.com/jewalky/UltimateDoomBuilder/issues/736
+		/// </summary>
+		/// <param name="file">Full path and file name of the WAD to check. Only the first map is checked</param>
+		/// <returns>true if the check was successful, false if there was a problem. Also returns a message in case something is wrong</returns>
+		private (bool, string) CheckMapValidity(string file)
+		{
+			WAD wad = new WAD(file, true);
+
+			try
+			{
+				Lump nodes = wad.FindLump("NODES");
+				if (nodes == null)
+					throw new Exception("NODES lump not found");
+
+				Stream stream = nodes.GetSafeStream();
+				if (stream.Length == 0)
+					throw new Exception("NODES lump is empty");
+
+				using (BinaryReader reader = new BinaryReader(stream))
+				{
+					List<byte[]> formats = new List<byte[]> { Encoding.ASCII.GetBytes("ZNOD"), Encoding.ASCII.GetBytes("XNOD") };
+
+					byte[] format = reader.ReadBytes(4);
+
+					if(formats.Any(f => f.SequenceEqual(format)))
+						throw new Exception("ZDBSP nodes detected. This format is not supporeted by the Visplane Explorer Mode");
+				}
+			}
+			catch(Exception e)
+			{
+				return (false, e.Message);
+			}
+			finally
+			{
+				// Get rid of the WAD ASAP. If something failed and we don't do this the WAD can't be deleted by the
+				// cleanup method
+				wad.Dispose();
+			}
+
+			return (true, string.Empty);
+		}
+
 		#endregion
 
 		#region ================== Events
@@ -254,6 +300,14 @@ namespace CodeImp.DoomBuilder.Plugins.VisplaneExplorer
 				Cursor.Current = Cursors.Default;
 				General.Interface.DisplayStatus(StatusType.Warning, "Unable to set test environment...");
 				OnCancel();
+				return;
+			}
+
+			(bool mapvalid, string message) = CheckMapValidity(tempfile);
+			if(!mapvalid)
+			{
+				MessageBox.Show($"Error: {message}.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				General.Editing.CancelMode();
 				return;
 			}
 

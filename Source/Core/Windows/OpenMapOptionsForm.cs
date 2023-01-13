@@ -41,6 +41,7 @@ namespace CodeImp.DoomBuilder.Windows
 		private string selectedmapname;
 		private static readonly Regex episodemapregex = new Regex("^E[1-9]M[1-9]$");
 		private static readonly Regex noepisodemapregex = new Regex("^MAP[0-9][0-9]$");
+		private readonly int initialformheight;
 
 		// Properties
 		//public string FilePathName { get { return filepathname; } }
@@ -51,10 +52,12 @@ namespace CodeImp.DoomBuilder.Windows
 		{
 			// Initialize
 			InitializeComponent();
-			CodeImp.DoomBuilder.General.ApplyMonoListViewFix(mapslist);
+			this.initialformheight = Height;
+			General.ApplyMonoListViewFix(mapslist);
 			this.Text = "Open Map from " + Path.GetFileName(filepathname);
 			this.filepathname = filepathname;
 			datalocations.StartPath = filepathname; //mxd
+			datalocations.IsMapControl = true;
 			this.options = null;
 		}
 
@@ -63,12 +66,20 @@ namespace CodeImp.DoomBuilder.Windows
 		{
 			// Initialize
 			InitializeComponent();
-			CodeImp.DoomBuilder.General.ApplyMonoListViewFix(mapslist);
+			this.initialformheight = Height;
+			General.ApplyMonoListViewFix(mapslist);
 			this.Text = "Open Map from " + Path.GetFileName(filepathname);
 			this.filepathname = filepathname;
 			this.options = options;
 			datalocations.StartPath = filepathname; //mxd
-			datalocations.EditResourceLocationList(options.Resources);
+			datalocations.IsMapControl = true;
+		}
+
+		private GameConfiguration GetGameConfiguration()
+		{
+			if (config.Items.Count == 0 || config.SelectedIndex < 0) return null;
+
+			return new GameConfiguration((config.SelectedItem as ConfigurationInfo).Configuration);
 		}
 
 		// This loads the settings and attempt to find a suitable config
@@ -230,6 +241,7 @@ namespace CodeImp.DoomBuilder.Windows
 			{
 				// Show the window
 				this.Opacity = 1;
+				datalocations.GameConfiguration = GetGameConfiguration();
 			}
 
 			// Done
@@ -311,6 +323,9 @@ namespace CodeImp.DoomBuilder.Windows
 		// Configuration is selected
 		private void config_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			//
+			datalocations.GameConfiguration = GetGameConfiguration();
+
 			// Anything selected?
 			if(config.SelectedIndex < 0) return;
 
@@ -528,6 +543,10 @@ namespace CodeImp.DoomBuilder.Windows
 			
 			// Load settings
 			LoadSettings();
+
+			// Show
+			if (options != null)
+				datalocations.EditResourceLocationList(options.Resources);
 		}
 
 		// Map name doubleclicked
@@ -540,7 +559,10 @@ namespace CodeImp.DoomBuilder.Windows
 		// Map name selected
 		private void mapslist_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
 		{
-			if(!e.IsSelected) return; //mxd. Don't want to trigger this twice
+			//
+			datalocations.GameConfiguration = GetGameConfiguration();
+
+			if (!e.IsSelected) return; //mxd. Don't want to trigger this twice
 			
 			DataLocationList locations;
 			DataLocationList listedlocations;
@@ -618,5 +640,11 @@ namespace CodeImp.DoomBuilder.Windows
 			General.ShowHelp("w_openmapoptions.html");
 			hlpevent.Handled = true;
 		}
-	}
+
+        private void datalocations_OnWarningsChanged(int size)
+        {
+			Height = initialformheight + size;
+			Refresh();
+		}
+    }
 }

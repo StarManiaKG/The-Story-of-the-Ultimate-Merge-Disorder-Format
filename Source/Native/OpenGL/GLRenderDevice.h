@@ -35,7 +35,7 @@ class GLTexture;
 class GLRenderDevice : public RenderDevice
 {
 public:
-	GLRenderDevice(void* disp, void* window);
+	GLRenderDevice(void* disp, void* window, bool debug);
 	~GLRenderDevice();
 
 	void DeclareUniform(UniformName name, const char* glslname, UniformType type) override;

@@ -52,8 +52,8 @@ namespace CodeImp.DoomBuilder.Windows
 			int newflagswidth = flags.GetWidth();
 			int newflagsheight = flags.GetHeight();
 
-			if(flagswidth != newflagswidth) this.Width += (newflagswidth - flagswidth);
-			if(flagsheight != newflagsheight) this.Height += (newflagsheight - flagsheight);
+			if(flagswidth < newflagswidth) this.Width += (newflagswidth - flagswidth);
+			if(flagsheight < newflagsheight) this.Height += (newflagsheight - flagsheight);
 
 			// Parse the value string and check the boxes if necessary
 			if(!string.IsNullOrEmpty(value.Trim()))

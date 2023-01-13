@@ -34,6 +34,11 @@ namespace CodeImp.DoomBuilder.StairSectorBuilderMode
 	// by the core.
 	//
 
+	internal class ToastMessages
+	{
+		public static readonly string ENGAGEFAILED = "engagefailed";
+	}
+
 	public class BuilderPlug : Plug
 	{
         public struct Prefab
@@ -119,6 +124,9 @@ namespace CodeImp.DoomBuilder.StairSectorBuilderMode
 
 			// Keep a static reference
             me = this;
+
+			// Register toasts
+			General.ToastManager.RegisterToast(ToastMessages.ENGAGEFAILED, "Stair Sector Builder Mode starting failed", "When no linedefs or sectors are selected when entering Stair Sector Builder Mode");
 		}
 
 		// This is called when the plugin is terminated

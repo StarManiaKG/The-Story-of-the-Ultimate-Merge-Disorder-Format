@@ -133,7 +133,7 @@ public:
 
 	static Backend* Get();
 
-	virtual RenderDevice* NewRenderDevice(void* disp, void* window) = 0;
+	virtual RenderDevice* NewRenderDevice(void* disp, void* window, bool debug) = 0;
 	virtual void DeleteRenderDevice(RenderDevice* device) = 0;
 
 	virtual VertexBuffer* NewVertexBuffer() = 0;

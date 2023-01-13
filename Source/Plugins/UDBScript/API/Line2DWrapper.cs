@@ -66,8 +66,8 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				this.v1 = new Vector2DWrapper((Vector2D)BuilderPlug.Me.GetVectorFromObject(v1, false));
-				this.v2 = new Vector2DWrapper((Vector2D)BuilderPlug.Me.GetVectorFromObject(v2, false));
+				this.v1 = new Vector2DWrapper(BuilderPlug.Me.GetVector3DFromObject(v1));
+				this.v2 = new Vector2DWrapper(BuilderPlug.Me.GetVector3DFromObject(v2));
 			}
 			catch (CantConvertToVectorException e)
 			{
@@ -114,10 +114,10 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(a1, false);
-				Vector2D v2 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(a2, false);
-				Vector2D v3 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(b1, false);
-				Vector2D v4 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(b2, false);
+				Vector2D v1 = BuilderPlug.Me.GetVector3DFromObject(a1);
+				Vector2D v2 = BuilderPlug.Me.GetVector3DFromObject(a2);
+				Vector2D v3 = BuilderPlug.Me.GetVector3DFromObject(b1);
+				Vector2D v4 = BuilderPlug.Me.GetVector3DFromObject(b2);
 				double u_ray;
 
 				return Line2D.GetIntersection(v1, v2, v3.x, v3.y, v4.x, v4.y, out u_ray, bounded);
@@ -141,10 +141,10 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(a1, false);
-				Vector2D v2 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(a2, false);
-				Vector2D v3 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(b1, false);
-				Vector2D v4 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(b2, false);
+				Vector2D v1 = BuilderPlug.Me.GetVector3DFromObject(a1);
+				Vector2D v2 = BuilderPlug.Me.GetVector3DFromObject(a2);
+				Vector2D v3 = BuilderPlug.Me.GetVector3DFromObject(b1);
+				Vector2D v4 = BuilderPlug.Me.GetVector3DFromObject(b2);
 
 				return new Vector2DWrapper(Line2D.GetIntersectionPoint(new Line2D(v1, v2), new Line2D(v3, v4), bounded));
 			}
@@ -165,9 +165,9 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v11 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(v1, false);
-				Vector2D v21 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(v2, false);
-				Vector2D p1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(p, false);
+				Vector2D v11 = BuilderPlug.Me.GetVector3DFromObject(v1);
+				Vector2D v21 = BuilderPlug.Me.GetVector3DFromObject(v2);
+				Vector2D p1 = BuilderPlug.Me.GetVector3DFromObject(p);
 
 				return Line2D.GetSideOfLine(v11, v21, p1);
 			}
@@ -189,9 +189,9 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v11 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(v1, false);
-				Vector2D v21 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(v2, false);
-				Vector2D p1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(p, false);
+				Vector2D v11 = BuilderPlug.Me.GetVector3DFromObject(v1);
+				Vector2D v21 = BuilderPlug.Me.GetVector3DFromObject(v2);
+				Vector2D p1 = BuilderPlug.Me.GetVector3DFromObject(p);
 
 				return Line2D.GetDistanceToLine(v11, v21, p1, bounded);
 			}
@@ -213,9 +213,9 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v11 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(v1, false);
-				Vector2D v21 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(v2, false);
-				Vector2D p1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(p, false);
+				Vector2D v11 = BuilderPlug.Me.GetVector3DFromObject(v1);
+				Vector2D v21 = BuilderPlug.Me.GetVector3DFromObject(v2);
+				Vector2D p1 = BuilderPlug.Me.GetVector3DFromObject(p);
 
 				return Line2D.GetDistanceToLineSq(v11, v21, p1, bounded);
 			}
@@ -236,9 +236,9 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v11 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(v1, false);
-				Vector2D v21 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(v2, false);
-				Vector2D p1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(p, false);
+				Vector2D v11 = BuilderPlug.Me.GetVector3DFromObject(v1);
+				Vector2D v21 = BuilderPlug.Me.GetVector3DFromObject(v2);
+				Vector2D p1 = BuilderPlug.Me.GetVector3DFromObject(p);
 
 				return Line2D.GetNearestOnLine(v11, v21, p1);
 			}
@@ -259,8 +259,8 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v11 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(v1, false);
-				Vector2D v21 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(v2, false);
+				Vector2D v11 = BuilderPlug.Me.GetVector3DFromObject(v1);
+				Vector2D v21 = BuilderPlug.Me.GetVector3DFromObject(v2);
 
 				return new Vector2DWrapper(Line2D.GetCoordinatesAt(v11, v21, u));
 			}
@@ -343,8 +343,8 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v3 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(a1, false);
-				Vector2D v4 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(a2, false);
+				Vector2D v3 = BuilderPlug.Me.GetVector3DFromObject(a1);
+				Vector2D v4 = BuilderPlug.Me.GetVector3DFromObject(a2);
 				double u_ray;
 
 				return AsLine2D().GetIntersection(v3.x, v3.y, v4.x, v4.y, out u_ray, bounded);
@@ -366,8 +366,8 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v3 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(a1, false);
-				Vector2D v4 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(a2, false);
+				Vector2D v3 = BuilderPlug.Me.GetVector3DFromObject(a1);
+				Vector2D v4 = BuilderPlug.Me.GetVector3DFromObject(a2);
 				Line2D line = AsLine2D();
 				double u_ray;
 				line.GetIntersection(v3.x, v3.y, v4.x, v4.y, out u_ray, bounded);
@@ -405,7 +405,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D p1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(p, false);
+				Vector2D p1 = BuilderPlug.Me.GetVector3DFromObject(p);
 
 				return AsLine2D().GetSideOfLine(p1);
 			}

@@ -111,7 +111,13 @@ namespace CodeImp.DoomBuilder.CommentsPanel
 			if(dockerpanel != null)
 				dockerpanel.UpdateListSoon();
 		}
-		
+
+		// Edit performed
+		public override void OnEditAccept()
+		{
+			dockerpanel?.UpdateListSoon();
+		}
+
 		// Mode changes
 		public override bool OnModeChange(EditMode oldmode, EditMode newmode)
 		{
@@ -119,6 +125,15 @@ namespace CodeImp.DoomBuilder.CommentsPanel
 				dockerpanel.UpdateListSoon();
 				
 			return base.OnModeChange(oldmode, newmode);
+		}
+
+		/// <summary>
+		/// Checks if the currently active docker is the Comments docker.
+		/// </summary>
+		/// <returns>true if the Comments docker is active, otherwise false</returns>
+		public bool IsDockerActive()
+		{
+			return General.Interface.ActiveDockerTabName == commentsdocker.Title;
 		}
     }
 }

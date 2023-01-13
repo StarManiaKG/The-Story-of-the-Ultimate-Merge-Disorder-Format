@@ -10,7 +10,7 @@ using CodeImp.DoomBuilder.Rendering;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.ZDoom 
+namespace CodeImp.DoomBuilder.ZDoom
 {
 	internal sealed class ModeldefStructure
 	{
@@ -34,12 +34,14 @@ namespace CodeImp.DoomBuilder.ZDoom
 		private string path;
 		private Vector3f scale;
 		private Vector3f offset;
+		private Vector3f rotationcenter;
 		private float angleoffset;
 		private float pitchoffset;
 		private float rolloffset;
 		private bool inheritactorpitch;
 		private bool useactorpitch;
 		private bool useactorroll;
+		private bool userotationcenter;
 
 		private Dictionary<string, HashSet<FrameStructure>> frames;
 
@@ -52,12 +54,14 @@ namespace CodeImp.DoomBuilder.ZDoom
 		public Dictionary<int, string> ModelNames { get { return modelnames; } }
 		public Vector3f Scale { get { return scale; } }
 		public Vector3f Offset { get { return offset; } }
+		public Vector3f RotationCenter { get { return rotationcenter; } }
 		public float AngleOffset { get { return angleoffset; } }
 		public float PitchOffset { get { return pitchoffset; } }
 		public float RollOffset { get { return rolloffset; } }
 		public bool InheritActorPitch { get { return inheritactorpitch; } }
 		public bool UseActorPitch { get { return useactorpitch; } }
 		public bool UseActorRoll { get { return useactorroll; } }
+		public bool UseRotationCenter { get { return userotationcenter; } }
 		public string DataPath { get { return path; } } // biwa
 
 		public Dictionary<string, HashSet<FrameStructure>> Frames { get { return frames; } }
@@ -84,7 +88,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 		{
 			// Read modeldef structure contents
 			bool parsingfinished = false;
-			while(!parsingfinished && parser.SkipWhitespace(true)) 
+			while(!parsingfinished && parser.SkipWhitespace(true))
 			{
 				string token = parser.ReadToken().ToLowerInvariant();
 				if(string.IsNullOrEmpty(token)) continue;
@@ -125,24 +129,24 @@ namespace CodeImp.DoomBuilder.ZDoom
 
 						// Model path
 						token = parser.StripTokenQuotes(parser.ReadToken(false)).ToLowerInvariant(); // Don't skip newline
-						if(string.IsNullOrEmpty(token)) 
+						if(string.IsNullOrEmpty(token))
 						{
 							parser.ReportError("Expected model name");
 							return false;
-						} 
+						}
 
 						// Check invalid path chars
 						if(!parser.CheckInvalidPathChars(token)) return false;
 
 						// Check extension
 						string modelext = Path.GetExtension(token);
-						if(string.IsNullOrEmpty(modelext)) 
+						if(string.IsNullOrEmpty(modelext))
 						{
 							parser.ReportError("Model \"" + token + "\" won't be loaded. Models without extension are not supported by GZDoom");
 							return false;
 						}
 
-						if(modelext != ".md3" && modelext != ".md2" && modelext != ".3d" && modelext != ".obj") 
+						if(modelext != ".md3" && modelext != ".md2" && modelext != ".3d" && modelext != ".obj")
 						{
 							parser.ReportError("Model \"" + token + "\" won't be loaded. Only Unreal 3D, MD2, MD3, and OBJ models are supported");
 							return false;
@@ -176,11 +180,11 @@ namespace CodeImp.DoomBuilder.ZDoom
 
 						// Skin path
 						token = parser.StripTokenQuotes(parser.ReadToken(false)).ToLowerInvariant(); // Don't skip newline
-						if(string.IsNullOrEmpty(token)) 
+						if(string.IsNullOrEmpty(token))
 						{
 							parser.ReportError("Expected skin path");
 							return false;
-						} 
+						}
 
 						// Check invalid path chars
 						if(!parser.CheckInvalidPathChars(token)) return false;
@@ -252,7 +256,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 					case "scale":
 						parser.SkipWhitespace(true);
 						token = parser.ReadToken();
-						if(!parser.ReadSignedFloat(token, ref scale.Y)) 
+						if(!parser.ReadSignedFloat(token, ref scale.Y))
 						{
 							// Not numeric!
 							parser.ReportError("Expected Scale X value, but got \"" + token + "\"");
@@ -261,7 +265,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 
 						parser.SkipWhitespace(true);
 						token = parser.ReadToken();
-						if(!parser.ReadSignedFloat(token, ref scale.X)) 
+						if(!parser.ReadSignedFloat(token, ref scale.X))
 						{
 							// Not numeric!
 							parser.ReportError("Expected Scale Y value, but got \"" + token + "\"");
@@ -270,7 +274,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 
 						parser.SkipWhitespace(true);
 						token = parser.ReadToken();
-						if(!parser.ReadSignedFloat(token, ref scale.Z)) 
+						if(!parser.ReadSignedFloat(token, ref scale.Z))
 						{
 							// Not numeric!
 							parser.ReportError("Expected Scale Z value, but got \"" + token + "\"");
@@ -281,7 +285,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 					case "offset":
 						parser.SkipWhitespace(true);
 						token = parser.ReadToken();
-						if(!parser.ReadSignedFloat(token, ref offset.X)) 
+						if(!parser.ReadSignedFloat(token, ref offset.X))
 						{
 							// Not numeric!
 							parser.ReportError("Expected Offset X value, but got \"" + token + "\"");
@@ -290,7 +294,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 
 						parser.SkipWhitespace(true);
 						token = parser.ReadToken();
-						if(!parser.ReadSignedFloat(token, ref offset.Y)) 
+						if(!parser.ReadSignedFloat(token, ref offset.Y))
 						{
 							// Not numeric!
 							parser.ReportError("Expected Offset Y value, but got \"" + token + "\"");
@@ -299,7 +303,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 
 						parser.SkipWhitespace(true);
 						token = parser.ReadToken();
-						if(!parser.ReadSignedFloat(token, ref offset.Z)) 
+						if(!parser.ReadSignedFloat(token, ref offset.Z))
 						{
 							// Not numeric!
 							parser.ReportError("Expected Offset Z value, but got \"" + token + "\"");
@@ -310,7 +314,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 					case "zoffset":
 						parser.SkipWhitespace(true);
 						token = parser.ReadToken();
-						if(!parser.ReadSignedFloat(token, ref offset.Z)) 
+						if(!parser.ReadSignedFloat(token, ref offset.Z))
 						{
 							// Not numeric!
 							parser.ReportError("Expected ZOffset value, but got \"" + token + "\"");
@@ -321,7 +325,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 					case "angleoffset":
 						parser.SkipWhitespace(true);
 						token = parser.ReadToken();
-						if(!parser.ReadSignedFloat(token, ref angleoffset)) 
+						if(!parser.ReadSignedFloat(token, ref angleoffset))
 						{
 							// Not numeric!
 							parser.ReportError("Expected AngleOffset value, but got \"" + token + "\"");
@@ -332,7 +336,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 					case "pitchoffset":
 						parser.SkipWhitespace(true);
 						token = parser.ReadToken();
-						if(!parser.ReadSignedFloat(token, ref pitchoffset)) 
+						if(!parser.ReadSignedFloat(token, ref pitchoffset))
 						{
 							// Not numeric!
 							parser.ReportError("Expected PitchOffset value, but got \"" + token + "\"");
@@ -343,10 +347,39 @@ namespace CodeImp.DoomBuilder.ZDoom
 					case "rolloffset":
 						parser.SkipWhitespace(true);
 						token = parser.ReadToken();
-						if(!parser.ReadSignedFloat(token, ref rolloffset)) 
+						if(!parser.ReadSignedFloat(token, ref rolloffset))
 						{
 							// Not numeric!
 							parser.ReportError("Expected RollOffset value, but got \"" + token + "\"");
+							return false;
+						}
+						break;
+
+					case "rotation-center":
+						parser.SkipWhitespace(true);
+						token = parser.ReadToken();
+						if (!parser.ReadSignedFloat(token, ref rotationcenter.X))
+						{
+							// Not numeric!
+							parser.ReportError("Expected rotation center X value, but got \"" + token + "\"");
+							return false;
+						}
+
+						parser.SkipWhitespace(true);
+						token = parser.ReadToken();
+						if (!parser.ReadSignedFloat(token, ref rotationcenter.Y))
+						{
+							// Not numeric!
+							parser.ReportError("Expected rotation center Y value, but got \"" + token + "\"");
+							return false;
+						}
+
+						parser.SkipWhitespace(true);
+						token = parser.ReadToken();
+						if (!parser.ReadSignedFloat(token, ref rotationcenter.Z))
+						{
+							// Not numeric!
+							parser.ReportError("Expected rotation center Z value, but got \"" + token + "\"");
 							return false;
 						}
 						break;
@@ -360,13 +393,18 @@ namespace CodeImp.DoomBuilder.ZDoom
 						useactorroll = true;
 						break;
 
+					case "rotating":
+					case "userotationcenter":
+						userotationcenter = true;
+						break;
+
 					case "inheritactorpitch":
 						inheritactorpitch = true;
 						useactorpitch = false;
 						parser.LogWarning("INHERITACTORPITCH flag is deprecated. Consider using USEACTORPITCH flag instead");
 						break;
 
-					case "inheritactorroll": 
+					case "inheritactorroll":
 						useactorroll = true;
 						parser.LogWarning("INHERITACTORROLL flag is deprecated. Consider using USEACTORROLL flag instead");
 						break;
@@ -375,7 +413,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 					case "frameindex":
 						// Sprite name
 						parser.SkipWhitespace(true);
-						string fispritename = parser.ReadToken();
+						string fispritename = ZDTextParser.StripQuotes(parser.ReadToken());
 						if(string.IsNullOrEmpty(fispritename))
 						{
 							parser.ReportError("Expected sprite name");
@@ -383,13 +421,13 @@ namespace CodeImp.DoomBuilder.ZDoom
 						}
 						if(fispritename.Length != 4)
 						{
-							parser.ReportError("Sprite name must be 4 characters long");
+							parser.ReportError("Sprite name must be 4 characters long, got \"" + fispritename + "\"");
 							return false;
 						}
 
 						// Sprite frame
 						parser.SkipWhitespace(true);
-						token = parser.ReadToken();
+						token = ZDTextParser.StripQuotes(parser.ReadToken());
 						if(string.IsNullOrEmpty(token))
 						{
 							parser.ReportError("Expected sprite frame");

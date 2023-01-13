@@ -135,7 +135,7 @@ namespace CodeImp.DoomBuilder.ZDoom
         private static Dictionary<string, ZScriptTokenType> namedtokentypes; // these are tokens that have precise equivalent in the enum (like operators)
         private static Dictionary<ZScriptTokenType, string> namedtokentypesreverse; // these are tokens that have precise equivalent in the enum (like operators)
         private static List<string> namedtokentypesorder; // this is the list of said tokens ordered by length.
-        private static StringBuilder SB;
+        private StringBuilder SB = new StringBuilder();
 
         public BinaryReader Reader { get { return reader; } }
         public long LastPosition { get; private set; }
@@ -156,9 +156,6 @@ namespace CodeImp.DoomBuilder.ZDoom
                     LinePositions.Add(br.BaseStream.Position);
             }
             br.BaseStream.Position = cpos;
-
-            if (SB == null)
-                SB = new StringBuilder();
 
             if (namedtokentypes == null || namedtokentypesreverse == null || namedtokentypesorder == null)
             {
@@ -210,7 +207,15 @@ namespace CodeImp.DoomBuilder.ZDoom
         private ZScriptToken TryReadWhitespace()
         {
             long cpos = LastPosition = reader.BaseStream.Position;
-            char c = reader.ReadChar();
+            char c;
+            try
+            {
+                c = reader.ReadChar();
+            }
+            catch (EndOfStreamException)
+            {
+                return null;
+            }
 
             // 
             string whitespace = " \r\t\u00A0";
@@ -223,7 +228,15 @@ namespace CodeImp.DoomBuilder.ZDoom
                 SB.Append(c);
                 while (true)
                 {
-                    char cnext = reader.ReadChar();
+                    char cnext;
+                    try
+                    {
+                        cnext = reader.ReadChar();
+                    }
+                    catch (EndOfStreamException)
+                    {
+                        break;
+                    }
                     if (whitespace.Contains(cnext))
                     {
                         SB.Append(cnext);
@@ -248,7 +261,15 @@ namespace CodeImp.DoomBuilder.ZDoom
         private ZScriptToken TryReadIdentifier()
         {
             long cpos = LastPosition = reader.BaseStream.Position;
-            char c = reader.ReadChar();
+            char c;
+            try
+            {
+                c = reader.ReadChar();
+            }
+            catch (EndOfStreamException)
+            {
+                return null;
+            }
 
             // check identifier
             if ((c >= 'a' && c <= 'z') ||
@@ -259,7 +280,15 @@ namespace CodeImp.DoomBuilder.ZDoom
                 SB.Append(c);
                 while (true)
                 {
-                    char cnext = reader.ReadChar();
+                    char cnext;
+                    try
+                    {
+                        cnext = reader.ReadChar();
+                    }
+                    catch (EndOfStreamException)
+                    {
+                        break;
+                    }
                     if ((cnext >= 'a' && cnext <= 'z') ||
                         (cnext >= 'A' && cnext <= 'Z') ||
                         (cnext == '_') ||
@@ -287,7 +316,15 @@ namespace CodeImp.DoomBuilder.ZDoom
         private ZScriptToken TryReadNumber()
         {
             long cpos = LastPosition = reader.BaseStream.Position;
-            char c = reader.ReadChar();
+            char c;
+            try
+            {
+                c = reader.ReadChar();
+            }
+            catch (EndOfStreamException)
+            {
+                return null;
+            }
 
             // check integer
             if ((c >= '0' && c <= '9') || c == '.')
@@ -313,7 +350,15 @@ namespace CodeImp.DoomBuilder.ZDoom
                     SB.Append(c);
                     while (true)
                     {
-                        char cnext = reader.ReadChar();
+                        char cnext;
+                        try
+                        {
+                            cnext = reader.ReadChar();
+                        }
+                        catch (EndOfStreamException)
+                        {
+                            break;
+                        }
                         if (!isdouble && (cnext == 'x') && SB.Length == 1)
                         {
                             isoctal = false;
@@ -336,7 +381,15 @@ namespace CodeImp.DoomBuilder.ZDoom
                             isexponent = true;
                             isdouble = true;
                             SB.Append('e');
-                            cnext = reader.ReadChar();
+                            try
+                            {
+                                cnext = reader.ReadChar();
+                            }
+                            catch (EndOfStreamException)
+                            {
+                                reader.BaseStream.Position = cpos;
+                                return null; // bad exponent notation
+                            }
                             if (cnext == '-') SB.Append('-');
                             else reader.BaseStream.Position--;
                         }
@@ -395,7 +448,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 					}
                     catch (Exception)
                     {
-                        // throw new Exception(tok.ToString());
+                        reader.BaseStream.Position = cpos;
                         return null;
                     }
 
@@ -410,14 +463,30 @@ namespace CodeImp.DoomBuilder.ZDoom
         private ZScriptToken TryReadStringOrComment(bool allowstring, bool allowname, bool allowblock, bool allowline)
         {
             long cpos = LastPosition = reader.BaseStream.Position;
-            char c = reader.ReadChar();
+            char c;
+            try
+            {
+                c = reader.ReadChar();
+            }
+            catch (EndOfStreamException)
+            {
+                return null;
+            }
 
             switch (c)
             {
                 case '/': // comment
                     {
                         if (!allowblock && !allowline) break;
-                        char cnext = reader.ReadChar();
+                        char cnext;
+                        try
+                        {
+                            cnext = reader.ReadChar();
+                        }
+                        catch (EndOfStreamException)
+                        {
+                            break; // invalid
+                        }
                         if (cnext == '/')
                         {
                             if (!allowline) break;
@@ -425,7 +494,14 @@ namespace CodeImp.DoomBuilder.ZDoom
                             SB.Length = 0;
                             while (true)
                             {
-                                cnext = reader.ReadChar();
+                                try
+                                {
+                                    cnext = reader.ReadChar();
+                                }
+                                catch (EndOfStreamException)
+                                {
+                                    break;
+                                }
                                 if (cnext == '\n')
                                 {
                                     reader.BaseStream.Position--;
@@ -448,7 +524,14 @@ namespace CodeImp.DoomBuilder.ZDoom
                             SB.Length = 0;
                             while (true)
                             {
-                                cnext = reader.ReadChar();
+                                try
+                                {
+                                    cnext = reader.ReadChar();
+                                }
+                                catch (EndOfStreamException)
+                                {
+                                    break;
+                                }
                                 if (cnext == '*')
                                 {
                                     char cnext2 = reader.ReadChar();
@@ -478,22 +561,29 @@ namespace CodeImp.DoomBuilder.ZDoom
                         SB.Length = 0;
                         while (true)
                         {
-                            // todo: parse escape sequences properly
-                            char cnext = reader.ReadChar();
-                            if (cnext == '\\') // escape sequence. right now, do nothing
+                            try
                             {
-                                cnext = reader.ReadChar();
-                                SB.Append(cnext);
-                            }
-                            else if (cnext == c)
+                                // todo: parse escape sequences properly
+                                char cnext = reader.ReadChar();
+                                if (cnext == '\\') // escape sequence. right now, do nothing
+                                {
+                                    cnext = reader.ReadChar();
+                                    SB.Append(cnext);
+                                }
+                                else if (cnext == c)
+                                {
+                                    ZScriptToken tok = new ZScriptToken();
+                                    tok.Position = cpos;
+                                    tok.Type = type;
+                                    tok.Value = SB.ToString();
+                                    return tok;
+                                }
+                                else SB.Append(cnext);
+                            } catch (EndOfStreamException)
                             {
-                                ZScriptToken tok = new ZScriptToken();
-                                tok.Position = cpos;
-                                tok.Type = type;
-                                tok.Value = SB.ToString();
-                                return tok;
+                                reader.BaseStream.Position = cpos;
+                                return null; // bad string, unterminated and ends with EOF
                             }
-                            else SB.Append(cnext);
                         }
                     }
 
@@ -642,6 +732,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 
                 // token not found.
                 tok = new ZScriptToken();
+                tok.Position = reader.BaseStream.Position;
                 tok.Type = ZScriptTokenType.Invalid;
                 tok.Value = "" + reader.ReadChar();
                 tok.IsValid = false;

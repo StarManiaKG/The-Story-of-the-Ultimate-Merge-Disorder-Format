@@ -34,6 +34,7 @@ namespace CodeImp.DoomBuilder.Actions
 		private readonly string title;
 		private readonly string description;
 		private readonly string category;
+		private readonly bool registertoast;
 
 		// Shortcut key
 		private int key;
@@ -62,6 +63,7 @@ namespace CodeImp.DoomBuilder.Actions
 		public string Category { get { return category; } }
 		public string Title { get { return title; } }
 		public string Description { get { return description; } }
+		public bool RegisterToast { get { return registertoast; } }
 		public int ShortcutKey { get { return key; } }
 		public int ShortcutMask { get { return keymask; } }
 		public int DefaultShortcutKey { get { return defaultkey; } }
@@ -88,6 +90,7 @@ namespace CodeImp.DoomBuilder.Actions
 			this.title = cfg.ReadSetting(shortname + ".title", "[" + name + "]");
 			this.category = cfg.ReadSetting(shortname + ".category", "");
 			this.description = cfg.ReadSetting(shortname + ".description", "");
+			this.registertoast = cfg.ReadSetting(shortname + ".registertoast", false);
 			this.allowkeys = cfg.ReadSetting(shortname + ".allowkeys", true);
 			this.allowmouse = cfg.ReadSetting(shortname + ".allowmouse", true);
 			this.allowscroll = cfg.ReadSetting(shortname + ".allowscroll", false);

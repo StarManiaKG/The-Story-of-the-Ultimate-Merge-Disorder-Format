@@ -3,17 +3,7 @@
 ## Constructors
 
 ---
-### Vector2D(v)
-Creates a new `Vector2D` from a point.
-
-```js
-let v = new UDB.Vector2D([ 32, 64 ]);
-```
-#### Parameters
-* v: The vector to create the `Vector2D` from
-
----
-### Vector2D(x, y)
+### Vector2D(x: double, y: double)
 Creates a new `Vector2D` from x and y coordinates
 
 ```js
@@ -22,10 +12,20 @@ let v = new UDB.Vector2D(32, 64);
 #### Parameters
 * x: The x coordinate
 * y: The y coordinate
+
+---
+### Vector2D(v: object)
+Creates a new `Vector2D` from a point.
+
+```js
+let v = new UDB.Vector2D([ 32, 64 ]);
+```
+#### Parameters
+* v: The vector to create the `Vector2D` from
 ## Static methods
 
 ---
-### crossProduct(a, b)
+### crossProduct(a: object, b: object)
 Returns the cross product of two `Vector2D`s.
 #### Parameters
 * a: First `Vector2D`
@@ -34,7 +34,7 @@ Returns the cross product of two `Vector2D`s.
 Cross product of the two vectors as `Vector2D`
 
 ---
-### dotProduct(a, b)
+### dotProduct(a: Vector2D, b: Vector2D)
 Returns the dot product of two `Vector2D`s.
 #### Parameters
 * a: First `Vector2D`
@@ -43,7 +43,7 @@ Returns the dot product of two `Vector2D`s.
 The dot product of the two vectors
 
 ---
-### fromAngle(angle)
+### fromAngle(angle: double)
 Creates a `Vector2D` from an angle in degrees,
 #### Parameters
 * angle: Angle in degrees
@@ -51,7 +51,7 @@ Creates a `Vector2D` from an angle in degrees,
 Vector as `Vector2D`
 
 ---
-### fromAngleRad(angle)
+### fromAngleRad(angle: double)
 Creates a `Vector2D` from an angle in radians,
 #### Parameters
 * angle: Angle in radians
@@ -59,7 +59,7 @@ Creates a `Vector2D` from an angle in radians,
 Vector as `Vector2D`
 
 ---
-### getAngle(a, b)
+### getAngle(a: object, b: object)
 Returns the angle between two `Vector2D`s in degrees.
 #### Parameters
 * a: First `Vector2D`
@@ -68,7 +68,7 @@ Returns the angle between two `Vector2D`s in degrees.
 Angle in degrees
 
 ---
-### getAngleRad(a, b)
+### getAngleRad(a: object, b: object)
 Returns the angle between two `Vector2D`s in radians
 #### Parameters
 * a: First `Vector2D`
@@ -77,7 +77,7 @@ Returns the angle between two `Vector2D`s in radians
 Angle in radians
 
 ---
-### getDistance(a, b)
+### getDistance(a: object, b: object)
 Returns the distance between two `Vector2D`s.
 #### Parameters
 * a: First `Vector2D`
@@ -86,7 +86,7 @@ Returns the distance between two `Vector2D`s.
 The distance
 
 ---
-### getDistanceSq(a, b)
+### getDistanceSq(a: object, b: object)
 Returns the square distance between two `Vector2D`s.
 #### Parameters
 * a: First `Vector2D`
@@ -95,7 +95,7 @@ Returns the square distance between two `Vector2D`s.
 The squared distance
 
 ---
-### reflect(v, m)
+### reflect(v: object, m: object)
 Reflects a `Vector2D` over a mirror `Vector2D`.
 #### Parameters
 * v: `Vector2D` to reflect
@@ -104,7 +104,7 @@ Reflects a `Vector2D` over a mirror `Vector2D`.
 The reflected vector as `Vector2D`
 
 ---
-### reversed(v)
+### reversed(v: object)
 Returns a reversed `Vector2D`.
 #### Parameters
 * v: `Vector2D` to reverse
@@ -134,7 +134,7 @@ Returns the angle of the `Vector2D` in radians.
 The angle of the `Vector2D` in radians
 
 ---
-### getInverseTransformed(invoffsetx, invoffsety, invscalex, invscaley)
+### getInverseTransformed(invoffsetx: double, invoffsety: double, invscalex: double, invscaley: double)
 Returns the inverse transformed vector as `Vector2D`.
 #### Parameters
 * invoffsetx: X offset
@@ -169,7 +169,7 @@ Returns the perpendicular to the `Vector2D`.
 The perpendicular as `Vector2D`
 
 ---
-### getRotated(theta)
+### getRotated(theta: double)
 Returns the rotated vector as `Vector2D`.
 #### Parameters
 * theta: Angle in degree to rotate by
@@ -177,7 +177,7 @@ Returns the rotated vector as `Vector2D`.
 The rotated `Vector2D`
 
 ---
-### getRotatedRad(theta)
+### getRotatedRad(theta: double)
 Returns the rotated vector as `Vector2D`.
 #### Parameters
 * theta: Angle in radians to rotate by
@@ -191,7 +191,7 @@ Returns a `Vector2D` with the sign of all components.
 A `Vector2D` with the sign of all components
 
 ---
-### getTransformed(offsetx, offsety, scalex, scaley)
+### getTransformed(offsetx: double, offsety: double, scalex: double, scaley: double)
 Returns the transformed vector as `Vector2D`.
 #### Parameters
 * offsetx: X offset

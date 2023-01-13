@@ -45,6 +45,9 @@ namespace CodeImp.DoomBuilder.ZDoom
 			this.actorsbyclass = actorsbyclass;
 			this.entries = new Dictionary<string, ModelData>(StringComparer.OrdinalIgnoreCase);
             this.parsedlumps = new HashSet<string>();
+
+			// We don't want the '-' as a special token because commands can contain them (like "rotation-center")
+			specialtokens = ":{}+\n;";
 		}
 
 		#endregion
@@ -187,7 +190,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 								if(mds.Frames.ContainsKey(targetsprite))
 								{
 									// Create model data
-									ModelData md = new ModelData { InheritActorPitch = mds.InheritActorPitch, UseActorPitch = mds.UseActorPitch, UseActorRoll = mds.UseActorRoll, Path = mds.DataPath };
+									ModelData md = new ModelData { InheritActorPitch = mds.InheritActorPitch, UseActorPitch = mds.UseActorPitch, UseActorRoll = mds.UseActorRoll, UseRotationCenter = mds.UseRotationCenter, RotationCenter = mds.RotationCenter, Path = mds.DataPath };
 
 									// Things are complicated in GZDoom...
 									Matrix moffset = Matrix.Translation(mds.Offset.Y, -mds.Offset.X, mds.Offset.Z);
@@ -200,7 +203,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 									foreach(var fs in mds.Frames[targetsprite])
 									{
 										// Sanity checks
-										if(fs.ModelIndex >= mds.ModelNames.Count || string.IsNullOrEmpty(mds.ModelNames[fs.ModelIndex]))
+										if (!mds.ModelNames.ContainsKey(fs.ModelIndex) || string.IsNullOrEmpty(mds.ModelNames[fs.ModelIndex]))
 										{
 											LogWarning("Model definition \"" + classname + "\", frame \"" + fs.SpriteName + " " + fs.FrameName + "\" references undefined model index " + fs.ModelIndex);
 											continue;

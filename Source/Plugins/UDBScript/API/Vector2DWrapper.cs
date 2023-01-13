@@ -127,7 +127,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(v, false);
+				Vector2D v1 = BuilderPlug.Me.GetVector3DFromObject(v);
 
 				_x = v1.x;
 				_y = v1.y;
@@ -169,12 +169,9 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 			{
 				try
 				{
-					object v = BuilderPlug.Me.GetVectorFromObject(rhs, true);
+					Vector2D v = BuilderPlug.Me.GetVector3DFromObject(rhs);
 
-					if (v is Vector2D)
-						return new Vector2DWrapper(lhs._x + ((Vector2D)v).x, lhs._y + ((Vector2D)v).y);
-					else
-						return new Vector2DWrapper(lhs._x + ((Vector3D)v).x, lhs._y + ((Vector3D)v).y);
+					return new Vector2DWrapper(lhs._x + v.x, lhs._y + v.y);
 				}
 				catch (CantConvertToVectorException e)
 				{
@@ -197,12 +194,9 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 			{
 				try
 				{
-					object v = BuilderPlug.Me.GetVectorFromObject(lhs, true);
+					Vector2D v = BuilderPlug.Me.GetVector3DFromObject(lhs);
 
-					if (v is Vector2D)
-						return new Vector2DWrapper(((Vector2D)v).x + rhs._x, ((Vector2D)v).y + rhs._y);
-					else
-						return new Vector2DWrapper(((Vector3D)v).x + rhs._x, ((Vector3D)v).y + rhs._y);
+					return new Vector2DWrapper(v.x + rhs._x, v.y + rhs._y);
 				}
 				catch (CantConvertToVectorException e)
 				{
@@ -226,12 +220,9 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 
 			try
 			{
-				object v = BuilderPlug.Me.GetVectorFromObject(rhs, true);
+				Vector2D v = BuilderPlug.Me.GetVector3DFromObject(rhs);
 
-				if (v is Vector2D)
-					return new Vector2DWrapper(lhs._x - ((Vector2D)v).x, lhs._y - ((Vector2D)v).y);
-				else
-					return new Vector2DWrapper(lhs._x - ((Vector3D)v).x, lhs._y - ((Vector3D)v).y);
+				return new Vector2DWrapper(lhs._x - v.x, lhs._y - v.y);
 			}
 			catch (CantConvertToVectorException e)
 			{
@@ -246,12 +237,9 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 
 			try
 			{
-				object v = BuilderPlug.Me.GetVectorFromObject(lhs, true);
+				Vector2D v = BuilderPlug.Me.GetVector3DFromObject(lhs);
 
-				if (v is Vector2D)
-					return new Vector2DWrapper(((Vector2D)v).x - rhs._x, ((Vector2D)v).y - rhs._y);
-				else
-					return new Vector2DWrapper(((Vector3D)v).x - rhs._x, ((Vector3D)v).y - rhs._y);
+				return new Vector2DWrapper(v.x - rhs._x, v.y - rhs._y);
 			}
 			catch (CantConvertToVectorException e)
 			{
@@ -275,12 +263,9 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 
 			try
 			{
-				object v = BuilderPlug.Me.GetVectorFromObject(rhs, true);
+				Vector2D v = BuilderPlug.Me.GetVector3DFromObject(rhs);
 
-				if (v is Vector2D)
-					return new Vector2DWrapper(lhs._x * ((Vector2D)v).x, lhs._y * ((Vector2D)v).y);
-				else
-					return new Vector2DWrapper(lhs._x * ((Vector3D)v).x, lhs._y * ((Vector3D)v).y);
+				return new Vector2DWrapper(lhs._x * v.x, lhs._y * v.y);
 			}
 			catch (CantConvertToVectorException e)
 			{
@@ -295,12 +280,9 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 
 			try
 			{
-				object v = BuilderPlug.Me.GetVectorFromObject(lhs, true);
+				Vector2D v = BuilderPlug.Me.GetVector3DFromObject(lhs);
 
-				if (v is Vector2D)
-					return new Vector2DWrapper(((Vector2D)v).x * rhs._x, ((Vector2D)v).y * rhs._y);
-				else
-					return new Vector2DWrapper(((Vector3D)v).x * rhs._x, ((Vector3D)v).y * rhs._y);
+				return new Vector2DWrapper(v.x * rhs._x, v.y * rhs._y);
 			}
 			catch (CantConvertToVectorException e)
 			{
@@ -319,12 +301,9 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 
 			try
 			{
-				object v = BuilderPlug.Me.GetVectorFromObject(rhs, true);
+				Vector2D v = BuilderPlug.Me.GetVector3DFromObject(rhs);
 
-				if (v is Vector2D)
-					return new Vector2DWrapper(lhs._x / ((Vector2D)v).x, lhs._y / ((Vector2D)v).y);
-				else
-					return new Vector2DWrapper(lhs._x / ((Vector3D)v).x, lhs._y / ((Vector3D)v).y);
+				return new Vector2DWrapper(lhs._x / v.x, lhs._y / v.y);
 			}
 			catch (CantConvertToVectorException e)
 			{
@@ -339,12 +318,9 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 
 			try
 			{
-				object v = BuilderPlug.Me.GetVectorFromObject(lhs, true);
+				Vector2D v = BuilderPlug.Me.GetVector3DFromObject(lhs);
 
-				if (v is Vector2D)
-					return new Vector2DWrapper(((Vector2D)v).x / rhs._x, ((Vector2D)v).y / rhs._y);
-				else
-					return new Vector2DWrapper(((Vector3D)v).x / rhs._x, ((Vector3D)v).y / rhs._y);
+				return new Vector2DWrapper(v.x / rhs._x, v.y / rhs._y);
 			}
 			catch (CantConvertToVectorException e)
 			{
@@ -360,7 +336,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(rhs, false);
+				Vector2D v1 = BuilderPlug.Me.GetVector3DFromObject(rhs);
 				return (lhs._x == v1.x) && (lhs._y == v1.y);
 			}
 			catch (CantConvertToVectorException e)
@@ -373,7 +349,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(lhs, false);
+				Vector2D v1 = BuilderPlug.Me.GetVector3DFromObject(lhs);
 				return (v1.x == rhs._x) && (v1.y == rhs._y);
 			}
 			catch (CantConvertToVectorException e)
@@ -386,7 +362,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(rhs, false);
+				Vector2D v1 = BuilderPlug.Me.GetVector3DFromObject(rhs);
 				return (lhs._x != v1.x) || (lhs._y != v1.y);
 			}
 			catch (CantConvertToVectorException e)
@@ -399,7 +375,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(lhs, false);
+				Vector2D v1 = BuilderPlug.Me.GetVector3DFromObject(lhs);
 				return (v1.x != rhs._x) || (v1.y != rhs._y);
 			}
 			catch (CantConvertToVectorException e)
@@ -436,8 +412,8 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D a1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(a, false);
-				Vector2D b1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(b, false);
+				Vector2D a1 = BuilderPlug.Me.GetVector3DFromObject(a);
+				Vector2D b1 = BuilderPlug.Me.GetVector3DFromObject(b);
 
 				return new Vector2DWrapper(a1.y * b1.x, a1.x * b1.y);
 			}
@@ -457,8 +433,8 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(v, false);
-				Vector2D m1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(m, false);
+				Vector2D v1 = BuilderPlug.Me.GetVector3DFromObject(v);
+				Vector2D m1 = BuilderPlug.Me.GetVector3DFromObject(m);
 
 				Vector2D mv = Vector2D.Reflect(v1, m1);
 
@@ -479,7 +455,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D v1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(v, false);
+				Vector2D v1 = BuilderPlug.Me.GetVector3DFromObject(v);
 
 				return new Vector2DWrapper(Vector2D.Reversed(v1));
 			}
@@ -519,8 +495,8 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D a1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(a, false);
-				Vector2D b1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(b, false);
+				Vector2D a1 = BuilderPlug.Me.GetVector3DFromObject(a);
+				Vector2D b1 = BuilderPlug.Me.GetVector3DFromObject(b);
 
 				return Vector2D.GetAngle(a1, b1);
 			}
@@ -540,8 +516,8 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D a1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(a, false);
-				Vector2D b1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(b, false);
+				Vector2D a1 = BuilderPlug.Me.GetVector3DFromObject(a);
+				Vector2D b1 = BuilderPlug.Me.GetVector3DFromObject(b);
 
 				return Angle2D.RadToDeg(Vector2D.GetAngle(a1, b1));
 			}
@@ -561,8 +537,8 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D a1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(a, false);
-				Vector2D b1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(b, false);
+				Vector2D a1 = BuilderPlug.Me.GetVector3DFromObject(a);
+				Vector2D b1 = BuilderPlug.Me.GetVector3DFromObject(b);
 
 				return Vector2D.DistanceSq(a1, b1);
 			}
@@ -582,8 +558,8 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		{
 			try
 			{
-				Vector2D a1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(a, false);
-				Vector2D b1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(b, false);
+				Vector2D a1 = BuilderPlug.Me.GetVector3DFromObject(a);
+				Vector2D b1 = BuilderPlug.Me.GetVector3DFromObject(b);
 
 				return Vector2D.Distance(a1, b1);
 			}

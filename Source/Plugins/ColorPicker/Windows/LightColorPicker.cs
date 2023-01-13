@@ -218,7 +218,7 @@ namespace CodeImp.DoomBuilder.ColorPicker.Windows
 				//update color 
 				if(colorChanged) //need this check to allow relative mode to work properly
 				{ 
-                    if (t.DynamicLightType.LightType == GZGeneral.LightType.SPOT)
+                    if (t.DynamicLightType.LightType == GZGeneral.LightType.SPOT || t.DynamicLightType.LightType == GZGeneral.LightType.SUN)
                     {
                         int c = ((int)lightProps.Red << 16) | ((int)lightProps.Green << 8) | lightProps.Blue;
                         t.Args[0] = 0;
@@ -323,8 +323,7 @@ namespace CodeImp.DoomBuilder.ColorPicker.Windows
 		{
 			General.Map.UndoRedo.CreateUndo(description);
 
-			//tricky way to actually store undo information...
-			foreach(Thing t in selection) t.Move(t.Position);
+			foreach (Thing t in selection) t.Fields.BeforeFieldsChange();
 		}
 
 		//this is called only once
@@ -332,7 +331,7 @@ namespace CodeImp.DoomBuilder.ColorPicker.Windows
 		{
 			if (thing.DynamicLightType.LightDef == GZGeneral.LightDef.VAVOOM_GENERIC) return Color.White; //vavoom light
 			if (thing.DynamicLightType.LightDef == GZGeneral.LightDef.VAVOOM_COLORED) return Color.FromArgb((byte)thing.Args[1], (byte)thing.Args[2], (byte)thing.Args[3]); //vavoom colored light
-            if (thing.DynamicLightType.LightType == GZGeneral.LightType.SPOT)
+            if (thing.DynamicLightType.LightType == GZGeneral.LightType.SPOT || thing.DynamicLightType.LightType == GZGeneral.LightType.SUN)
             {
                 if (thing.Fields.ContainsKey("arg0str"))
                 {

@@ -331,9 +331,15 @@ namespace CodeImp.DoomBuilder.BuilderModes
 			Vector2D scaledPerpendicular = delta.GetPerpendicular().GetNormal().GetScaled(18f / renderer.Scale);
 			renderer.RenderLine(middlePoint, new Vector2D(middlePoint.x - scaledPerpendicular.x, middlePoint.y - scaledPerpendicular.y), LINE_THICKNESS, color, true);
 		}
-		
+
 		// This returns the aligned and snapped draw position
 		public static DrawnVertex GetCurrentPosition(Vector2D mousemappos, bool snaptonearest, bool snaptogrid, bool snaptocardinal, bool usefourcardinaldirections, IRenderer2D renderer, List<DrawnVertex> points)
+		{
+			return GetCurrentPosition(mousemappos, snaptonearest, snaptogrid, snaptocardinal, usefourcardinaldirections, renderer, points, null);
+		}
+
+		// This returns the aligned and snapped draw position
+		public static DrawnVertex GetCurrentPosition(Vector2D mousemappos, bool snaptonearest, bool snaptogrid, bool snaptocardinal, bool usefourcardinaldirections, IRenderer2D renderer, List<DrawnVertex> points, BlockMap<BlockEntry> blockmap)
 		{
 			DrawnVertex p = new DrawnVertex();
 			p.stitch = true; //mxd. Setting these to false seems to be a good way to create invalid geometry...
@@ -380,8 +386,22 @@ namespace CodeImp.DoomBuilder.BuilderModes
 					}
 				}
 
+				List<Vertex> vertices = new List<Vertex>();
+				Vertex nv = null;
+
+				// If we got a blockmap get the veritces that are in range only
+				if (blockmap != null)
+				{
+					HashSet<BlockEntry> blocks = blockmap.GetSquareRange(vm.x - vrange, vm.y - vrange, vrange * 2, vrange * 2);
+					foreach (BlockEntry be in blocks)
+						vertices.AddRange(be.Vertices);
+
+					nv = MapSet.NearestVertexSquareRange(vertices, vm, vrange);
+				}
+				else
+					nv = General.Map.Map.NearestVertexSquareRange(vm, vrange);
+
 				// Try the nearest vertex
-				Vertex nv = General.Map.Map.NearestVertexSquareRange(vm, vrange);
 				if(nv != null)
 				{
 					//mxd. Line angle must stay the same
@@ -402,7 +422,7 @@ namespace CodeImp.DoomBuilder.BuilderModes
 				}
 
 				// Try the nearest linedef. mxd. We'll need much bigger stitch distance when snapping to cardinal directions
-				Linedef nl = General.Map.Map.NearestLinedefRange(vm, BuilderPlug.Me.StitchRange / renderer.Scale);
+				Linedef nl = blockmap != null ? MapSet.NearestLinedefRange(blockmap, vm, BuilderPlug.Me.StitchRange / renderer.Scale) : General.Map.Map.NearestLinedefRange(vm, BuilderPlug.Me.StitchRange / renderer.Scale);
 				if(nl != null)
 				{
 					//mxd. Line angle must stay the same

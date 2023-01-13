@@ -39,6 +39,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 		#region ================== Variables
 
 		private readonly Dictionary<string, TextureStructure> textures;
+		private readonly Dictionary<string, TextureStructure> walltextures;
 		private readonly Dictionary<string, TextureStructure> flats;
 		private readonly Dictionary<string, TextureStructure> sprites;
 		private readonly char[] pathtrimchars = {'_', '.', ' ', '-'}; //mxd
@@ -50,6 +51,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 		internal override ScriptType ScriptType { get { return ScriptType.TEXTURES; } } //mxd
 		
 		public IEnumerable<TextureStructure> Textures { get { return textures.Values; } }
+		public IEnumerable<TextureStructure> WallTextures { get { return walltextures.Values; } }
 		public IEnumerable<TextureStructure> Flats { get { return flats.Values; } }
 		public IEnumerable<TextureStructure> Sprites { get { return sprites.Values; } }
 		
@@ -66,6 +68,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 
 			// Initialize
 			textures = new Dictionary<string, TextureStructure>(StringComparer.Ordinal);
+			walltextures = new Dictionary<string, TextureStructure>(StringComparer.Ordinal);
 			flats = new Dictionary<string, TextureStructure>(StringComparer.Ordinal);
 			sprites = new Dictionary<string, TextureStructure>(StringComparer.Ordinal);
 		}
@@ -115,7 +118,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 						case "texture":
 						{
 							// Read texture structure
-							TextureStructure tx = new TextureStructure(this, "texture", virtualpath);
+							TextureStructure tx = new TextureStructure(this, TextureNamespace.TEXTURE, virtualpath);
 							if(this.HasError) return false;
 
 							// if a limit for the texture name length is set make sure that it's not exceeded
@@ -141,7 +144,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 						case "sprite":
 						{
 							// Read sprite structure
-							TextureStructure tx = new TextureStructure(this, "sprite", virtualpath);
+							TextureStructure tx = new TextureStructure(this, TextureNamespace.SPRITE, virtualpath);
 							if(this.HasError) return false;
 
 							//mxd. Sprite name length must be either 6 or 8 chars
@@ -166,7 +169,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 						case "walltexture":
 						{
 							// Read walltexture structure
-							TextureStructure tx = new TextureStructure(this, "walltexture", virtualpath);
+							TextureStructure tx = new TextureStructure(this, TextureNamespace.WALLTEXTURE, virtualpath);
 							if(this.HasError) return false;
 
 							// if a limit for the walltexture name length is set make sure that it's not exceeded
@@ -184,15 +187,15 @@ namespace CodeImp.DoomBuilder.ZDoom
 							}
 
 							// Add the walltexture
-							if(!textures.ContainsKey(tx.Name) || (textures[tx.Name].TypeName != "texture"))
-								textures[tx.Name] = tx;
+							if(!walltextures.ContainsKey(tx.Name) /*|| (walltextures[tx.Name].TypeName != "texture") */)
+									walltextures[tx.Name] = tx;
 						}
 						break;
 
 						case "flat":
 						{
 							// Read flat structure
-							TextureStructure tx = new TextureStructure(this, "flat", virtualpath);
+							TextureStructure tx = new TextureStructure(this, TextureNamespace.FLAT, virtualpath);
 							if(this.HasError) return false;
 
 							// if a limit for the flat name length is set make sure that it's not exceeded
@@ -210,7 +213,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 							}
 
 							// Add the flat
-							if(!flats.ContainsKey(tx.Name) || (flats[tx.Name].TypeName != "texture"))
+							if(!flats.ContainsKey(tx.Name) /*|| (flats[tx.Name].TypeName != "texture") */)
 								flats[tx.Name] = tx;
 						}
 						break;
@@ -249,6 +252,16 @@ namespace CodeImp.DoomBuilder.ZDoom
 			
 			// Return true when no errors occurred
 			return (ErrorDescription == null);
+		}
+
+		public List<TextureStructure> GetMixedWallTextures()
+		{
+			Dictionary<string, TextureStructure> images = new Dictionary<string, TextureStructure>(walltextures);
+
+			foreach(string s in textures.Keys)
+				images[s] = textures[s];
+
+			return new List<TextureStructure>(images.Values);
 		}
 		
 		#endregion

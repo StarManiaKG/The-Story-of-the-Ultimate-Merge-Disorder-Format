@@ -429,7 +429,8 @@ namespace CodeImp.DoomBuilder.Map
 			flatvertices.CopyTo(updateinfo.floorvertices, 0);
 			General.Plugins.OnSectorFloorSurfaceUpdate(this, ref updateinfo.floorvertices);
 			updateinfo.floortexture = longfloortexname;
-			
+			updateinfo.desaturation = this.Desaturation;
+
 			// Update entry
 			General.Map.CRenderer2D.Surfaces.UpdateSurfaces(surfaceentries, updateinfo);
 			General.Map.CRenderer2D.Surfaces.UnlockBuffers();

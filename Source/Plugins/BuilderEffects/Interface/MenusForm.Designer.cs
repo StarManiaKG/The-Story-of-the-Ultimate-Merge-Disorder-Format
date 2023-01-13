@@ -32,8 +32,8 @@
 			this.menujitter = new System.Windows.Forms.ToolStripMenuItem();
 			this.menusectorflatshading = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip = new System.Windows.Forms.ToolStrip();
-			this.buttonjitter = new System.Windows.Forms.ToolStripButton();
-			this.buttonsectorflatshading = new System.Windows.Forms.ToolStripButton();
+			this.buttonjitter = new CodeImp.DoomBuilder.Controls.ToolStripActionButton();
+			this.buttonsectorflatshading = new CodeImp.DoomBuilder.Controls.ToolStripActionButton();
 			this.menuStrip.SuspendLayout();
 			this.toolStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -151,10 +151,10 @@
 		private System.Windows.Forms.ToolStripMenuItem stripimport;
 		private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
 		private System.Windows.Forms.ToolStrip toolStrip;
-		private System.Windows.Forms.ToolStripButton buttonjitter;
+		private CodeImp.DoomBuilder.Controls.ToolStripActionButton buttonjitter;
 		private System.Windows.Forms.ToolStripMenuItem stripmodes;
 		private System.Windows.Forms.ToolStripMenuItem menujitter;
 		private System.Windows.Forms.ToolStripMenuItem menusectorflatshading;
-		private System.Windows.Forms.ToolStripButton buttonsectorflatshading;
+		private CodeImp.DoomBuilder.Controls.ToolStripActionButton buttonsectorflatshading;
 	}
 }

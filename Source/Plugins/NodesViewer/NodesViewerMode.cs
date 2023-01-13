@@ -4,12 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using CodeImp.DoomBuilder.Editing;
 using CodeImp.DoomBuilder.Geometry;
+using CodeImp.DoomBuilder.Map;
 using CodeImp.DoomBuilder.Rendering;
 using CodeImp.DoomBuilder.Windows;
-using CodeImp.DoomBuilder.Map;
 
 #endregion
 
@@ -51,6 +53,8 @@ namespace CodeImp.DoomBuilder.Plugins.NodesViewer
 		public Vector2D[] Vertices { get { return verts; } }
 		public Subsector[] Subsectors { get { return ssectors; } }
 		public NodesForm Form { get { return form; } }
+		
+		public override bool AlwaysShowVertices { get { return true;  } }
 
 		#endregion
 
@@ -90,12 +94,37 @@ namespace CodeImp.DoomBuilder.Plugins.NodesViewer
 		/// </summary>
 		private bool LoadClassicStructures()
 		{
+			List<byte[]> unsupportedheaders = new List<byte[]>() { Encoding.ASCII.GetBytes("ZNOD"), Encoding.ASCII.GetBytes("XNOD") };
+
 			// Load the nodes structure
 			MemoryStream nodesstream = General.Map.GetLumpData("NODES");
+
+			if(nodesstream.Length < 4)
+			{
+				MessageBox.Show("The NODES lump is too short.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				General.Editing.CancelMode();
+				return false;
+			}
+
+			BinaryReader nodesreader = new BinaryReader(nodesstream);
+
+			// Compare the byte arrays. We can't do it by comparing strings, since the data read from the NODES
+			// lump might be interpreted as some UTF value. See https://github.com/jewalky/UltimateDoomBuilder/issues/827
+			byte[] header = nodesreader.ReadBytes(4);
+			if(unsupportedheaders.Where(e => Enumerable.SequenceEqual(e, header)).Any())
+			{
+				MessageBox.Show("ZDBSP compressed nodes are currently not supported.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				General.Editing.CancelMode();
+				return false;
+			}
+
+			// Rewind stream position
+			nodesreader.BaseStream.Position = 0;
+
 			int numnodes = (int)nodesstream.Length / 28;
 
 			//mxd. Boilerplate!
-			if(numnodes < 1)
+			if (numnodes < 1)
 			{
 				// Cancel mode
 				MessageBox.Show("The map has only one subsector. Please add more sectors, then try running this mode again.", "THY NODETH ARETH BROKH!", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -103,7 +132,7 @@ namespace CodeImp.DoomBuilder.Plugins.NodesViewer
 				return false;
 			}
 
-			BinaryReader nodesreader = new BinaryReader(nodesstream);
+			
 			nodes = new Node[numnodes];
 			for(int i = 0; i < nodes.Length; i++)
 			{
@@ -837,6 +866,14 @@ namespace CodeImp.DoomBuilder.Plugins.NodesViewer
 			//mxd
 			if(haveZnodes) 
 			{
+				// For whatever reason ZDBSP reorders the vertices when building the nodes, so if the map was modified in UDB
+				// and then the Nodes Viewer is engaged the vertices in the ZNODES are not the same, resulting in an incorrect
+				// view or even a crash.
+				// See https://github.com/jewalky/UltimateDoomBuilder/issues/659
+				General.Interface.DisplayStatus(StatusType.Warning, "ZNODES are currently not supported.");
+				General.Editing.CancelMode();
+				return;
+
 				General.Interface.DisplayStatus(StatusType.Busy, "Reading map nodes...");
 				if(!LoadZNodes()) 
 				{

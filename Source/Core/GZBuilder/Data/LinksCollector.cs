@@ -579,6 +579,14 @@ namespace CodeImp.DoomBuilder.GZBuilder.Data
                         color = new PixelColor((byte)linealpha, (byte)t.Args[1], (byte)t.Args[2], (byte)t.Args[3]);
                         break;
 
+					case GZGeneral.LightDef.POINT_STATIC:
+						// ZDRay static lights have an intensity that's set through the thing's alpha value
+						double intensity = t.Fields.GetValue("alpha", 1.0);
+						byte r = (byte)General.Clamp(t.Args[0] * intensity, 0.0, 255.0);
+						byte g = (byte)General.Clamp(t.Args[1] * intensity, 0.0, 255.0);
+						byte b = (byte)General.Clamp(t.Args[2] * intensity, 0.0, 255.0);
+						color = new PixelColor((byte)linealpha, r, g, b);
+						break;
                     default:
                         color = new PixelColor((byte)linealpha, (byte)t.Args[0], (byte)t.Args[1], (byte)t.Args[2]);
                         break;
@@ -612,6 +620,20 @@ namespace CodeImp.DoomBuilder.GZBuilder.Data
                 color.a = (byte)linealpha;
             }
             else color = new PixelColor((byte)linealpha, (byte)((t.Args[0] & 0xFF0000) >> 16), (byte)((t.Args[0] & 0x00FF00) >> 8), (byte)((t.Args[0] & 0x0000FF)));
+
+			// ZDRay static lights have an intensity that's set through the thing's alpha value
+			if (t.DynamicLightType.LightDef == GZGeneral.LightDef.SPOT_STATIC)
+			{
+				double intensity = t.Fields.GetValue("alpha", 1.0);
+				if (intensity != 1.0)
+				{
+					byte r = (byte)General.Clamp(color.r * intensity, 0.0, 255.0);
+					byte g = (byte)General.Clamp(color.g * intensity, 0.0, 255.0);
+					byte b = (byte)General.Clamp(color.b * intensity, 0.0, 255.0);
+					color = new PixelColor((byte)linealpha, r, g, b);
+				}
+			}
+
 
             if (highlight)
             {
@@ -729,7 +751,7 @@ namespace CodeImp.DoomBuilder.GZBuilder.Data
             foreach (Thing t in things)
             {
                 GZGeneral.LightData ld = t.DynamicLightType;
-                if (ld == null) continue;
+                if (ld == null || ld.LightType == GZGeneral.LightType.SUN) continue;
 
                 if (ld.LightType != GZGeneral.LightType.SPOT)
                 {

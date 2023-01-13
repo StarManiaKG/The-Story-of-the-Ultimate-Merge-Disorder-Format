@@ -61,6 +61,9 @@ namespace CodeImp.DoomBuilder.Data
 
 		#region ================== Variables
 
+		// Optional setting
+		public bool Silent = false;
+
 		// Source
 		private WAD file;
 		private bool is_iwad;
@@ -89,7 +92,7 @@ namespace CodeImp.DoomBuilder.Data
 		#region ================== Constructor / Disposer
 
 		// Constructor
-		public WADReader(DataLocation dl, bool asreadonly) : base(dl, asreadonly)
+		public WADReader(DataLocation dl, GameConfiguration config, bool asreadonly) : base(dl, asreadonly)
 		{
 			General.WriteLogLine("Opening WAD resource \"" + location.location + "\"");
 
@@ -99,14 +102,14 @@ namespace CodeImp.DoomBuilder.Data
 			// Initialize
 			file = new WAD(location.location, asreadonly);
 			strictpatches = dl.option1;
-			Initialize(); //mxd
+			Initialize(config); //mxd
 
 			// We have no destructor
 			GC.SuppressFinalize(this);
 		}
 
 		//mxd. Constructor for temporary WAD files
-		internal WADReader(DataLocation dl, bool asreadonly, bool create) : base(dl, asreadonly)
+		internal WADReader(DataLocation dl, GameConfiguration config, bool asreadonly, bool create) : base(dl, asreadonly)
 		{
 			if(!create)
 			{
@@ -119,14 +122,14 @@ namespace CodeImp.DoomBuilder.Data
 			// Initialize
 			file = new WAD(location.location, asreadonly);
 			strictpatches = dl.option1;
-			Initialize();
+			Initialize(config);
 
 			// We have no destructor
 			GC.SuppressFinalize(this);
 		}
 
 		//mxd
-		private void Initialize()
+		private void Initialize(GameConfiguration config)
 		{
 			is_iwad = file.IsIWAD;
 			isreadonly |= file.IsReadOnly; // Just in case...
@@ -141,13 +144,13 @@ namespace CodeImp.DoomBuilder.Data
 			voxelranges = new List<LumpRange>(); //mxd
 			
 			// Find ranges
-			FindRanges(patchranges, General.Map.Config.PatchRanges, "patches", "Patch");
-			FindRanges(spriteranges, General.Map.Config.SpriteRanges, "sprites", "Sprite");
-			FindRanges(flatranges, General.Map.Config.FlatRanges, "flats", "Flat");
-			FindRanges(textureranges, General.Map.Config.TextureRanges, "textures", "Texture");
-			FindRanges(hiresranges, General.Map.Config.HiResRanges, "hires", "HiRes texture");
-			FindRanges(colormapranges, General.Map.Config.ColormapRanges, "colormaps", "Colormap");
-			FindRanges(voxelranges, General.Map.Config.VoxelRanges, "voxels", "Voxel");
+			FindRanges(config, patchranges, config.PatchRanges, "patches", "Patch");
+			FindRanges(config, spriteranges, config.SpriteRanges, "sprites", "Sprite");
+			FindRanges(config, flatranges, config.FlatRanges, "flats", "Flat");
+			FindRanges(config, textureranges, config.TextureRanges, "textures", "Texture");
+			FindRanges(config, hiresranges, config.HiResRanges, "hires", "HiRes texture");
+			FindRanges(config, colormapranges, config.ColormapRanges, "colormaps", "Colormap");
+			FindRanges(config, voxelranges, config.VoxelRanges, "voxels", "Voxel");
 
 			//mxd
 			invertedflatranges = new List<LumpRange>();
@@ -225,7 +228,7 @@ namespace CodeImp.DoomBuilder.Data
         }
 
         // This fills a ranges list
-        private void FindRanges(List<LumpRange> ranges, IDictionary rangeinfos, string rangename, string elementname)
+        private void FindRanges(GameConfiguration config, List<LumpRange> ranges, IDictionary rangeinfos, string rangename, string elementname)
 		{
 			Dictionary<LumpRange, KeyValuePair<string, string>> failedranges = new Dictionary<LumpRange, KeyValuePair<string, string>>(); //mxd
 			Dictionary<int, bool> successfulrangestarts = new Dictionary<int, bool>(); //mxd
@@ -234,8 +237,8 @@ namespace CodeImp.DoomBuilder.Data
 			foreach(DictionaryEntry r in rangeinfos)
 			{
 				// Read start and end
-				string rangestart = General.Map.Config.ReadSetting(rangename + "." + r.Key + ".start", "");
-				string rangeend = General.Map.Config.ReadSetting(rangename + "." + r.Key + ".end", "");
+				string rangestart = config.ReadSetting(rangename + "." + r.Key + ".start", "");
+				string rangeend = config.ReadSetting(rangename + "." + r.Key + ".end", "");
 				if((rangestart.Length > 0) && (rangeend.Length > 0))
 				{
 					// Find ranges
@@ -271,7 +274,7 @@ namespace CodeImp.DoomBuilder.Data
 				foreach(KeyValuePair<LumpRange, KeyValuePair<string, string>> group in failedranges)
 				{
 					if(successfulrangestarts.ContainsKey(group.Key.start)) continue;
-					General.ErrorLogger.Add(ErrorType.Warning, "\"" + group.Value.Key + "\" range at index " + group.Key.start + " is not closed in resource \"" + location.GetDisplayName() + "\" (\"" + group.Value.Value + "\" marker is missing).");
+					if (!Silent) General.ErrorLogger.Add(ErrorType.Warning, "\"" + group.Value.Key + "\" range at index " + group.Key.start + " is not closed in resource \"" + location.GetDisplayName() + "\" (\"" + group.Value.Value + "\" marker is missing).");
 				}
 
 				//mxd. Check duplicates
@@ -280,8 +283,10 @@ namespace CodeImp.DoomBuilder.Data
 					HashSet<string> names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 					for(int i = range.start + 1; i < range.end; i++)
 					{
-						if(names.Contains(file.Lumps[i].Name))
-							General.ErrorLogger.Add(ErrorType.Warning, elementname + " \"" + file.Lumps[i].Name + "\", index " + i + " is double defined in resource \"" + location.GetDisplayName() + "\".");
+						if (names.Contains(file.Lumps[i].Name))
+						{
+							if (!Silent) General.ErrorLogger.Add(ErrorType.Warning, elementname + " \"" + file.Lumps[i].Name + "\", index " + i + " is double defined in resource \"" + location.GetDisplayName() + "\".");
+						}
 						else
 							names.Add(file.Lumps[i].Name);
 					}
@@ -430,11 +435,11 @@ namespace CodeImp.DoomBuilder.Data
 			Lump lump = file.FindLump("TEXTURE1");
 			if(lump != null) 
 			{
-				LoadTextureSet("TEXTURE1", lump.GetSafeStream(), ref images, pnames);
+				LoadTextureSet("TEXTURE1", lump.GetSafeStream(), ref images, pnames, Silent);
 				if(images.Count > 0) images.RemoveAt(0); //mxd. The first TEXTURE1 texture cannot be used. Let's remove it here
 			}
 			lump = file.FindLump("TEXTURE2");
-			if(lump != null) LoadTextureSet("TEXTURE2", lump.GetSafeStream(), ref images, pnames);
+			if(lump != null) LoadTextureSet("TEXTURE2", lump.GetSafeStream(), ref images, pnames, Silent);
 			
 			// Read ranges from configuration
 			foreach(LumpRange range in textureranges)
@@ -454,7 +459,7 @@ namespace CodeImp.DoomBuilder.Data
 					else 
 					{
 						// Can't load image without size
-						General.ErrorLogger.Add(ErrorType.Error, "Can't load texture \"" + file.Lumps[i].Name + "\" from \"" + location.GetDisplayName() + "\" because it doesn't contain any data.");
+						if (!Silent) General.ErrorLogger.Add(ErrorType.Error, "Can't load texture \"" + file.Lumps[i].Name + "\" from \"" + location.GetDisplayName() + "\" because it doesn't contain any data.");
 					}
 				}
 			}
@@ -469,6 +474,9 @@ namespace CodeImp.DoomBuilder.Data
 				{
 					// Make the textures
 					foreach(TextureStructure t in cachedparsers[fullpath].Textures)
+						images.Add(t.MakeImage());
+
+					foreach (TextureStructure t in cachedparsers[fullpath].WallTextures)
 						images.Add(t.MakeImage());
 				}
 				else
@@ -509,7 +517,7 @@ namespace CodeImp.DoomBuilder.Data
 					else
 					{
 						// Can't load image without size
-						General.ErrorLogger.Add(ErrorType.Error, "Can't load HiRes texture \"" + file.Lumps[i].Name + "\" from \"" + location.GetDisplayName() + "\" because it doesn't contain any data.");
+						if (!Silent) General.ErrorLogger.Add(ErrorType.Error, "Can't load HiRes texture \"" + file.Lumps[i].Name + "\" from \"" + location.GetDisplayName() + "\" because it doesn't contain any data.");
 					}
 				}
 			}
@@ -525,12 +533,13 @@ namespace CodeImp.DoomBuilder.Data
 			parser.Parse(data, false);
 			if(parser.HasError) parser.LogError(); //mxd
 
-			// Make the textures
-			foreach(TextureStructure t in parser.Textures)
-			{
-				// Add the texture
+			// Make and add the textures
+			foreach (TextureStructure t in parser.Textures)
 				images.Add(t.MakeImage());
-			}
+
+			// Make and add the wall textures
+			foreach (TextureStructure t in parser.WallTextures)
+				images.Add(t.MakeImage());
 
 			//mxd. Add to text resources collection
 			if(!General.Map.Data.ScriptResources.ContainsKey(parser.ScriptType))
@@ -543,7 +552,7 @@ namespace CodeImp.DoomBuilder.Data
 		}
 		
 		// This loads a set of textures
-		public static void LoadTextureSet(string sourcename, Stream texturedata, ref List<ImageData> images, PatchNames pnames)
+		public static void LoadTextureSet(string sourcename, Stream texturedata, ref List<ImageData> images, PatchNames pnames, bool silent)
 		{
 			if(texturedata.Length == 0) return;
 			BinaryReader reader = new BinaryReader(texturedata);
@@ -604,7 +613,7 @@ namespace CodeImp.DoomBuilder.Data
 					else
 					{
 						// Can't load image without name
-						General.ErrorLogger.Add(ErrorType.Error, "Can't load an unnamed texture from \"" + sourcename + "\". Please consider giving names to your resources.");
+						if (!silent) General.ErrorLogger.Add(ErrorType.Error, "Can't load an unnamed texture from \"" + sourcename + "\". Please consider giving names to your resources.");
 					}
 					
 					// Go for all patches in texture
@@ -627,7 +636,7 @@ namespace CodeImp.DoomBuilder.Data
 							else
 							{
 								// Can't load image without name
-								General.ErrorLogger.Add(ErrorType.Error, "Can't use an unnamed patch referenced in \"" + sourcename + "\". Please consider giving names to your resources.");
+								if (!silent) General.ErrorLogger.Add(ErrorType.Error, "Can't use an unnamed patch referenced in \"" + sourcename + "\". Please consider giving names to your resources.");
 							}
 						}
 					}

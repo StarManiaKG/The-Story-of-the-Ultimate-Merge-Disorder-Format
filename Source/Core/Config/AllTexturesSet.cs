@@ -65,7 +65,7 @@ namespace CodeImp.DoomBuilder.Config
 		{
 			//mxd. Use short name when adding a texture with "classic" name to override same-named textures 
 			// with textures loaded from directory/pk3 containters
-			textures[image.DisplayName.Length > 8 ? image.Name : image.ShortName] = image;
+			textures[/*image.DisplayName.Length > 8 ?*/ image.Name /*: image.ShortName*/] = image;
 		}
 
 		internal void AddFlat(ImageData image)

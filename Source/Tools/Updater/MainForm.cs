@@ -13,6 +13,7 @@ using System.Threading;
 using System.Windows.Forms;
 using SharpCompress.Archives;
 using SharpCompress.Readers;
+using Microsoft.Win32;
 
 #endregion
 
@@ -34,6 +35,7 @@ namespace mxd.GZDBUpdater
 	    private static bool appclosing;
 	    private static MainForm me;
 		private const string MESSAGEBOX_TITLE = "Ultimate Doom Builder Updater";
+		private bool useInstaller = false;
 
 		#endregion
 
@@ -57,7 +59,17 @@ namespace mxd.GZDBUpdater
 
 		public MainForm()
         {
-            if(!CheckPremissions(Application.StartupPath))
+			// Check if we should use the installer or just unpack the update
+			string installLocation = (string)Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Ultimate Doom Builder", "Location", null);
+
+			if (installLocation != null)
+			{
+				string ourpath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+				if (ourpath == installLocation)
+					useInstaller = true;
+			}
+
+			if (!CheckPremissions(Application.StartupPath))
             {
                 ErrorDescription = "Update failed: your user account does not have write access to the destination folder \"" + Application.StartupPath + "\"\n\nMove the editor to a folder with write access,\nor run the updater as Administrator.";
                 InvokeClose();
@@ -109,21 +121,100 @@ namespace mxd.GZDBUpdater
 				return;
 			}
 
-			UpdateLabel(label1, "4/6: Decompressing package...");
-            Thread.Sleep(500);
-			if(!Unpack(updateFolder + downloadFile, Application.StartupPath))
+			// Rename the updater so that a new version can be written
+			UpdateLabel(label1, "4/6: Renaming updater...");
+			Thread.Sleep(500);
+			if(!RenameUpdater())
 			{
 				e.Cancel = true;
 				return;
 			}
 
+			// Install the update
+			if (useInstaller)
+			{
+				UpdateLabel(label1, "5/6: Running installer...");
+				Thread.Sleep(500);
+				if(!InstallUpdateWithInstaller())
+				{
+					e.Cancel = true;
+					return;
+				}
+			}
+			else
+			{
+				UpdateLabel(label1, "5/6: Decompressing package...");
+				Thread.Sleep(500);
+				if (!Unpack(updateFolder + downloadFile, Application.StartupPath))
+				{
+					e.Cancel = true;
+					return;
+				}
+			}
+
+			// This currently doesn't do anything, since the directory it tries to move the files
+			// from is empty (bar the update file)
+			/*
 			UpdateLabel(label1, "5/6: Moving files...");
             Thread.Sleep(500);
             MoveFiles();
+			*/
             
 			UpdateLabel(label1, "6/6: Wrapping up...");
             Thread.Sleep(500);
 			PostDownload();
+		}
+
+		private bool InstallUpdateWithInstaller()
+		{
+			Process process;
+
+			try
+			{
+				// Run the installer in silent mode. This will skip any user interaction (if possible)
+				process = Process.Start(updateFolder + downloadFile, "/silent");
+			}
+			catch (Exception ex)
+			{
+				ErrorDescription = $"Failed to run installer: {ex.Message}";
+				return false;
+			}
+
+			process.WaitForExit();
+
+			// Check if the installer ran successfully. See https://jrsoftware.org/ishelp/index.php?topic=setupexitcodes
+			if (process.ExitCode == 2)
+			{
+				ErrorDescription = "Installer aborted by the user.";
+				return false;
+			}
+			else if (process.ExitCode > 0)
+			{
+				ErrorDescription = $"Installer failed with exit code {process.ExitCode}.";
+				return false;
+			}
+
+			return true;
+		}
+
+		private bool RenameUpdater()
+		{
+			string ourname = Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName);
+			string movename = ourname + ".old";
+
+			try
+			{
+				if (File.Exists(movename))
+					File.Delete(movename);
+				File.Move(ourname, movename);
+			}
+			catch(Exception e)
+			{
+				ErrorDescription = $"Failed to rename updater from {ourname} to {movename}: {e.Message}";
+				return false;
+			}
+
+			return true;
 		}
 
 		private bool EditorClosed()
@@ -287,6 +378,7 @@ namespace mxd.GZDBUpdater
 		private bool LoadConfig(string filename)
 		{
 			string[] lines = File.ReadAllLines(filename);
+
 			foreach (string line in lines)
 			{
 				if(line.StartsWith("URL"))
@@ -298,9 +390,13 @@ namespace mxd.GZDBUpdater
 					appFileName = line.Substring(8).Trim();
 					processToEnd = Path.GetFileNameWithoutExtension(appFileName);
 				}
-				else if(line.StartsWith("UpdateName"))
+				else if(!useInstaller && line.StartsWith("UpdateName"))
 				{
 					downloadFile = line.Substring(10).Trim();
+				}
+				else if(useInstaller && line.StartsWith("InstallerName"))
+				{
+					downloadFile = line.Substring(13).Trim();
 				}
                 else if(line.StartsWith("Platform"))
                 {
@@ -355,7 +451,7 @@ namespace mxd.GZDBUpdater
 					while(reader.MoveToNextEntry())
 					{
 						if(appclosing) break;
-						if(reader.Entry.IsDirectory || Path.GetFileName(reader.Entry.Key) == ourname) continue; // Don't try to overrite ourselves...
+						// if(reader.Entry.IsDirectory || Path.GetFileName(reader.Entry.Key) == ourname) continue; // Don't try to overrite ourselves...
 						reader.WriteEntryToDirectory(unZipTo, options);
 						UpdateProgressBar(new ByteArgs { Downloaded = curentry++, Total = totalentries }, 1, 2);
 					}

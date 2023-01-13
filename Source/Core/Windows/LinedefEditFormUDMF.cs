@@ -218,8 +218,18 @@ namespace CodeImp.DoomBuilder.Windows
 			pfcBackScaleMid.LinkValues = General.Settings.ReadSetting("windows." + configname + ".linkbackmidscale", false);
 			pfcBackScaleBottom.LinkValues = General.Settings.ReadSetting("windows." + configname + ".linkbackbottomscale", false);
 
+			// Upper/middle/lower brightness of front sidedef
+			lightfrontupper.Setup(VisualModes.VisualGeometryType.WALL_UPPER);
+			lightfrontmiddle.Setup(VisualModes.VisualGeometryType.WALL_MIDDLE);
+			lightfrontlower.Setup(VisualModes.VisualGeometryType.WALL_LOWER);
+
+			// Upper/middle/lower brightness of back sidedef
+			lightbackupper.Setup(VisualModes.VisualGeometryType.WALL_UPPER);
+			lightbackmiddle.Setup(VisualModes.VisualGeometryType.WALL_MIDDLE);
+			lightbacklower.Setup(VisualModes.VisualGeometryType.WALL_LOWER);
+
 			// Disable top/mid/bottom texture offset controls?
-			if(!General.Map.Config.UseLocalSidedefTextureOffsets)
+			if (!General.Map.Config.UseLocalSidedefTextureOffsets)
 			{
 				pfcFrontOffsetTop.Enabled = false;
 				pfcFrontOffsetMid.Enabled = false;
@@ -349,6 +359,11 @@ namespace CodeImp.DoomBuilder.Windows
 				cbLightAbsoluteFront.Checked = fl.Front.Fields.GetValue("lightabsolute", false);
 
 				frontTextureOffset.SetValues(fl.Front.OffsetX, fl.Front.OffsetY, true); //mxd
+
+				// Upper/middle/lower brightness of front sidedef
+				lightfrontupper.SetValues(fl.Front, true);
+				lightfrontmiddle.SetValues(fl.Front, true);
+				lightfrontlower.SetValues(fl.Front, true);
 			}
 
 			// Back settings
@@ -374,6 +389,11 @@ namespace CodeImp.DoomBuilder.Windows
 				cbLightAbsoluteBack.Checked = fl.Back.Fields.GetValue("lightabsolute", false);
  
 				backTextureOffset.SetValues(fl.Back.OffsetX, fl.Back.OffsetY, true); //mxd
+
+				// Upper/middle/lower brightness of back sidedef
+				lightbackupper.SetValues(fl.Back, true);
+				lightbackmiddle.SetValues(fl.Back, true);
+				lightbacklower.SetValues(fl.Back, true);
 			}
 
 			////////////////////////////////////////////////////////////////////////
@@ -381,7 +401,7 @@ namespace CodeImp.DoomBuilder.Windows
 			////////////////////////////////////////////////////////////////////////
 
 			// Go for all lines
-			foreach(Linedef l in lines)
+			foreach (Linedef l in lines)
 			{
 				// Flags
 				foreach(CheckBox c in flags.Checkboxes)
@@ -515,6 +535,11 @@ namespace CodeImp.DoomBuilder.Windows
 					}
 
 					frontTextureOffset.SetValues(l.Front.OffsetX, l.Front.OffsetY, false); //mxd
+
+					// Upper/middle/lower brightness of front sidedef
+					lightfrontupper.SetValues(l.Front, false);
+					lightfrontmiddle.SetValues(l.Front, false);
+					lightfrontlower.SetValues(l.Front, false);
 				}
 
 				// Back settings
@@ -570,6 +595,11 @@ namespace CodeImp.DoomBuilder.Windows
 					}
 
 					backTextureOffset.SetValues(l.Back.OffsetX, l.Back.OffsetY, false); //mxd
+
+					// Upper/middle/lower brightness of back sidedef
+					lightbackupper.SetValues(l.Back, false);
+					lightbackmiddle.SetValues(l.Back, false);
+					lightbacklower.SetValues(l.Back, false);
 				}
 
 				//mxd
@@ -598,10 +628,20 @@ namespace CodeImp.DoomBuilder.Windows
 			resetfrontlight.Visible = (cbLightAbsoluteFront.CheckState != CheckState.Unchecked || lightFront.GetResult(0) != 0);
 			resetbacklight.Visible = (cbLightAbsoluteBack.CheckState != CheckState.Unchecked || lightBack.GetResult(0) != 0);
 			if(alpha.Text == "1") resetalpha.Visible = false;
+
+			// Upper/middle/lower brightness of front sidedef
+			lightfrontupper.FinalizeSetup();
+			lightfrontmiddle.FinalizeSetup();
+			lightfrontlower.FinalizeSetup();
+
+			// Upper/middle/lower brightness of back sidedef
+			lightbackupper.FinalizeSetup();
+			lightbackmiddle.FinalizeSetup();
+			lightbacklower.FinalizeSetup();
 		}
 
 		//mxd
-		private void MakeUndo() 
+		public void MakeUndo() 
 		{
 			if(undocreated) return;
 			undocreated = true;
@@ -654,6 +694,14 @@ namespace CodeImp.DoomBuilder.Windows
 				foreach (CheckBox c in udmfactivates.Checkboxes)
 					c.ForeColor = SystemColors.ControlText;
 			}
+		}
+
+		/// <summary>
+		/// Runs the OnValuesChanged event. Use after updating properties from other controls.
+		/// </summary>
+		public void ValuesChangedExternal()
+		{
+			OnValuesChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		#endregion
@@ -1952,9 +2000,8 @@ namespace CodeImp.DoomBuilder.Windows
 			if(OnValuesChanged != null) OnValuesChanged(this, EventArgs.Empty);
 		}
 
-			#endregion
-
 		#endregion
 
+		#endregion
 	}
 }

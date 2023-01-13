@@ -196,9 +196,20 @@ namespace CodeImp.DoomBuilder.Dehacked
 			string line = datareader.ReadLine();
 
 			if (line != null)
-				return line.Trim();
-			else
-				return null;
+			{
+				line = line.Trim();
+
+				// Editor key?
+				if (line.StartsWith("#$"))
+					return line;
+
+				// Cut everything from the line after a #, unless it's the "ID #" field, then cut everything after then next #
+				// This is technically against the (nowhere officially defined) DeHackEd specs, but of course people manually
+				// added comments at the end of lines anyway and got away with it
+				return Regex.Replace(line, @"\s*(id\s+#)?([^#]*)(#[^$].+)?", "$1$2", RegexOptions.IgnoreCase).Trim();
+			}
+
+			return null;
 		}
 
 		/// <summary>
@@ -389,7 +400,7 @@ namespace CodeImp.DoomBuilder.Dehacked
 		{
 			// Thing headers have the format "Thing <thingnumber> (<thingname>)". Note that "thingnumber" is not the
 			// DoomEdNum, but the Dehacked thing number
-			Regex re = new Regex(@"thing\s+(\d+)\s+\((.+)\)", RegexOptions.IgnoreCase);
+			Regex re = new Regex(@"thing\s+(\d+)(\s+\((.+)\))?", RegexOptions.IgnoreCase);
 			Match m = re.Match(line);
 
 			if (!m.Success)
@@ -399,7 +410,7 @@ namespace CodeImp.DoomBuilder.Dehacked
 			}
 
 			int dehthingnumber = int.Parse(m.Groups[1].Value);
-			string dehthingname = m.Groups[2].Value;
+			string dehthingname = string.IsNullOrWhiteSpace(m.Groups[3].Value) ? "<DeHackEd thing " + dehthingnumber + ">" : m.Groups[3].Value;
 			string fieldkey = string.Empty;
 			string fieldvalue = string.Empty;
 

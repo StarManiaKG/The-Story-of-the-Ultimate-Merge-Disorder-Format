@@ -33,6 +33,7 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		// When this is 0, it takes the color from the sector above
 		public int brightnessbelow;
 		public PixelColor colorbelow;
+		public PixelColor d64color; // own color of the plane
 		public bool disablelighting; //mxd
 		public bool restrictlighting; //mxd
 		public bool resetlighting; //mxd
@@ -66,6 +67,7 @@ namespace CodeImp.DoomBuilder.BuilderModes
 			target.color = this.color;
 			target.brightnessbelow = this.brightnessbelow;
 			target.colorbelow = this.colorbelow;
+			target.d64color = this.d64color;
 			target.affectedbyglow = this.affectedbyglow; //mxd
 			target.disablelighting = this.disablelighting; //mxd
 			target.restrictlighting = this.restrictlighting; //mxd

@@ -3,17 +3,7 @@
 ## Constructors
 
 ---
-### Vector3D(v)
-Creates a new `Vector3D` from a point.
-
-```js
-let v = new UDB.Vector3D([ 32, 64, 128 ]);
-```
-#### Parameters
-* v: The vector to create the `Vector3D` from
-
----
-### Vector3D(x, y, z)
+### Vector3D(x: double, y: double, z: double)
 Creates a new `Vector3D` from x and y coordinates
 
 ```js
@@ -23,10 +13,20 @@ let v = new UDB.Vector3D(32, 64, 128);
 * x: The x coordinate
 * y: The y coordinate
 * z: The z coordinate
+
+---
+### Vector3D(v: object)
+Creates a new `Vector3D` from a point.
+
+```js
+let v = new UDB.Vector3D([ 32, 64, 128 ]);
+```
+#### Parameters
+* v: The vector to create the `Vector3D` from
 ## Static methods
 
 ---
-### crossProduct(a, b)
+### crossProduct(a: object, b: object)
 Returns the cross product of two `Vector3D`s.
 #### Parameters
 * a: First `Vector3D`
@@ -35,7 +35,7 @@ Returns the cross product of two `Vector3D`s.
 Cross product of the two vectors as `Vector3D`
 
 ---
-### dotProduct(a, b)
+### dotProduct(a: Vector3D, b: Vector3D)
 Returns the dot product of two `Vector3D`s.
 #### Parameters
 * a: First `Vector3D`
@@ -44,7 +44,7 @@ Returns the dot product of two `Vector3D`s.
 The dot product of the two vectors
 
 ---
-### fromAngleXY(angle)
+### fromAngleXY(angle: double)
 Creates a `Vector3D` from an angle in radians,
 #### Parameters
 * angle: Angle on the x/y axes in degrees
@@ -52,7 +52,7 @@ Creates a `Vector3D` from an angle in radians,
 Vector as `Vector3D`
 
 ---
-### fromAngleXYRad(angle)
+### fromAngleXYRad(angle: double)
 Creates a `Vector3D` from an angle in radians
 #### Parameters
 * angle: Angle on the x/y axes in radians
@@ -60,7 +60,7 @@ Creates a `Vector3D` from an angle in radians
 Vector as `Vector3D`
 
 ---
-### fromAngleXYZ(anglexy, anglez)
+### fromAngleXYZ(anglexy: double, anglez: double)
 Creates a `Vector3D` from two angles in degrees
 #### Parameters
 * anglexy: Angle on the x/y axes in radians
@@ -69,7 +69,7 @@ Creates a `Vector3D` from two angles in degrees
 Vector as `Vector3D`
 
 ---
-### fromAngleXYZRad(anglexy, anglez)
+### fromAngleXYZRad(anglexy: double, anglez: double)
 Creates a `Vector3D` from two angles in radians
 #### Parameters
 * anglexy: Angle on the x/y axes in radians
@@ -78,7 +78,7 @@ Creates a `Vector3D` from two angles in radians
 Vector as `Vector3D`
 
 ---
-### reflect(v, m)
+### reflect(v: object, m: object)
 Reflects a `Vector3D` over a mirror `Vector3D`.
 #### Parameters
 * v: `Vector3D` to reflect
@@ -87,7 +87,7 @@ Reflects a `Vector3D` over a mirror `Vector3D`.
 The reflected vector as `Vector3D`
 
 ---
-### reversed(v)
+### reversed(v: object)
 Returns a reversed `Vector3D`.
 #### Parameters
 * v: `Vector3D` to reverse
@@ -151,7 +151,7 @@ Returns the normal of the `Vector3D`.
 The normal as `Vector3D`
 
 ---
-### getScaled(scale)
+### getScaled(scale: double)
 Return the scaled `Vector3D`.
 #### Parameters
 * scale: Scale, where 1.0 is unscaled

@@ -17,6 +17,7 @@
 #region ================== Namespaces
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 #endregion
@@ -38,9 +39,10 @@ namespace CodeImp.DoomBuilder.Data
 		public bool option1;
 		public bool option2;
 		public bool notfortesting;
+		public List<string> requiredarchives;
 		
 		// Constructor
-		public DataLocation(int type, string location, bool option1, bool option2, bool notfortesting)
+		public DataLocation(int type, string location, bool option1, bool option2, bool notfortesting, List<string> requiredarchives)
 		{
 			// Initialize
 			this.type = type;
@@ -50,10 +52,11 @@ namespace CodeImp.DoomBuilder.Data
 			this.option2 = option2;
 			this.notfortesting = notfortesting;
 			this.name = string.Empty; //mxd
+			this.requiredarchives = requiredarchives;
 		}
 
 		//mxd. Constructor for WADs inside of PK3s
-		internal DataLocation(int type, string location, string initiallocation, bool option1, bool option2, bool notfortesting)
+		internal DataLocation(int type, string location, string initiallocation, bool option1, bool option2, bool notfortesting, List<string> requiredarchives)
 		{
 			// Initialize
 			this.type = type;
@@ -62,7 +65,8 @@ namespace CodeImp.DoomBuilder.Data
 			this.option1 = option1;
 			this.option2 = option2;
 			this.notfortesting = notfortesting;
-			this.name = string.Empty; 
+			this.name = string.Empty;
+			this.requiredarchives = requiredarchives;
 		}
 
 		// This displays the struct as string

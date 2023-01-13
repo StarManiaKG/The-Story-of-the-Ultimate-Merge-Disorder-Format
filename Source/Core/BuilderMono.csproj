@@ -160,6 +160,7 @@
     <Compile Include="Config\LinedefActivateInfo.cs" />
     <Compile Include="Config\ProgramConfiguration.cs" />
     <Compile Include="Config\SkillInfo.cs" />
+    <Compile Include="Config\RequiredArchive.cs" />
     <Compile Include="Config\StaticLimits.cs" />
     <Compile Include="Config\TagType.cs" />
     <Compile Include="Config\TextureSet.cs" />
@@ -183,6 +184,12 @@
     <Compile Include="Controls\ArgumentsControlSRB2.Designer.cs">
       <DependentUpon>ArgumentsControlSRB2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\CommandPaletteControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CommandPaletteControl.Designer.cs">
+      <DependentUpon>CommandPaletteControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ExternalCommandControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -194,6 +201,21 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\Scripting\TextEditorControl.cs" />
+    <Compile Include="Controls\SidedefPartLightControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\SidedefPartLightControl.Designer.cs">
+      <DependentUpon>SidedefPartLightControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ToastControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ToastControl.Designer.cs">
+      <DependentUpon>ToastControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ToolStripActionButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\TransparentTrackBar.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -218,6 +240,7 @@
     <Compile Include="Data\FlatImage.cs" />
     <Compile Include="Data\ImageLoadState.cs" />
     <Compile Include="General\SHA256Hash.cs" />
+    <Compile Include="General\ToastManager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -685,6 +708,9 @@
     <EmbeddedResource Include="Controls\ArgumentsControlSRB2.resx">
       <DependentUpon>ArgumentsControlSRB2.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CommandPaletteControl.resx">
+      <DependentUpon>CommandPaletteControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ExternalCommandControl.resx">
       <DependentUpon>ExternalCommandControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -693,6 +719,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\LinedefEditFormSRB2.resx">
       <DependentUpon>LinedefEditFormSRB2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\SidedefPartLightControl.resx">
+      <DependentUpon>SidedefPartLightControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ToastControl.resx">
+      <DependentUpon>ToastControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\PreAndPostCommandsForm.resx">
       <DependentUpon>PreAndPostCommandsForm.cs</DependentUpon>

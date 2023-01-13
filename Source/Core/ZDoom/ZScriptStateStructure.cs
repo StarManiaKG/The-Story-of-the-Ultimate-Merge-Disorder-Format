@@ -39,6 +39,7 @@ namespace CodeImp.DoomBuilder.ZDoom
             if (outs.Length > 0)
             {
                 ZScriptToken tok = new ZScriptToken();
+                tok.Position = cpos;
                 tok.Type = ZScriptTokenType.String;
                 tok.Value = outs;
                 return tok;

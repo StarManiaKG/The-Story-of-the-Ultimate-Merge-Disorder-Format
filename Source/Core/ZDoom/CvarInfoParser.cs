@@ -52,86 +52,88 @@ namespace CodeImp.DoomBuilder.ZDoom
 
 			// Continue until at the end of the stream
 			HashSet<string> knowntypes = new HashSet<string> { "int", "float", "color", "bool", "string" };
-			HashSet<string> flags = new HashSet<string> { "noarchive", "cheat", "latch" };
+			HashSet<string> flags = new HashSet<string> { "user", "server", "nosave", "noarchive", "cheat", "latch" };
 			while(SkipWhitespace(true))
 			{
 				string token = ReadToken().ToLowerInvariant();
 				if(string.IsNullOrEmpty(token)) continue;
 
-				//<scope> [noarchive] [cheat] [latch] <type> <name> [= <defaultvalue>];
-				switch(token)
+				// According to the ZDoom wikie (https://zdoom.org/wiki/CVARINFO) the format has to be
+				//   <scope> [noarchive] [cheat] [latch] <type> <name> [= <defaultvalue>];
+				// where <scope> is one of "user", "server", or "nosave". This it just the intended format, GZDoom actually
+				// accepts and combination of the scope variables (apparently for backwards compatibility), even when it
+				// doesn't make sense.
+				// See https://github.com/jewalky/UltimateDoomBuilder/issues/748
+
+				if (flags.Contains(token))
 				{
-					case "user":
-					case "server":
-					case "nosave":
-						// read (skip) flags
-						while(true)
-						{
-							string flagtoken;
+					// read (skip) flags
+					while (true)
+					{
+						string flagtoken;
 
-							SkipWhitespace(true);
-							flagtoken = ReadToken().ToLowerInvariant();
-
-							if(!flags.Contains(flagtoken))
-							{
-								DataStream.Seek(-flagtoken.Length - 1, SeekOrigin.Current);
-								break;
-							}
-						}
-
-						// Type
 						SkipWhitespace(true);
-						string type = ReadToken().ToLowerInvariant();
+						flagtoken = ReadToken().ToLowerInvariant();
 
-						if(!knowntypes.Contains(type))
+						if (!flags.Contains(flagtoken))
 						{
-							ReportError("Unknown cvar type");
-							return false;
+							DataStream.Seek(-flagtoken.Length - 1, SeekOrigin.Current);
+							break;
 						}
+					}
 
-						// Name
-						SkipWhitespace(true);
-						string name = ReadToken();
+					// Next should be the type
+					SkipWhitespace(true);
+					string type = ReadToken().ToLowerInvariant();
 
-						if(string.IsNullOrEmpty(name))
-						{
-							ReportError("Expected cvar name");
-							return false;
-						}
-
-						// Either "=" or ";"
-						SkipWhitespace(true);
-						token = ReadToken();
-
-						switch(token)
-						{
-							case "=":
-								SkipWhitespace(true);
-								string value = ReadToken();
-
-								if(string.IsNullOrEmpty(value))
-								{
-									ReportError("Expected \"" + name + "\" cvar value");
-									return false;
-								}
-
-								// Add to collection
-								if(!AddValue(name, type, value)) return false;
-
-								// Next should be ";"
-								if(!NextTokenIs(";")) return false;
-								break;
-
-							case ";":
-								if(!AddValue(name, type, string.Empty)) return false;
-								break;
-						}
-
-						break;
-
-					default:
-						ReportError("Unknown keyword");
+					if (!knowntypes.Contains(type))
+					{
+						ReportError($"Unknown token '{type}'. Expected type of " + string.Join(", ", knowntypes));
 						return false;
+					}
+
+					// Name
+					SkipWhitespace(true);
+					string name = ReadToken();
+
+					if (string.IsNullOrEmpty(name))
+					{
+						ReportError("Expected cvar name");
+						return false;
+					}
+
+					// Either "=" or ";"
+					SkipWhitespace(true);
+					token = ReadToken();
+
+					switch (token)
+					{
+						case "=":
+							SkipWhitespace(true);
+							string value = ReadToken();
+
+							if (string.IsNullOrEmpty(value))
+							{
+								ReportError("Expected \"" + name + "\" cvar value");
+								return false;
+							}
+
+							// Add to collection
+							if (!AddValue(name, type, value)) return false;
+
+							// Next should be ";"
+							if (!NextTokenIs(";")) return false;
+							break;
+
+						case ";":
+							if (!AddValue(name, type, string.Empty)) return false;
+							break;
+					}
+				}
+				else
+				{
+					ReportError("Unknown keyword");
+					return false;
 				}
 			}
 

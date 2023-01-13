@@ -24,6 +24,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using CodeImp.DoomBuilder.Controls;
@@ -35,7 +36,8 @@ namespace CodeImp.DoomBuilder.UDBScript
 		#region ================== Variables
 
 		private ImageList images;
-		private ContextMenuStrip contextmenu;
+		private ContextMenuStrip filecontextmenu;
+		private ContextMenuStrip foldercontextmenu;
 		ToolStripItem[] slotitems;
 
 		#endregion
@@ -63,7 +65,10 @@ namespace CodeImp.DoomBuilder.UDBScript
 
 		#region ================== Methods
 
-		private void CreateContextMenu()
+		/// <summary>
+		/// Creates the context menu for file items.
+		/// </summary>
+		private void CreateFileContextMenu()
 		{
 			ToolStripMenuItem edititem = new ToolStripMenuItem("Edit");
 			edititem.Click += EditScriptClicked;
@@ -84,11 +89,26 @@ namespace CodeImp.DoomBuilder.UDBScript
 			setslot.DropDownItems.AddRange(slotitems);
 			setslot.DropDownItemClicked += ItemClicked;
 
-			contextmenu = new ContextMenuStrip();
-			contextmenu.Items.AddRange(new ToolStripItem[]
+			filecontextmenu = new ContextMenuStrip();
+			filecontextmenu.Items.AddRange(new ToolStripItem[]
 			{
 				edititem,
 				setslot
+			});
+		}
+
+		/// <summary>
+		/// Creates the context menu for folder items.
+		/// </summary>
+		private void CreateFolderContextMenu()
+		{
+			ToolStripMenuItem openitem = new ToolStripMenuItem("Open in Explorer");
+			openitem.Click += (s, e) => { try { Process.Start("explorer.exe", ((ScriptDirectoryStructure)filetree.SelectedNodes[0].Tag).Path); } catch { } };
+
+			foldercontextmenu = new ContextMenuStrip();
+			foldercontextmenu.Items.AddRange(new ToolStripItem[]
+			{
+				openitem
 			});
 		}
 
@@ -112,7 +132,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 		/// <summary>
 		/// Updates the context menu of the slots so that the items show the script name and hotkey (if applicable)
 		/// </summary>
-		private void UpdateContextMenu()
+		private void UpdateFileContextMenu()
 		{
 			for (int i = 0; i < BuilderPlug.NUM_SCRIPT_SLOTS; i++)
 			{
@@ -174,7 +194,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 					BuilderPlug.Me.SetScriptSlot((int)e.ClickedItem.Tag, si);
 			}
 
-			UpdateContextMenu();
+			UpdateFileContextMenu();
 
 			foreach (TreeNode node in filetree.Nodes)
 				UpdateTree(node);
@@ -264,6 +284,9 @@ namespace CodeImp.DoomBuilder.UDBScript
 		{
 			List<TreeNode> newnodes = new List<TreeNode>();
 
+			if (sds == null)
+				return newnodes.ToArray();
+
 			// Go through folders and add files (and other folders) recusrively
 			foreach (ScriptDirectoryStructure subsds in sds.Directories.OrderBy(s => s.Name))
 			{
@@ -272,6 +295,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 
 				tn.Tag = subsds;
 				tn.SelectedImageKey = tn.ImageKey = "Folder";
+				tn.ContextMenuStrip = foldercontextmenu;
 
 				if (subsds.Expanded)
 					tn.Expand();
@@ -300,7 +324,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 
 				tn.Tag = si;
 				tn.SelectedImageKey = tn.ImageKey = "Script";
-				tn.ContextMenuStrip = contextmenu;
+				tn.ContextMenuStrip = filecontextmenu;
 
 				newnodes.Add(tn);
 			}
@@ -406,8 +430,10 @@ namespace CodeImp.DoomBuilder.UDBScript
 			if (!Visible || Disposing)
 				return;
 
-			CreateContextMenu();
-			UpdateContextMenu();
+			CreateFileContextMenu();
+			UpdateFileContextMenu();
+			CreateFolderContextMenu();
+
 			FillTree();
 		}
 

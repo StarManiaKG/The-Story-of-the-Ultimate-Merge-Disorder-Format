@@ -86,10 +86,10 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		private AlignData aligndata;
 
 		// List of selected items
-		private readonly ICollection<Thing> selectedthings;
+		private readonly ICollection<Thing> dragthings;
 
 		// List of non-selected items
-		private readonly ICollection<Thing> unselectedthings;
+		private readonly ICollection<Thing> unmovingthings;
 		
 		// Keep track of view changes
 		private double lastoffsetx;
@@ -114,7 +114,7 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		#region ================== Constructor / Disposer
 
 		// Constructor to start dragging immediately
-		public DragThingsMode(EditMode basemode, Vector2D dragstartmappos, bool makeundo)
+		public DragThingsMode(EditMode basemode, Vector2D dragstartmappos, ICollection<Thing> things, bool makeundo)
 		{
 			// Initialize
 			this.dragstartmappos = dragstartmappos;
@@ -125,20 +125,24 @@ namespace CodeImp.DoomBuilder.BuilderModes
 
 			// Mark what we are dragging
 			General.Map.Map.ClearAllMarks(false);
-			General.Map.Map.MarkSelectedThings(true, true);
+			dragthings = new List<Thing>();
+			foreach (Thing t in things)
+			{
+				t.Marked = true;
+				dragthings.Add(t);
+			}
 			
-			// Get selected things
-			selectedthings = General.Map.Map.GetMarkedThings(true);
-			unselectedthings = new List<Thing>();
-			foreach(Thing t in General.Map.ThingsFilter.VisibleThings) if(!t.Marked) unselectedthings.Add(t);
+			// Get things we're not dragging
+			unmovingthings = new List<Thing>();
+			foreach(Thing t in General.Map.ThingsFilter.VisibleThings) if(!t.Marked) unmovingthings.Add(t);
 			
 			// Get the nearest thing for snapping
-			dragitem = MapSet.NearestThing(selectedthings, dragstartmappos);
+			dragitem = MapSet.NearestThing(dragthings, dragstartmappos);
 
 			// Make old positions list
 			// We will use this as reference to move the vertices, or to move them back on cancel
-			oldpositions = new List<Vector2D>(selectedthings.Count);
-			foreach(Thing t in selectedthings) oldpositions.Add(t.Position);
+			oldpositions = new List<Vector2D>(dragthings.Count);
+			foreach(Thing t in dragthings) oldpositions.Add(t.Position);
 
 			// Also keep old position of the dragged item
 			dragitemposition = dragitem.Position;
@@ -206,7 +210,7 @@ namespace CodeImp.DoomBuilder.BuilderModes
 			if(snapnearest)
 			{
 				// Find nearest unselected item within selection range
-				Thing nearest = MapSet.NearestThingSquareRange(unselectedthings, mousemappos, BuilderPlug.Me.StitchRange / renderer.Scale);
+				Thing nearest = MapSet.NearestThingSquareRange(unmovingthings, mousemappos, BuilderPlug.Me.StitchRange / renderer.Scale);
 				if(nearest != null)
 				{
 					// Move the dragged item
@@ -253,7 +257,7 @@ namespace CodeImp.DoomBuilder.BuilderModes
 				int i = 0;
 
 				// Move selected geometry
-				foreach(Thing t in selectedthings)
+				foreach(Thing t in dragthings)
 				{
 					// Move vertex from old position relative to the
 					// mouse position change since drag start
@@ -314,8 +318,8 @@ namespace CodeImp.DoomBuilder.BuilderModes
 			{
 				// Render things
 				renderer.RenderThingSet(General.Map.ThingsFilter.HiddenThings, General.Settings.HiddenThingsAlpha);
-				renderer.RenderThingSet(unselectedthings, General.Settings.ActiveThingsAlpha);
-				renderer.RenderThingSet(selectedthings, General.Settings.ActiveThingsAlpha);
+				renderer.RenderThingSet(unmovingthings, General.Settings.ActiveThingsAlpha);
+				renderer.RenderThingSet(dragthings, General.Settings.ActiveThingsAlpha);
 
 				// Draw the dragged item highlighted
 				// This is important to know, because this item is used
@@ -334,7 +338,7 @@ namespace CodeImp.DoomBuilder.BuilderModes
 			MoveThingsRelative(new Vector2D(0f, 0f), false, false, false, false);
 
 			// If only a single vertex was selected, deselect it now
-			if(selectedthings.Count == 1) General.Map.Map.ClearSelectedThings();
+			//if(dragthings.Count == 1) General.Map.Map.ClearSelectedThings();
 			
 			// Update cached values
 			General.Map.Map.Update();
@@ -376,7 +380,7 @@ namespace CodeImp.DoomBuilder.BuilderModes
 
 				// Make undo for the dragging
 				if(makeundo) //mxd
-					General.Map.UndoRedo.CreateUndo((selectedthings.Count == 1 ? "Drag thing" : "Drag " + selectedthings.Count + " things"));
+					General.Map.UndoRedo.CreateUndo((dragthings.Count == 1 ? "Drag thing" : "Drag " + dragthings.Count + " things"));
 
 				// Move selected geometry to final position
 				if(aligndata != null && aligndata.Active) //mxd. Apply aligning
@@ -393,7 +397,7 @@ namespace CodeImp.DoomBuilder.BuilderModes
 				}
 
 				//mxd. Snap selected things to map format accuracy
-				foreach(Thing thing in selectedthings) thing.SnapToAccuracy(false);
+				foreach(Thing thing in dragthings) thing.SnapToAccuracy(false);
 
 				// Map is changed
 				General.Map.IsChanged = true;
@@ -430,7 +434,7 @@ namespace CodeImp.DoomBuilder.BuilderModes
 			snaptogridincrement = (!snaptocardinaldirection && General.Interface.AltState); //mxd
 
 			//mxd. Snap to nearest linedef
-			if(selectedthings.Count == 1 && snaptonearest && !snaptocardinaldirection 
+			if(dragthings.Count == 1 && snaptonearest && !snaptocardinaldirection 
 				&& Thing.AlignableRenderModes.Contains(dragitem.RenderMode)
 				&& MoveThingsRelative(mousemappos - dragstartmappos, snaptogrid, snaptogridincrement, false, false)) 
 			{

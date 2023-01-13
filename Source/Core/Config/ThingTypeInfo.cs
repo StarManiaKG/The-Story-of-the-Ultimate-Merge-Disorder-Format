@@ -91,6 +91,7 @@ namespace CodeImp.DoomBuilder.Config
 		private string obsoletemessage; //mxd
 		private Dictionary<string, Dictionary<string, string>> flagsrename; //mxd. <MapSetIOName, <flag, title>>
 		private int thinglink;
+		private List<string> adduniversalfields;
 
 		//mxd. GZDoom rendering properties
 		private ThingRenderMode rendermode;
@@ -200,6 +201,7 @@ namespace CodeImp.DoomBuilder.Config
 			this.flagsrename = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase); //mxd
 			this.thinglink = 0;
             this.optional = false; // [ZZ]
+			this.adduniversalfields = new List<string>();
 			
 			// We have no destructor
 			GC.SuppressFinalize(this);
@@ -241,6 +243,16 @@ namespace CodeImp.DoomBuilder.Config
 			this.locksprite = cfg.ReadSetting("thingtypes." + cat.Name + "." + key + ".locksprite", false); //mxd
 			this.classname = cfg.ReadSetting("thingtypes." + cat.Name + "." + key + ".class", String.Empty); //mxd
 			this.thinglink = cfg.ReadSetting("thingtypes." + cat.Name + "." + key + ".thinglink", 0);
+
+			// Read universal fields that should be added to this thing type
+			adduniversalfields = new List<string>();
+			IDictionary adduniversalfieldsdic = cfg.ReadSetting("thingtypes." + cat.Name + "." + key + ".adduniversalfields", new Hashtable());
+			foreach(DictionaryEntry de in adduniversalfieldsdic)
+			{
+				string addname = de.Key.ToString().ToLowerInvariant();
+				if (!adduniversalfields.Contains(addname))
+					adduniversalfields.Add(addname);
+			}
 
 			//mxd. Read flagsrename
 			this.flagsrename = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
@@ -322,6 +334,7 @@ namespace CodeImp.DoomBuilder.Config
 			this.spritescale = new SizeF(cat.SpriteScale, cat.SpriteScale);
 			this.locksprite = false; //mxd
 			this.flagsrename = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase); //mxd
+			this.adduniversalfields = new List<string>();
 
 			// Safety
 			if(this.radius < 4f || this.fixedsize) this.radius = THING_FIXED_SIZE;
@@ -370,6 +383,7 @@ namespace CodeImp.DoomBuilder.Config
 			this.absolutez = cat.AbsoluteZ;
 			this.spritescale = new SizeF(cat.SpriteScale, cat.SpriteScale);
 			this.flagsrename = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase); //mxd
+			this.adduniversalfields = new List<string>();
 
 			// Safety
 			if(this.hangs && this.absolutez) this.hangs = false; //mxd
@@ -422,6 +436,7 @@ namespace CodeImp.DoomBuilder.Config
 			this.absolutez = cat.AbsoluteZ;
 			this.spritescale = new SizeF(cat.SpriteScale, cat.SpriteScale);
 			this.flagsrename = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase); //mxd
+			this.adduniversalfields = new List<string>();
 
 			// Safety
 			if(this.hangs && this.absolutez) this.hangs = false; //mxd
@@ -478,6 +493,7 @@ namespace CodeImp.DoomBuilder.Config
 			this.xybillboard = other.xybillboard; //mxd
 			this.spritescale = new SizeF(other.spritescale.Width, other.spritescale.Height);
 			this.flagsrename = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase); //mxd
+			this.adduniversalfields = new List<string>(other.adduniversalfields);
 
 			//mxd. Copy GZDoom rendering properties
 			this.rendermode = other.rendermode;
@@ -500,6 +516,13 @@ namespace CodeImp.DoomBuilder.Config
 			bright = thing.Bright;
 
 			ModifyByDehackedThing(thing);
+		}
+
+		internal ThingTypeInfo(ThingCategory cat, ActorStructure actor, ThingTypeInfo other) : this(actor.DoomEdNum, other)
+		{
+			category = cat;
+
+			ModifyByDecorateActor(actor);
 		}
 
 		#endregion
@@ -968,6 +991,11 @@ namespace CodeImp.DoomBuilder.Config
 		public override string ToString()
 		{
 			return title + " (" + index + ")";
+		}
+
+		public bool HasAddUniversalField(string fieldname)
+		{
+			return adduniversalfields != null && adduniversalfields.Contains(fieldname);
 		}
 		
 		#endregion

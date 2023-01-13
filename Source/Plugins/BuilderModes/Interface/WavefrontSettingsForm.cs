@@ -104,7 +104,7 @@ namespace CodeImp.DoomBuilder.BuilderModes.Interface
 			{
 				// gbActorFormat.Enabled = gbActorSettings.Enabled = cbGenerateCode.Checked;
 				gbActorFormat.Enabled = gbActorSettings.Enabled = tbActorPath.Enabled = bBrowseActorPath.Enabled = cbGenerateCode.Checked;
-				tbModelPath.Enabled = bBrowseModelPath.Enabled = cbGenerateModeldef.Checked && cbExportForGZDoom.Checked;
+				tbModelPath.Enabled = bBrowseModelPath.Enabled = cbExportForGZDoom.Checked;
 			}
 
 
@@ -235,7 +235,7 @@ namespace CodeImp.DoomBuilder.BuilderModes.Interface
 			}
 
 			gbActorSettings.Enabled = gbActorFormat.Enabled =  tbActorPath.Enabled = bBrowseActorPath.Enabled = cbGenerateCode.Checked && cbExportForGZDoom.Checked;
-			tbModelPath.Enabled = bBrowseModelPath.Enabled = cbGenerateModeldef.Checked && cbExportForGZDoom.Checked;
+			tbModelPath.Enabled = bBrowseModelPath.Enabled = cbExportForGZDoom.Checked;
 
 			tbExportPath.Enabled = browse.Enabled = cbExportTextures.Enabled = nudScale.Enabled = !cbExportForGZDoom.Checked;
 		}
@@ -378,7 +378,7 @@ namespace CodeImp.DoomBuilder.BuilderModes.Interface
 
 		private void cbGenerateModeldef_CheckedChanged(object sender, EventArgs e)
 		{
-			tbModelPath.Enabled = bBrowseModelPath.Enabled = cbGenerateModeldef.Checked && cbExportForGZDoom.Checked;
+			tbModelPath.Enabled = bBrowseModelPath.Enabled = cbExportForGZDoom.Checked;
 		}
 	}
 }

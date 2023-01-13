@@ -51,8 +51,18 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 			}
 			set
 			{
-				if (element is Thing) ((Thing)element).Args[i] = value;
-				else if (element is Linedef) ((Linedef)element).Args[i] = value;
+				if (element is Thing)
+				{
+					// We're not directly changing the fields, but apparently that's the only way to record the changes for the undo system
+					((Thing)element).Fields.BeforeFieldsChange();
+					((Thing)element).Args[i] = value;
+				}
+				else if (element is Linedef)
+				{
+					// We're not directly changing the fields, but apparently that's the only way to record the changes for the undo system
+					((Linedef)element).Fields.BeforeFieldsChange();
+					((Linedef)element).Args[i] = value;
+				}
 			}
 		}
 

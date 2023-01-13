@@ -30,6 +30,15 @@ using CodeImp.DoomBuilder.Rendering;
 
 namespace CodeImp.DoomBuilder.Data
 {
+	public enum TextureNamespace
+	{
+		TEXTURE,
+		WALLTEXTURE,
+		FLAT,
+		SPRITE,
+		PATCH
+	}
+
 	internal sealed unsafe class TEXTURESImage : ImageData
 	{
 		#region ================== Variables
@@ -37,14 +46,14 @@ namespace CodeImp.DoomBuilder.Data
 		private readonly List<TexturePatch> patches; //mxd
 		private readonly bool optional; //mxd
 		private readonly bool nulltexture; //mxd
-		
+
 		#endregion
 
 		#region ================== Constructor / Disposer
 
 		// Constructor
 		public TEXTURESImage(string name, string virtualpath, int width, int height, float scalex, float scaley, 
-			bool worldpanning, bool isflat, bool optional, bool nulltexture)
+			bool worldpanning, TextureNamespace texturenamespace, bool optional, bool nulltexture)
 		{
 			// Initialize
 			this.width = width;
@@ -55,11 +64,11 @@ namespace CodeImp.DoomBuilder.Data
 			this.optional = optional; //mxd
 			this.nulltexture = nulltexture; //mxd
 			this.patches = new List<TexturePatch>(1);
+			this.texturenamespace = texturenamespace;
 
 			//mxd
 			SetName(name);
 			this.virtualname = (!string.IsNullOrEmpty(virtualpath) ? virtualpath : "[TEXTURES]") + Path.AltDirectorySeparatorChar + this.name;
-			this.isFlat = isflat;
 			
 			// We have no destructor
 			GC.SuppressFinalize(this);

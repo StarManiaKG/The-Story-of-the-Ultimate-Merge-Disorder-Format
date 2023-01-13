@@ -68,17 +68,18 @@ namespace CodeImp.DoomBuilder.Data
 		#region ================== Constructor / Disposer
 
 		// Constructor
-		public PK3Reader(DataLocation dl, bool asreadonly) : base(dl, asreadonly)
+		public PK3Reader(DataLocation dl, GameConfiguration config, bool asreadonly) : base(dl, asreadonly)
 		{
-            LoadFrom(dl, asreadonly);
+            LoadFrom(dl, config, asreadonly);
 		}
 
-        private void LoadFrom(DataLocation dl, bool asreadonly)
+        private void LoadFrom(DataLocation dl, GameConfiguration config, bool asreadonly)
         {
 			FileAccess access;
 			FileShare share;
 
 			isreadonly = asreadonly;
+			config = config;
 
 			// Determine if opening for read only
 			if (isreadonly)
@@ -143,10 +144,10 @@ namespace CodeImp.DoomBuilder.Data
 			filestream = null;
 
             // Make files list
-            files = new DirectoryFilesList(dl.GetDisplayName(), fileentries);
+            files = new DirectoryFilesList(dl.GetDisplayName(), config, Silent, fileentries);
 
             // Initialize without path (because we use paths relative to the PK3 file)
-            Initialize();
+            Initialize(config);
 
             // We have no destructor
             GC.SuppressFinalize(this);
@@ -589,7 +590,7 @@ namespace CodeImp.DoomBuilder.Data
 							catch(SharpCompress.Compressors.Deflate.ZlibException)
 							{
 								// This happens when the PK3 was modified externally and the resources were not reloaded
-								General.ErrorLogger.Add(ErrorType.Error, "Cannot load the file \"" + filename + "\" from archive \"" + location.GetDisplayName() + "\". Did you modify the archive without reloading the resouces?");
+								if (!Silent) General.ErrorLogger.Add(ErrorType.Error, "Cannot load the file \"" + filename + "\" from archive \"" + location.GetDisplayName() + "\". Did you modify the archive without reloading the resouces?");
 
 								filedata.Dispose();
 								filedata = null;
@@ -598,7 +599,7 @@ namespace CodeImp.DoomBuilder.Data
 							}
 							catch(NotSupportedException e)
 							{
-								General.ErrorLogger.Add(ErrorType.Error, "Cannot load the file \"" + filename + "\" from archive \"" + location.GetDisplayName() + "\". " + e.Message);
+								if (!Silent) General.ErrorLogger.Add(ErrorType.Error, "Cannot load the file \"" + filename + "\" from archive \"" + location.GetDisplayName() + "\". " + e.Message);
 
 								filedata.Dispose();
 								filedata = null;
@@ -618,7 +619,7 @@ namespace CodeImp.DoomBuilder.Data
 			if(filedata == null)
 			{
 				//mxd
-				General.ErrorLogger.Add(ErrorType.Error, "Cannot find the file \"" + filename + "\" in archive \"" + location.GetDisplayName() + "\".");
+				if (!Silent) General.ErrorLogger.Add(ErrorType.Error, "Cannot find the file \"" + filename + "\" in archive \"" + location.GetDisplayName() + "\".");
 				return null;
 			}
 
@@ -656,7 +657,7 @@ namespace CodeImp.DoomBuilder.Data
 						+ ", started at " + checkresult.Processes[0].StartTime + ").";
 				}
 				
-				General.ErrorLogger.Add(ErrorType.Error, errmsg);
+				if (!Silent) General.ErrorLogger.Add(ErrorType.Error, errmsg);
 				return false;
 			}
 
@@ -667,7 +668,7 @@ namespace CodeImp.DoomBuilder.Data
 					if(za == null)
 					{
 						string errmsg = "Unable to save file \"" + filename + "\" into archive \"" + location.GetDisplayName() + "\". Unable to open target file as a zip archive.";
-						General.ErrorLogger.Add(ErrorType.Error, errmsg);
+						if (!Silent) General.ErrorLogger.Add(ErrorType.Error, errmsg);
 						return false;
 					}
 
@@ -720,7 +721,7 @@ namespace CodeImp.DoomBuilder.Data
 					case 60:
 					case 62:
 					case 124:
-						General.ErrorLogger.Add(ErrorType.Error, "Error in \"" + location.GetDisplayName() + "\": unsupported character \"" + c + "\" in path \"" + path + "\". File loading was skipped.");
+						if (!Silent) General.ErrorLogger.Add(ErrorType.Error, "Error in \"" + location.GetDisplayName() + "\": unsupported character \"" + c + "\" in path \"" + path + "\". File loading was skipped.");
 						return false;
 
 					default:

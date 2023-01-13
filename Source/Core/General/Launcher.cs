@@ -149,7 +149,7 @@ namespace CodeImp.DoomBuilder
 			//mxd. General.Map.FilePathName will be empty when a newly created map was not saved yet.
 			if(!string.IsNullOrEmpty(General.Map.FilePathName))
 			{
-				DataLocation maplocation = new DataLocation(DataLocation.RESOURCE_WAD, General.Map.FilePathName, false, false, false);
+				DataLocation maplocation = new DataLocation(DataLocation.RESOURCE_WAD, General.Map.FilePathName, false, false, false, null);
 				locations.Remove(maplocation); //If maplocation was already added as a resource, make sure it's singular and is last in the list
 				locations.Add(maplocation); 
 			}

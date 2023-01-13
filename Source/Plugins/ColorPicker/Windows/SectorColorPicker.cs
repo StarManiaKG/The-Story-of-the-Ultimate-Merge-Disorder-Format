@@ -97,6 +97,8 @@ namespace CodeImp.DoomBuilder.ColorPicker.Windows
 			rbSectorColor.CheckedChanged += rbColor_CheckedChanged;
 			rbFadeColor.CheckedChanged += rbColor_CheckedChanged;
 
+			this.AcceptButton = colorPickerControl1.OkButton;
+			this.CancelButton = colorPickerControl1.CancelButton;
 			Text = "Editing " + rest;
 
 			//cannot fail here :)

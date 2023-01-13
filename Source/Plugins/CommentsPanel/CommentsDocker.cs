@@ -152,7 +152,6 @@ namespace CodeImp.DoomBuilder.CommentsPanel
 		public void UpdateListSoon()
 		{
 			updatetimer.Stop();
-			updatetimer.Interval = 100;
 			updatetimer.Start();
 		}
 		
@@ -387,16 +386,18 @@ namespace CodeImp.DoomBuilder.CommentsPanel
 		// as it is called every time a dialog window closes.
 		private void ParentForm_Activated(object sender, EventArgs e)
 		{
-			UpdateList();
+			UpdateListSoon();
 		}
 		
 		// Update regulary
 		private void updatetimer_Tick(object sender, EventArgs e)
 		{
 			updatetimer.Stop();
-			updatetimer.Interval = 2000;
+
+			if (!BuilderPlug.Me.IsDockerActive())
+				return;
+
 			UpdateList();
-			updatetimer.Start();
 		}
 		
 		// Mouse pressed
@@ -630,7 +631,13 @@ namespace CodeImp.DoomBuilder.CommentsPanel
 		{
 			preventupdate = false;
 		}
-		
+
+		private void CommentsDocker_VisibleChanged(object sender, EventArgs e)
+		{
+			if (Visible)
+				UpdateList();
+		}
+
 		#endregion
 	}
 }

@@ -37,7 +37,7 @@ using Jint;
 
 namespace CodeImp.DoomBuilder.UDBScript
 {
-	class RuntimeConstraint : IConstraint
+	class RuntimeConstraint : Constraint
 	{
 		#region ================== Constants
 
@@ -62,14 +62,14 @@ namespace CodeImp.DoomBuilder.UDBScript
 
 		#region ================== Methods
 
-		public void Reset()
+		public override void Reset()
 		{
 		}
 
 		/// <summary>
 		/// Checks how long the script has been running and asks the user if it should abort or keep running
 		/// </summary>
-		public void Check()
+		public override void Check()
 		{
 			if(stopwatch.ElapsedMilliseconds > CHECK_MILLISECONDS)
 			{

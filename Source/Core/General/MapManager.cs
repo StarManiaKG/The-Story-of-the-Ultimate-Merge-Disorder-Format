@@ -295,12 +295,12 @@ namespace CodeImp.DoomBuilder
 			map = new MapSet();
 
 			// Create temp wadfile
-			DataLocation templocation = new DataLocation(DataLocation.RESOURCE_WAD, General.MakeTempFilename(temppath), false, false, false); //mxd
+			DataLocation templocation = new DataLocation(DataLocation.RESOURCE_WAD, General.MakeTempFilename(temppath), false, false, false, null); //mxd
 			General.WriteLogLine("Creating temporary file: " + templocation.location);
 #if DEBUG
-			tempwadreader = new WADReader(templocation, false, true);
+			tempwadreader = new WADReader(templocation, General.Map.Config, false, true);
 #else
-			try { tempwadreader = new WADReader(templocation, false, true); }
+			try { tempwadreader = new WADReader(templocation, General.Map.Config, false, true); }
 			catch(Exception e)
 			{
 				General.ShowErrorMessage("Error while creating a temporary wad file:\n" + e.GetType().Name + ": " + e.Message, MessageBoxButtons.OK);
@@ -389,12 +389,12 @@ namespace CodeImp.DoomBuilder
 			map = new MapSet();
 
 			// Create temp wadfile
-			DataLocation templocation = new DataLocation(DataLocation.RESOURCE_WAD, General.MakeTempFilename(temppath), false, false, false); //mxd
+			DataLocation templocation = new DataLocation(DataLocation.RESOURCE_WAD, General.MakeTempFilename(temppath), false, false, false, null); //mxd
 			General.WriteLogLine("Creating temporary file: " + templocation.location);
 #if DEBUG
-			tempwadreader = new WADReader(templocation, false, true);
+			tempwadreader = new WADReader(templocation, General.Map.Config, false, true);
 #else
-			try { tempwadreader = new WADReader(templocation, false, true); } catch(Exception e) 
+			try { tempwadreader = new WADReader(templocation, General.Map.Config, false, true); } catch(Exception e) 
 			{
 				General.ShowErrorMessage("Error while creating a temporary wad file:\n" + e.GetType().Name + ": " + e.Message, MessageBoxButtons.OK);
 				return false;
@@ -427,7 +427,7 @@ namespace CodeImp.DoomBuilder
 			// Load data manager
 			General.WriteLogLine("Loading data resources...");
 			data = new DataManager();
-			DataLocation maplocation = new DataLocation(DataLocation.RESOURCE_WAD, filepathname, options.StrictPatches, false, false);
+			DataLocation maplocation = new DataLocation(DataLocation.RESOURCE_WAD, filepathname, options.StrictPatches, false, false, null);
 			data.Load(configinfo.Resources, options.Resources, maplocation);
 
 			// Remove unused sectors
@@ -486,14 +486,14 @@ namespace CodeImp.DoomBuilder
 			WAD mapwad;
 
 			// Create temp wadfile
-			DataLocation templocation = new DataLocation(DataLocation.RESOURCE_WAD, General.MakeTempFilename(temppath), false, false, false); //mxd
+			DataLocation templocation = new DataLocation(DataLocation.RESOURCE_WAD, General.MakeTempFilename(temppath), false, false, false, null); //mxd
 			General.WriteLogLine("Creating temporary file: " + templocation.location);
 			if(tempwadreader != null) tempwadreader.Dispose();
 
 #if DEBUG
-			tempwadreader = new WADReader(templocation, false, true);
+			tempwadreader = new WADReader(templocation, General.Map.Config, false, true);
 #else
-			try { tempwadreader = new WADReader(templocation, false, true); } catch(Exception e) 
+			try { tempwadreader = new WADReader(templocation, General.Map.Config, false, true); } catch(Exception e) 
 			{
 				General.ShowErrorMessage("Error while creating a temporary wad file:\n" + e.GetType().Name + ": " + e.Message, MessageBoxButtons.OK);
 				return false;
@@ -2370,7 +2370,7 @@ namespace CodeImp.DoomBuilder
 			data = new DataManager();
 			if(!string.IsNullOrEmpty(filepathname)) 
 			{
-				DataLocation maplocation = new DataLocation(DataLocation.RESOURCE_WAD, filepathname, options.StrictPatches, false, false);
+				DataLocation maplocation = new DataLocation(DataLocation.RESOURCE_WAD, filepathname, options.StrictPatches, false, false, null);
 				data.Load(configinfo.Resources, options.Resources, maplocation);
 			}
 			else 
@@ -2642,6 +2642,9 @@ namespace CodeImp.DoomBuilder
 				// Withdraw undo
 				undoredo.WithdrawUndo();
 			}
+
+			// Let the current editing mode know that we changed something
+			General.Editing.Mode.OnMapElementsChanged();
 
 			// Done
 			General.Interface.RedrawDisplay();

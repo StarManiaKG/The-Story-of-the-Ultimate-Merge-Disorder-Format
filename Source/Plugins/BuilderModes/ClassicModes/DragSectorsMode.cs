@@ -45,8 +45,8 @@ namespace CodeImp.DoomBuilder.BuilderModes
 
 		#region ================== Variables
 
-		private ICollection<Linedef> selectedlines;
-		private ICollection<Sector> selectedsectors;
+		private ICollection<Linedef> draglines;
+		private ICollection<Sector> dragsectors;
 
 		#endregion
 
@@ -57,21 +57,27 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		#region ================== Constructor / Disposer
 
 		// Constructor to start dragging immediately
-		public DragSectorsMode(Vector2D dragstartmappos)
+		public DragSectorsMode(Vector2D dragstartmappos, ICollection<Sector> sectors)
 		{
 			// Mark what we are dragging
 			General.Map.Map.ClearAllMarks(false);
-			General.Map.Map.MarkSelectedLinedefs(true, true);
-			ICollection<Vertex> verts = General.Map.Map.GetVerticesFromLinesMarks(true);
-			foreach(Vertex v in verts) v.Marked = true;
-			
-			// Get selected lines
-			selectedlines = General.Map.Map.GetSelectedLinedefs(true);
-			selectedsectors = General.Map.Map.GetSelectedSectors(true);
+
+			// Get geometry to drag
+			dragsectors = new List<Sector>(sectors);
+			draglines = new HashSet<Linedef>();
+			foreach (Sector s in sectors)
+			{
+				foreach (Sidedef sd in s.Sidedefs)
+				{
+					draglines.Add(sd.Line);
+					sd.Line.Start.Marked = true;
+					sd.Line.End.Marked = true;
+				}
+			}
 			
 			// Initialize
 			base.StartDrag(dragstartmappos);
-			undodescription = (selectedsectors.Count == 1 ? "Drag sector" : "Drag " + selectedsectors.Count + " sectors"); //mxd
+			undodescription = (dragsectors.Count == 1 ? "Drag sector" : "Drag " + dragsectors.Count + " sectors"); //mxd
 			
 			// We have no destructor
 			GC.SuppressFinalize(this);
@@ -101,40 +107,6 @@ namespace CodeImp.DoomBuilder.BuilderModes
 			renderer.SetPresentation(Presentation.Standard);
 		}
 		
-		// Disenagaging
-		public override void OnDisengage()
-		{
-			// Select vertices from lines selection
-			General.Map.Map.ClearSelectedVertices();
-			ICollection<Vertex> verts = General.Map.Map.GetVerticesFromLinesMarks(true);
-			foreach(Vertex v in verts) v.Selected = true;
-
-			// Perform normal disengage
-			base.OnDisengage();
-
-			// Clear vertex selection
-			General.Map.Map.ClearSelectedVertices();
-			
-			// When not cancelled
-			if(!cancelled)
-			{
-				// If only a single sector was selected, deselect it now
-				if(selectedsectors.Count == 1)
-				{
-					General.Map.Map.ClearSelectedSectors();
-					General.Map.Map.ClearSelectedLinedefs();
-
-					//mxd. Also (de)select things?
-					if(BuilderPlug.Me.SyncronizeThingEdit)
-					{
-						Sector s = General.GetByIndex(selectedsectors, 0);
-						foreach(Thing t in General.Map.Map.Things)
-							if(t.Sector == s && t.Selected) t.Selected = false;
-					}
-				}
-			}
-		}
-
 		// This redraws the display
 		public override void OnRedrawDisplay()
 		{
@@ -164,13 +136,13 @@ namespace CodeImp.DoomBuilder.BuilderModes
 				// Render lines and vertices
 				renderer.PlotLinedefSet(snaptolines);
 				renderer.PlotLinedefSet(unstablelines);
-				renderer.PlotLinedefSet(selectedlines);
+				renderer.PlotLinedefSet(draglines);
 				renderer.PlotVerticesSet(General.Map.Map.Vertices);
 
 				// Draw the dragged item highlighted
 				// This is important to know, because this item is used
 				// for snapping to the grid and snapping to nearest items
-				renderer.PlotVertex(dragitem, ColorCollection.HIGHLIGHT);
+				renderer.PlotVertex(dragitem, ColorCollection.HIGHLIGHT, false);
 				
 				// Done
 				renderer.Finish();

@@ -146,6 +146,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <summary>
 		/// `Array` of arguments of the `Thing`. Number of arguments depends on game config (usually 5). Hexen format and UDMF only.
 		/// </summary>
+		/// <fakedtstype>number[]</fakedtstype>
 		public MapElementArgumentsWrapper args
 		{
 			get
@@ -319,12 +320,8 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 
 				try
 				{
-					object v = BuilderPlug.Me.GetVectorFromObject(value, true);
-
-					if (v is Vector2D)
-						thing.Move((Vector2D)v);
-					else
-						thing.Move((Vector3D)v);
+					Vector3D v = BuilderPlug.Me.GetVector3DFromObject(value);
+					thing.Move(v);
 				}
 				catch (CantConvertToVectorException e)
 				{
@@ -465,7 +462,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 
 			try
 			{
-				Vector2D v = (Vector2D)BuilderPlug.Me.GetVectorFromObject(pos, false);
+				Vector2D v = BuilderPlug.Me.GetVector3DFromObject(pos);
 				return thing.DistanceToSq(v);
 			}
 			catch (CantConvertToVectorException e)
@@ -490,7 +487,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 
 			try
 			{
-				Vector2D v = (Vector2D)BuilderPlug.Me.GetVectorFromObject(pos, false);
+				Vector2D v = BuilderPlug.Me.GetVector3DFromObject(pos);
 				return thing.DistanceTo(v);
 			}
 			catch (CantConvertToVectorException e)

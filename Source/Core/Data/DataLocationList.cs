@@ -20,6 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
+using System.Linq;
 using CodeImp.DoomBuilder.IO;
 
 #endregion
@@ -61,6 +62,9 @@ namespace CodeImp.DoomBuilder.Data
 					if(rlinfo.Contains("option2") && (rlinfo["option2"] is int)) res.option2 = General.Int2Bool((int)rlinfo["option2"]);
 					if(rlinfo.Contains("notfortesting") && (rlinfo["notfortesting"] is int)) res.notfortesting = General.Int2Bool((int)rlinfo["notfortesting"]);
 
+					if (rlinfo.Contains("requiredarchives") && rlinfo["requiredarchives"] is string) res.requiredarchives = ((string)rlinfo["requiredarchives"]).Split(',').ToList();
+					else res.requiredarchives = null;
+
 					// Add resource
 					Add(res);
 				}
@@ -100,6 +104,8 @@ namespace CodeImp.DoomBuilder.Data
 				rlinfo.Add("option1", General.Bool2Int(this[i].option1));
 				rlinfo.Add("option2", General.Bool2Int(this[i].option2));
 				rlinfo.Add("notfortesting", General.Bool2Int(this[i].notfortesting));
+
+				if (this[i].requiredarchives != null) rlinfo.Add("requiredarchives", string.Join(",", this[i].requiredarchives.ToArray()));
 
 				// Add structure
 				resinfo.Add("resource" + i.ToString(CultureInfo.InvariantCulture), rlinfo);

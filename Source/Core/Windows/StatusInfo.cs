@@ -33,7 +33,7 @@ namespace CodeImp.DoomBuilder.Windows
 		public readonly string selectioninfo; //mxd
 		internal bool displayed;
 		
-		internal StatusInfo(StatusType type, string message)
+		public StatusInfo(StatusType type, string message)
 		{
 			this.type = type;
 

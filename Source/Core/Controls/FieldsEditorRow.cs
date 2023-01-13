@@ -132,6 +132,9 @@ namespace CodeImp.DoomBuilder.Controls
 				isdefined = false;
 				//fieldtype.ApplyDefaultValue(); // [ZZ] don't do this. this is only done for int, and not a very good place to do it...
 
+				// We need to remember the default value of the user var
+				fieldinfo = new UniversalFieldInfo(name, type, value);
+
 				// Setup property cell
 				this.Cells[0].Value = name;
 				this.Cells[0].ReadOnly = true;

@@ -26,7 +26,7 @@ Object containing all the added options as properties.
 ## Methods
 
 ---
-### addOption(name, description, type, defaultvalue)
+### addOption(name: string, description: string, type: int, defaultvalue: object)
 Adds a parameter to query
 #### Parameters
 * name: Name of the variable that the queried value is stored in
@@ -35,7 +35,7 @@ Adds a parameter to query
 * defaultvalue: Default value of the parameter
 
 ---
-### addOption(name, description, type, defaultvalue, enumvalues)
+### addOption(name: string, description: string, type: int, defaultvalue: object, enumvalues: object)
 Adds a parameter to query
 #### Parameters
 * name: Name of the variable that the queried value is stored in

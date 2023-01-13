@@ -26,7 +26,7 @@
 		/// </summary>
 		private void InitializeComponent() {
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-			this.cpButton = new System.Windows.Forms.ToolStripButton();
+			this.cpButton = new CodeImp.DoomBuilder.Controls.ToolStripActionButton();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.modesmenu = new System.Windows.Forms.ToolStripMenuItem();
 			this.cpMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -104,7 +104,7 @@
 		#endregion
 
 		private System.Windows.Forms.ToolStrip toolStrip1;
-		private System.Windows.Forms.ToolStripButton cpButton;
+		private CodeImp.DoomBuilder.Controls.ToolStripActionButton cpButton;
 		private System.Windows.Forms.MenuStrip menuStrip1;
 		private System.Windows.Forms.ToolStripMenuItem modesmenu;
 		private System.Windows.Forms.ToolStripMenuItem cpMenu;

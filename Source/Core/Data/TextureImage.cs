@@ -48,6 +48,7 @@ namespace CodeImp.DoomBuilder.Data
 			this.scale.x = scalex;
 			this.scale.y = scaley;
 			this.worldpanning = worldpanning; //mxd
+			this.texturenamespace = TextureNamespace.WALLTEXTURE;
 			this.patches = new List<TexturePatch>();
 			SetName(name);
 			virtualname = "[" + group + "]/" + this.name; //mxd

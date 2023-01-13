@@ -1,3 +1,5 @@
+/// <reference path="../../../udbscript.d.ts" />
+
 `#version 4`;
 
 `#name Draw Voodoo Doll Closet`;
@@ -147,7 +149,7 @@ if(UDB.ScriptOptions.inactive)
 if(UDB.ScriptOptions.looping)
 {
 	// Create the teleport destination line
-	p.setAngle(90 * ScriptOptions.direction).moveTo(basepos)
+	p.setAngle(90 * UDB.ScriptOptions.direction).moveTo(basepos)
 	.moveForward(32).turnRight().moveForward(8).drawVertex()
 	.moveForward(closetwidth - 16).drawVertex();
 

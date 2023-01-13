@@ -167,8 +167,14 @@ namespace CodeImp.DoomBuilder.Plugins.NodesViewer
 			General.Editing.CancelMode();
 			NodesViewerMode newmode = new NodesViewerMode();
 			General.Editing.ChangeMode(newmode);
-			newmode.Form.showsegsvertices.Checked = this.showsegsvertices.Checked;
-			newmode.Form.Location = this.Location; //mxd
+
+			// If something went wrong while engaging the mode (for example an unsupported node format was detected)
+			// the mode will be disposed, so we need to check for it here
+			if (!newmode.IsDisposed)
+			{
+				newmode.Form.showsegsvertices.Checked = this.showsegsvertices.Checked;
+				newmode.Form.Location = this.Location; //mxd
+			}
 		}
 
 		#endregion

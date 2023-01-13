@@ -96,7 +96,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 			_width = image.Width;
 			_height = image.Height;
 			_scale = new Vector2DWrapper(image.Scale);
-			_isflat = image.IsFlat;
+			_isflat = image.TextureNamespace == TextureNamespace.FLAT;
 		}
 
 		#endregion

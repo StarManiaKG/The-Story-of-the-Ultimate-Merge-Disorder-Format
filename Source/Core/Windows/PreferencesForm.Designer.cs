@@ -38,6 +38,7 @@ namespace CodeImp.DoomBuilder.Windows
 			System.Windows.Forms.Label label18;
 			System.Windows.Forms.Label label1;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PreferencesForm));
+			this.autolaunchontest = new System.Windows.Forms.CheckBox();
 			this.texturesizesbelow = new System.Windows.Forms.CheckBox();
 			this.blackbrowsers = new System.Windows.Forms.CheckBox();
 			this.checkforupdates = new System.Windows.Forms.CheckBox();
@@ -66,12 +67,15 @@ namespace CodeImp.DoomBuilder.Windows
 			this.label26 = new System.Windows.Forms.Label();
 			this.label31 = new System.Windows.Forms.Label();
 			this.cbMarkExtraFloors = new System.Windows.Forms.CheckBox();
+			this.cbFlatShadeVertices = new System.Windows.Forms.CheckBox();
 			this.label32 = new System.Windows.Forms.Label();
 			this.label30 = new System.Windows.Forms.Label();
 			this.cbOldHighlightMode = new System.Windows.Forms.CheckBox();
 			this.cbStretchView = new System.Windows.Forms.CheckBox();
 			this.scriptautoclosebrackets = new System.Windows.Forms.CheckBox();
 			this.scriptallmanstyle = new System.Windows.Forms.CheckBox();
+			this.cbParallelizedLinedefPlotting = new System.Windows.Forms.CheckBox();
+			this.cbParallelizedVertexPlotting = new System.Windows.Forms.CheckBox();
 			this.browseScreenshotsFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
 			this.apply = new System.Windows.Forms.Button();
 			this.cancel = new System.Windows.Forms.Button();
@@ -211,7 +215,20 @@ namespace CodeImp.DoomBuilder.Windows
 			this.tabpasting = new System.Windows.Forms.TabPage();
 			this.label16 = new System.Windows.Forms.Label();
 			this.pasteoptions = new CodeImp.DoomBuilder.Controls.PasteOptionsControl();
-			this.autolaunchontest = new System.Windows.Forms.CheckBox();
+			this.tabtoasts = new System.Windows.Forms.TabPage();
+			this.groupBox10 = new System.Windows.Forms.GroupBox();
+			this.lvToastActions = new System.Windows.Forms.ListView();
+			this.title = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.description = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.tbToastDuration = new CodeImp.DoomBuilder.Controls.ButtonsNumericTextbox();
+			this.label12 = new System.Windows.Forms.Label();
+			this.cbToastsEnabled = new System.Windows.Forms.CheckBox();
+			this.gbToastPosition = new System.Windows.Forms.GroupBox();
+			this.label6 = new System.Windows.Forms.Label();
+			this.rbToastPosBR = new System.Windows.Forms.RadioButton();
+			this.rbToastPosBL = new System.Windows.Forms.RadioButton();
+			this.rbToastPosTR = new System.Windows.Forms.RadioButton();
+			this.rbToastPosTL = new System.Windows.Forms.RadioButton();
 			groupBox1 = new System.Windows.Forms.GroupBox();
 			label7 = new System.Windows.Forms.Label();
 			label5 = new System.Windows.Forms.Label();
@@ -256,6 +273,9 @@ namespace CodeImp.DoomBuilder.Windows
 			this.groupBox6.SuspendLayout();
 			this.previewgroup.SuspendLayout();
 			this.tabpasting.SuspendLayout();
+			this.tabtoasts.SuspendLayout();
+			this.groupBox10.SuspendLayout();
+			this.gbToastPosition.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox1
@@ -285,10 +305,20 @@ namespace CodeImp.DoomBuilder.Windows
 			groupBox1.Controls.Add(this.defaultviewmode);
 			groupBox1.Location = new System.Drawing.Point(8, 8);
 			groupBox1.Name = "groupBox1";
-			groupBox1.Size = new System.Drawing.Size(331, 438);
+			groupBox1.Size = new System.Drawing.Size(331, 462);
 			groupBox1.TabIndex = 0;
 			groupBox1.TabStop = false;
 			groupBox1.Text = " Options ";
+			// 
+			// autolaunchontest
+			// 
+			this.autolaunchontest.AutoSize = true;
+			this.autolaunchontest.Location = new System.Drawing.Point(16, 392);
+			this.autolaunchontest.Name = "autolaunchontest";
+			this.autolaunchontest.Size = new System.Drawing.Size(301, 17);
+			this.autolaunchontest.TabIndex = 50;
+			this.autolaunchontest.Text = "Automatically launch engine when test parameters change";
+			this.autolaunchontest.UseVisualStyleBackColor = true;
 			// 
 			// texturesizesbelow
 			// 
@@ -399,10 +429,12 @@ namespace CodeImp.DoomBuilder.Windows
 			this.vertexScale.BackColor = System.Drawing.Color.Transparent;
 			this.vertexScale.LargeChange = 1;
 			this.vertexScale.Location = new System.Drawing.Point(127, 119);
+			this.vertexScale.Maximum = 40;
 			this.vertexScale.Minimum = 1;
 			this.vertexScale.Name = "vertexScale";
 			this.vertexScale.Size = new System.Drawing.Size(116, 45);
 			this.vertexScale.TabIndex = 4;
+			this.vertexScale.TickFrequency = 4;
 			this.vertexScale.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
 			this.vertexScale.Value = 1;
 			this.vertexScale.ValueChanged += new System.EventHandler(this.vertexScale_ValueChanged);
@@ -627,7 +659,7 @@ namespace CodeImp.DoomBuilder.Windows
 			// cbMarkExtraFloors
 			// 
 			this.cbMarkExtraFloors.AutoSize = true;
-			this.cbMarkExtraFloors.Location = new System.Drawing.Point(18, 466);
+			this.cbMarkExtraFloors.Location = new System.Drawing.Point(18, 442);
 			this.cbMarkExtraFloors.Name = "cbMarkExtraFloors";
 			this.cbMarkExtraFloors.Size = new System.Drawing.Size(175, 17);
 			this.cbMarkExtraFloors.TabIndex = 1;
@@ -635,6 +667,18 @@ namespace CodeImp.DoomBuilder.Windows
 			this.toolTip1.SetToolTip(this.cbMarkExtraFloors, "When enabled, linedefs of sectors with 3d floors will be marked using \"3D Floors\"" +
         " color.");
 			this.cbMarkExtraFloors.UseVisualStyleBackColor = true;
+			// 
+			// cbFlatShadeVertices
+			// 
+			this.cbFlatShadeVertices.AutoSize = true;
+			this.cbFlatShadeVertices.Location = new System.Drawing.Point(18, 465);
+			this.cbFlatShadeVertices.Name = "cbFlatShadeVertices";
+			this.cbFlatShadeVertices.Size = new System.Drawing.Size(115, 17);
+			this.cbFlatShadeVertices.TabIndex = 1;
+			this.cbFlatShadeVertices.Text = "Flat shade vertices";
+			this.toolTip1.SetToolTip(this.cbFlatShadeVertices, "When enabled, vertices in classic mode will be drawn with flat shading instead of" +
+        " a raised border.");
+			this.cbFlatShadeVertices.UseVisualStyleBackColor = true;
 			// 
 			// label32
 			// 
@@ -661,7 +705,7 @@ namespace CodeImp.DoomBuilder.Windows
 			// cbOldHighlightMode
 			// 
 			this.cbOldHighlightMode.AutoSize = true;
-			this.cbOldHighlightMode.Location = new System.Drawing.Point(229, 443);
+			this.cbOldHighlightMode.Location = new System.Drawing.Point(229, 419);
 			this.cbOldHighlightMode.Name = "cbOldHighlightMode";
 			this.cbOldHighlightMode.Size = new System.Drawing.Size(207, 17);
 			this.cbOldHighlightMode.TabIndex = 15;
@@ -673,7 +717,7 @@ namespace CodeImp.DoomBuilder.Windows
 			// cbStretchView
 			// 
 			this.cbStretchView.AutoSize = true;
-			this.cbStretchView.Location = new System.Drawing.Point(229, 397);
+			this.cbStretchView.Location = new System.Drawing.Point(229, 373);
 			this.cbStretchView.Name = "cbStretchView";
 			this.cbStretchView.Size = new System.Drawing.Size(172, 17);
 			this.cbStretchView.TabIndex = 13;
@@ -705,6 +749,29 @@ namespace CodeImp.DoomBuilder.Windows
 			this.toolTip1.SetToolTip(this.scriptallmanstyle, resources.GetString("scriptallmanstyle.ToolTip"));
 			this.scriptallmanstyle.UseVisualStyleBackColor = true;
 			// 
+			// cbParallelizedLinedefPlotting
+			// 
+			this.cbParallelizedLinedefPlotting.AutoSize = true;
+			this.cbParallelizedLinedefPlotting.Location = new System.Drawing.Point(229, 465);
+			this.cbParallelizedLinedefPlotting.Name = "cbParallelizedLinedefPlotting";
+			this.cbParallelizedLinedefPlotting.Size = new System.Drawing.Size(150, 17);
+			this.cbParallelizedLinedefPlotting.TabIndex = 49;
+			this.cbParallelizedLinedefPlotting.Text = "Parallelized linedef plotting";
+			this.toolTip1.SetToolTip(this.cbParallelizedLinedefPlotting, "Parallelizes linedef plotting over all logical CPU cores.");
+			this.cbParallelizedLinedefPlotting.UseVisualStyleBackColor = true;
+			// 
+			// cbParallelizedVertexPlotting
+			// 
+			this.cbParallelizedVertexPlotting.AutoSize = true;
+			this.cbParallelizedVertexPlotting.Location = new System.Drawing.Point(18, 488);
+			this.cbParallelizedVertexPlotting.Name = "cbParallelizedVertexPlotting";
+			this.cbParallelizedVertexPlotting.Size = new System.Drawing.Size(148, 17);
+			this.cbParallelizedVertexPlotting.TabIndex = 50;
+			this.cbParallelizedVertexPlotting.Text = "Parallelized vertex plotting";
+			this.toolTip1.SetToolTip(this.cbParallelizedVertexPlotting, "Parallelizes vertex plotting over all logical CPU cores. Can result in vertices c" +
+        "lose to each other flickering when panning the view");
+			this.cbParallelizedVertexPlotting.UseVisualStyleBackColor = true;
+			// 
 			// browseScreenshotsFolderDialog
 			// 
 			this.browseScreenshotsFolderDialog.Description = "Select a Folder to Save Screenshots Into";
@@ -712,7 +779,7 @@ namespace CodeImp.DoomBuilder.Windows
 			// apply
 			// 
 			this.apply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.apply.Location = new System.Drawing.Point(467, 548);
+			this.apply.Location = new System.Drawing.Point(467, 573);
 			this.apply.Name = "apply";
 			this.apply.Size = new System.Drawing.Size(112, 25);
 			this.apply.TabIndex = 0;
@@ -724,7 +791,7 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			this.cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cancel.Location = new System.Drawing.Point(585, 548);
+			this.cancel.Location = new System.Drawing.Point(585, 573);
 			this.cancel.Name = "cancel";
 			this.cancel.Size = new System.Drawing.Size(112, 25);
 			this.cancel.TabIndex = 1;
@@ -742,12 +809,13 @@ namespace CodeImp.DoomBuilder.Windows
 			this.tabs.Controls.Add(this.tabcolors);
 			this.tabs.Controls.Add(this.tabscripteditor);
 			this.tabs.Controls.Add(this.tabpasting);
+			this.tabs.Controls.Add(this.tabtoasts);
 			this.tabs.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.tabs.Location = new System.Drawing.Point(11, 13);
 			this.tabs.Name = "tabs";
 			this.tabs.Padding = new System.Drawing.Point(24, 3);
 			this.tabs.SelectedIndex = 0;
-			this.tabs.Size = new System.Drawing.Size(688, 527);
+			this.tabs.Size = new System.Drawing.Size(688, 552);
 			this.tabs.TabIndex = 0;
 			this.tabs.SelectedIndexChanged += new System.EventHandler(this.tabs_SelectedIndexChanged);
 			// 
@@ -763,7 +831,7 @@ namespace CodeImp.DoomBuilder.Windows
 			this.tabinterface.Location = new System.Drawing.Point(4, 22);
 			this.tabinterface.Name = "tabinterface";
 			this.tabinterface.Padding = new System.Windows.Forms.Padding(5);
-			this.tabinterface.Size = new System.Drawing.Size(680, 501);
+			this.tabinterface.Size = new System.Drawing.Size(680, 526);
 			this.tabinterface.TabIndex = 0;
 			this.tabinterface.Text = "Interface";
 			this.tabinterface.UseVisualStyleBackColor = true;
@@ -1203,7 +1271,7 @@ namespace CodeImp.DoomBuilder.Windows
 			this.fieldofviewlabel.Name = "fieldofviewlabel";
 			this.fieldofviewlabel.Size = new System.Drawing.Size(23, 13);
 			this.fieldofviewlabel.TabIndex = 19;
-			this.fieldofviewlabel.Text = "50°";
+			this.fieldofviewlabel.Text = "50Â°";
 			// 
 			// label4
 			// 
@@ -1225,7 +1293,7 @@ namespace CodeImp.DoomBuilder.Windows
 			this.tabkeys.Location = new System.Drawing.Point(4, 22);
 			this.tabkeys.Name = "tabkeys";
 			this.tabkeys.Padding = new System.Windows.Forms.Padding(3);
-			this.tabkeys.Size = new System.Drawing.Size(680, 501);
+			this.tabkeys.Size = new System.Drawing.Size(680, 526);
 			this.tabkeys.TabIndex = 1;
 			this.tabkeys.Text = "Controls";
 			this.tabkeys.UseVisualStyleBackColor = true;
@@ -1415,7 +1483,7 @@ namespace CodeImp.DoomBuilder.Windows
 			this.tabcolors.Location = new System.Drawing.Point(4, 22);
 			this.tabcolors.Name = "tabcolors";
 			this.tabcolors.Padding = new System.Windows.Forms.Padding(5);
-			this.tabcolors.Size = new System.Drawing.Size(680, 501);
+			this.tabcolors.Size = new System.Drawing.Size(680, 526);
 			this.tabcolors.TabIndex = 2;
 			this.tabcolors.Text = "Appearance";
 			this.tabcolors.UseVisualStyleBackColor = true;
@@ -1425,9 +1493,12 @@ namespace CodeImp.DoomBuilder.Windows
 			this.appearancegroup1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.appearancegroup1.Controls.Add(this.cbParallelizedVertexPlotting);
+			this.appearancegroup1.Controls.Add(this.cbParallelizedLinedefPlotting);
 			this.appearancegroup1.Controls.Add(this.activethingsalphalabel);
 			this.appearancegroup1.Controls.Add(this.label31);
 			this.appearancegroup1.Controls.Add(this.cbMarkExtraFloors);
+			this.appearancegroup1.Controls.Add(this.cbFlatShadeVertices);
 			this.appearancegroup1.Controls.Add(this.activethingsalpha);
 			this.appearancegroup1.Controls.Add(this.hiddenthingsalphalabel);
 			this.appearancegroup1.Controls.Add(this.label32);
@@ -1549,7 +1620,7 @@ namespace CodeImp.DoomBuilder.Windows
 			// cbShowFPS
 			// 
 			this.cbShowFPS.AutoSize = true;
-			this.cbShowFPS.Location = new System.Drawing.Point(229, 466);
+			this.cbShowFPS.Location = new System.Drawing.Point(229, 442);
 			this.cbShowFPS.Name = "cbShowFPS";
 			this.cbShowFPS.Size = new System.Drawing.Size(148, 17);
 			this.cbShowFPS.TabIndex = 15;
@@ -1568,7 +1639,7 @@ namespace CodeImp.DoomBuilder.Windows
 			// qualitydisplay
 			// 
 			this.qualitydisplay.AutoSize = true;
-			this.qualitydisplay.Location = new System.Drawing.Point(18, 397);
+			this.qualitydisplay.Location = new System.Drawing.Point(18, 373);
 			this.qualitydisplay.Name = "qualitydisplay";
 			this.qualitydisplay.Size = new System.Drawing.Size(128, 17);
 			this.qualitydisplay.TabIndex = 10;
@@ -1622,7 +1693,7 @@ namespace CodeImp.DoomBuilder.Windows
 			// animatevisualselection
 			// 
 			this.animatevisualselection.AutoSize = true;
-			this.animatevisualselection.Location = new System.Drawing.Point(229, 420);
+			this.animatevisualselection.Location = new System.Drawing.Point(229, 396);
 			this.animatevisualselection.Name = "animatevisualselection";
 			this.animatevisualselection.Size = new System.Drawing.Size(190, 17);
 			this.animatevisualselection.TabIndex = 14;
@@ -1665,7 +1736,7 @@ namespace CodeImp.DoomBuilder.Windows
 			// visualbilinear
 			// 
 			this.visualbilinear.AutoSize = true;
-			this.visualbilinear.Location = new System.Drawing.Point(18, 443);
+			this.visualbilinear.Location = new System.Drawing.Point(18, 419);
 			this.visualbilinear.Name = "visualbilinear";
 			this.visualbilinear.Size = new System.Drawing.Size(171, 17);
 			this.visualbilinear.TabIndex = 12;
@@ -1675,7 +1746,7 @@ namespace CodeImp.DoomBuilder.Windows
 			// classicbilinear
 			// 
 			this.classicbilinear.AutoSize = true;
-			this.classicbilinear.Location = new System.Drawing.Point(18, 420);
+			this.classicbilinear.Location = new System.Drawing.Point(18, 396);
 			this.classicbilinear.Name = "classicbilinear";
 			this.classicbilinear.Size = new System.Drawing.Size(176, 17);
 			this.classicbilinear.TabIndex = 11;
@@ -1857,7 +1928,7 @@ namespace CodeImp.DoomBuilder.Windows
 			this.tabscripteditor.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.tabscripteditor.Location = new System.Drawing.Point(4, 22);
 			this.tabscripteditor.Name = "tabscripteditor";
-			this.tabscripteditor.Size = new System.Drawing.Size(680, 501);
+			this.tabscripteditor.Size = new System.Drawing.Size(680, 526);
 			this.tabscripteditor.TabIndex = 4;
 			this.tabscripteditor.Text = "Script Editor";
 			this.tabscripteditor.UseVisualStyleBackColor = true;
@@ -2350,7 +2421,7 @@ namespace CodeImp.DoomBuilder.Windows
 			this.tabpasting.Location = new System.Drawing.Point(4, 22);
 			this.tabpasting.Name = "tabpasting";
 			this.tabpasting.Padding = new System.Windows.Forms.Padding(5);
-			this.tabpasting.Size = new System.Drawing.Size(680, 501);
+			this.tabpasting.Size = new System.Drawing.Size(680, 526);
 			this.tabpasting.TabIndex = 3;
 			this.tabpasting.Text = "Pasting ";
 			this.tabpasting.UseVisualStyleBackColor = true;
@@ -2377,15 +2448,161 @@ namespace CodeImp.DoomBuilder.Windows
 			this.pasteoptions.Size = new System.Drawing.Size(666, 427);
 			this.pasteoptions.TabIndex = 0;
 			// 
-			// autolaunchontest
+			// tabtoasts
 			// 
-			this.autolaunchontest.AutoSize = true;
-			this.autolaunchontest.Location = new System.Drawing.Point(16, 392);
-			this.autolaunchontest.Name = "autolaunchontest";
-			this.autolaunchontest.Size = new System.Drawing.Size(301, 17);
-			this.autolaunchontest.TabIndex = 50;
-			this.autolaunchontest.Text = "Automatically launch engine when test parameters change";
-			this.autolaunchontest.UseVisualStyleBackColor = true;
+			this.tabtoasts.Controls.Add(this.groupBox10);
+			this.tabtoasts.Controls.Add(this.tbToastDuration);
+			this.tabtoasts.Controls.Add(this.label12);
+			this.tabtoasts.Controls.Add(this.cbToastsEnabled);
+			this.tabtoasts.Controls.Add(this.gbToastPosition);
+			this.tabtoasts.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.tabtoasts.Location = new System.Drawing.Point(4, 22);
+			this.tabtoasts.Name = "tabtoasts";
+			this.tabtoasts.Size = new System.Drawing.Size(680, 526);
+			this.tabtoasts.TabIndex = 5;
+			this.tabtoasts.Text = "Toasts";
+			this.tabtoasts.UseVisualStyleBackColor = true;
+			// 
+			// groupBox10
+			// 
+			this.groupBox10.Controls.Add(this.lvToastActions);
+			this.groupBox10.Location = new System.Drawing.Point(11, 164);
+			this.groupBox10.Name = "groupBox10";
+			this.groupBox10.Size = new System.Drawing.Size(653, 346);
+			this.groupBox10.TabIndex = 5;
+			this.groupBox10.TabStop = false;
+			this.groupBox10.Text = "Toasts";
+			// 
+			// lvToastActions
+			// 
+			this.lvToastActions.CheckBoxes = true;
+			this.lvToastActions.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.title,
+            this.description});
+			this.lvToastActions.FullRowSelect = true;
+			this.lvToastActions.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+			this.lvToastActions.HideSelection = false;
+			this.lvToastActions.Location = new System.Drawing.Point(6, 19);
+			this.lvToastActions.MultiSelect = false;
+			this.lvToastActions.Name = "lvToastActions";
+			this.lvToastActions.ShowGroups = false;
+			this.lvToastActions.Size = new System.Drawing.Size(641, 321);
+			this.lvToastActions.TabIndex = 5;
+			this.lvToastActions.UseCompatibleStateImageBehavior = false;
+			this.lvToastActions.View = System.Windows.Forms.View.Details;
+			// 
+			// title
+			// 
+			this.title.Text = "Title";
+			// 
+			// description
+			// 
+			this.description.Text = "Description";
+			// 
+			// tbToastDuration
+			// 
+			this.tbToastDuration.AllowDecimal = false;
+			this.tbToastDuration.AllowExpressions = false;
+			this.tbToastDuration.AllowNegative = false;
+			this.tbToastDuration.AllowRelative = false;
+			this.tbToastDuration.ButtonStep = 1;
+			this.tbToastDuration.ButtonStepBig = 10F;
+			this.tbToastDuration.ButtonStepFloat = 1F;
+			this.tbToastDuration.ButtonStepSmall = 0.1F;
+			this.tbToastDuration.ButtonStepsUseModifierKeys = false;
+			this.tbToastDuration.ButtonStepsWrapAround = false;
+			this.tbToastDuration.Location = new System.Drawing.Point(350, 45);
+			this.tbToastDuration.Name = "tbToastDuration";
+			this.tbToastDuration.Size = new System.Drawing.Size(70, 24);
+			this.tbToastDuration.StepValues = null;
+			this.tbToastDuration.TabIndex = 3;
+			this.tbToastDuration.WhenTextChanged += new System.EventHandler(this.tbToastDuration_WhenTextChanged);
+			// 
+			// label12
+			// 
+			this.label12.AutoSize = true;
+			this.label12.Location = new System.Drawing.Point(217, 50);
+			this.label12.Name = "label12";
+			this.label12.Size = new System.Drawing.Size(99, 13);
+			this.label12.TabIndex = 2;
+			this.label12.Text = "Duration (seconds):";
+			// 
+			// cbToastsEnabled
+			// 
+			this.cbToastsEnabled.AutoSize = true;
+			this.cbToastsEnabled.Location = new System.Drawing.Point(11, 15);
+			this.cbToastsEnabled.Name = "cbToastsEnabled";
+			this.cbToastsEnabled.Size = new System.Drawing.Size(90, 17);
+			this.cbToastsEnabled.TabIndex = 1;
+			this.cbToastsEnabled.Text = "Enable toasts";
+			this.cbToastsEnabled.UseVisualStyleBackColor = true;
+			this.cbToastsEnabled.CheckedChanged += new System.EventHandler(this.cbToastsEnabled_CheckedChanged);
+			// 
+			// gbToastPosition
+			// 
+			this.gbToastPosition.Controls.Add(this.label6);
+			this.gbToastPosition.Controls.Add(this.rbToastPosBR);
+			this.gbToastPosition.Controls.Add(this.rbToastPosBL);
+			this.gbToastPosition.Controls.Add(this.rbToastPosTR);
+			this.gbToastPosition.Controls.Add(this.rbToastPosTL);
+			this.gbToastPosition.Location = new System.Drawing.Point(11, 38);
+			this.gbToastPosition.Name = "gbToastPosition";
+			this.gbToastPosition.Size = new System.Drawing.Size(200, 120);
+			this.gbToastPosition.TabIndex = 0;
+			this.gbToastPosition.TabStop = false;
+			// 
+			// label6
+			// 
+			this.label6.AutoSize = true;
+			this.label6.Location = new System.Drawing.Point(62, 56);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(73, 13);
+			this.label6.TabIndex = 4;
+			this.label6.Text = "Toast position";
+			// 
+			// rbToastPosBR
+			// 
+			this.rbToastPosBR.AutoSize = true;
+			this.rbToastPosBR.Location = new System.Drawing.Point(180, 101);
+			this.rbToastPosBR.Name = "rbToastPosBR";
+			this.rbToastPosBR.Size = new System.Drawing.Size(14, 13);
+			this.rbToastPosBR.TabIndex = 3;
+			this.rbToastPosBR.TabStop = true;
+			this.rbToastPosBR.Tag = "3";
+			this.rbToastPosBR.UseVisualStyleBackColor = true;
+			// 
+			// rbToastPosBL
+			// 
+			this.rbToastPosBL.AutoSize = true;
+			this.rbToastPosBL.Location = new System.Drawing.Point(6, 101);
+			this.rbToastPosBL.Name = "rbToastPosBL";
+			this.rbToastPosBL.Size = new System.Drawing.Size(14, 13);
+			this.rbToastPosBL.TabIndex = 2;
+			this.rbToastPosBL.TabStop = true;
+			this.rbToastPosBL.Tag = "4";
+			this.rbToastPosBL.UseVisualStyleBackColor = true;
+			// 
+			// rbToastPosTR
+			// 
+			this.rbToastPosTR.AutoSize = true;
+			this.rbToastPosTR.Location = new System.Drawing.Point(180, 12);
+			this.rbToastPosTR.Name = "rbToastPosTR";
+			this.rbToastPosTR.Size = new System.Drawing.Size(14, 13);
+			this.rbToastPosTR.TabIndex = 1;
+			this.rbToastPosTR.TabStop = true;
+			this.rbToastPosTR.Tag = "2";
+			this.rbToastPosTR.UseVisualStyleBackColor = true;
+			// 
+			// rbToastPosTL
+			// 
+			this.rbToastPosTL.AutoSize = true;
+			this.rbToastPosTL.Location = new System.Drawing.Point(6, 12);
+			this.rbToastPosTL.Name = "rbToastPosTL";
+			this.rbToastPosTL.Size = new System.Drawing.Size(14, 13);
+			this.rbToastPosTL.TabIndex = 0;
+			this.rbToastPosTL.TabStop = true;
+			this.rbToastPosTL.Tag = "1";
+			this.rbToastPosTL.UseVisualStyleBackColor = true;
 			// 
 			// PreferencesForm
 			// 
@@ -2393,7 +2610,7 @@ namespace CodeImp.DoomBuilder.Windows
 			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.CancelButton = this.cancel;
-			this.ClientSize = new System.Drawing.Size(709, 585);
+			this.ClientSize = new System.Drawing.Size(709, 610);
 			this.Controls.Add(this.cancel);
 			this.Controls.Add(this.apply);
 			this.Controls.Add(this.tabs);
@@ -2458,6 +2675,11 @@ namespace CodeImp.DoomBuilder.Windows
 			this.groupBox6.PerformLayout();
 			this.previewgroup.ResumeLayout(false);
 			this.tabpasting.ResumeLayout(false);
+			this.tabtoasts.ResumeLayout(false);
+			this.tabtoasts.PerformLayout();
+			this.groupBox10.ResumeLayout(false);
+			this.gbToastPosition.ResumeLayout(false);
+			this.gbToastPosition.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -2559,6 +2781,7 @@ namespace CodeImp.DoomBuilder.Windows
 		private CodeImp.DoomBuilder.Controls.ColorControl color3dFloors;
 		private System.Windows.Forms.TextBox actiondescription;
 		private System.Windows.Forms.CheckBox cbMarkExtraFloors;
+		private System.Windows.Forms.CheckBox cbFlatShadeVertices;
 		private CodeImp.DoomBuilder.Controls.TransparentTrackBar recentFiles;
 		private System.Windows.Forms.Label labelRecentFiles;
 		private System.Windows.Forms.Label label25;
@@ -2638,5 +2861,21 @@ namespace CodeImp.DoomBuilder.Windows
         private System.Windows.Forms.CheckBox texturesizesbelow;
 		private System.Windows.Forms.CheckBox cbShowFPS;
 		private System.Windows.Forms.CheckBox autolaunchontest;
+		private System.Windows.Forms.TabPage tabtoasts;
+		private Controls.ButtonsNumericTextbox tbToastDuration;
+		private System.Windows.Forms.Label label12;
+		private System.Windows.Forms.CheckBox cbToastsEnabled;
+		private System.Windows.Forms.GroupBox gbToastPosition;
+		private System.Windows.Forms.Label label6;
+		private System.Windows.Forms.RadioButton rbToastPosBR;
+		private System.Windows.Forms.RadioButton rbToastPosBL;
+		private System.Windows.Forms.RadioButton rbToastPosTR;
+		private System.Windows.Forms.RadioButton rbToastPosTL;
+		private System.Windows.Forms.GroupBox groupBox10;
+		private System.Windows.Forms.ListView lvToastActions;
+		private System.Windows.Forms.ColumnHeader title;
+		private System.Windows.Forms.ColumnHeader description;
+		private System.Windows.Forms.CheckBox cbParallelizedVertexPlotting;
+		private System.Windows.Forms.CheckBox cbParallelizedLinedefPlotting;
 	}
 }

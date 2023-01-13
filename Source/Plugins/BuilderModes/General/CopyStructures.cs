@@ -322,6 +322,9 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		[FieldDescription(Description = "Ceiling glow", Field1 = "ceilingglowcolor", Field2 = "ceilingglowheight")]
 		public bool CeilingGlow = true;
 
+		[FieldDescription(Description = "Fog density", Field1 = "fogdensity")]
+		public bool FogDensity = true;
+
 		[FieldDescription(Description = "Desaturation", Field1 = "desaturation")]
 		public bool Desaturation = true;
 

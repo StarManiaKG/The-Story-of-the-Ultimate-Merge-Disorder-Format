@@ -35,7 +35,7 @@ namespace CodeImp.DoomBuilder.Data
 			// Initialize
 			SetName(name);
 			virtualname = "[Flats]/" + this.name; //mxd
-			isFlat = true; //mxd
+			texturenamespace = TextureNamespace.FLAT;
 			
 			// We have no destructor
 			GC.SuppressFinalize(this);

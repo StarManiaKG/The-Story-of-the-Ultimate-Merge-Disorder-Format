@@ -26,7 +26,7 @@
 class GLBackend : public Backend
 {
 public:
-	RenderDevice* NewRenderDevice(void* disp, void* window) override;
+	RenderDevice* NewRenderDevice(void* disp, void* window, bool debug) override;
 	void DeleteRenderDevice(RenderDevice* device) override;
 
 	VertexBuffer* NewVertexBuffer() override;

@@ -20,7 +20,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using CodeImp.DoomBuilder.Config;
 using CodeImp.DoomBuilder.Data;
 using CodeImp.DoomBuilder.Windows;
 
@@ -30,11 +33,30 @@ namespace CodeImp.DoomBuilder.Controls
 {
 	internal partial class ResourceListEditor : UserControl
 	{
+		#region ================== Internal warning struct
+		class Warning
+        {
+			public Panel Wrapper;
+			public PictureBox Picture;
+			public Label Text;
+
+			public Warning(Panel wrapper, PictureBox picture, Label text)
+            {
+				Wrapper = wrapper;
+				Picture = picture;
+				Text = text;
+            }
+        }
+		#endregion
+
 		#region ================== Delegates / Events
 
 		public delegate void ContentChanged();
+		public delegate void WarningsChanged(int size);
 		public event ContentChanged OnContentChanged;
+		public event WarningsChanged OnWarningsChanged;
 		public string StartPath; //mxd
+		public bool IsMapControl = false;
 
 		#endregion
 
@@ -47,12 +69,15 @@ namespace CodeImp.DoomBuilder.Controls
 		private readonly int pasteactionkey;
 		private readonly int pastespecialactionkey;
 		private readonly int deleteactionkey;
+		private readonly Dictionary<string, CancellationTokenSource> loadingrequiredarchives;
+		private readonly List<Warning> warnings;
 
 		#endregion
 
 		#region ================== Properties
 
 		public Point DialogOffset { get { return dialogoffset; } set { dialogoffset = value; } }
+		public GameConfiguration GameConfiguration { get; set; }
 
 		#endregion
 
@@ -64,8 +89,11 @@ namespace CodeImp.DoomBuilder.Controls
 			// Initialize
 			InitializeComponent();
 			ResizeColumnHeader();
-			
-			if(General.Actions != null)
+
+			loadingrequiredarchives = new Dictionary<string, CancellationTokenSource>();
+			warnings = new List<Warning>();
+
+			if (General.Actions != null)
 			{
 				// Get key shortcuts (mxd)
 				copyactionkey = General.Actions.GetActionByName("builder_copyselection").ShortcutKey;
@@ -85,6 +113,9 @@ namespace CodeImp.DoomBuilder.Controls
 			// Start with a clear list
 			resourceitems.Items.Clear();
 			copiedresources = new DataLocationList(); //mxd
+
+			Resize += HandleResize;
+			HandleResize(null, null);
 		}
 
 		#endregion
@@ -109,6 +140,257 @@ namespace CodeImp.DoomBuilder.Controls
 				default: return -1;
 			}
 		}
+
+		private List<string> RunCheckRequiredArchives(DataLocation loc, CancellationToken token)
+		{
+			return ResourceOptionsForm.CheckRequiredArchives(GameConfiguration, loc, token);
+		}
+
+		private async void StartRequiredArchivesCheck(string location)
+		{
+			if (GameConfiguration == null) return;
+
+			DataLocation loc = new DataLocation();
+			bool found = false;
+
+			foreach (ListViewItem item in resourceitems.Items)
+            {
+				DataLocation dl = (DataLocation)item.Tag;
+				if (dl.location == location)
+                {
+					loc = dl;
+					found = true;
+					break;
+                }
+            }
+
+			if (!found) return;
+
+			var cancellation = new CancellationTokenSource();
+
+			General.WriteLogLine(string.Format("Resource check started for: {0}", loc.location));
+
+			loadingrequiredarchives.Add(location, cancellation);
+			RefreshLoading();
+
+			try
+			{
+				loc.requiredarchives = await Task.Run(() => RunCheckRequiredArchives(loc, cancellation.Token));
+				
+				// in case of dir, option1/2 should be erased
+				if (loc.type == DataLocation.RESOURCE_DIRECTORY)
+					loc.option1 = loc.option2 = false;
+				// check if it has to be force-excluded from testing
+				foreach (var arc in GameConfiguration.RequiredArchives)
+				{
+					if (loc.requiredarchives.Contains(arc.ID) && arc.ExcludeFromTesting)
+						loc.notfortesting = true;
+				}
+
+				foreach (ListViewItem item in resourceitems.Items)
+				{
+					if (((DataLocation)item.Tag).location == location)
+					{
+						item.Tag = loc;
+						if (OnContentChanged != null) OnContentChanged();
+						break;
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				loc.requiredarchives = new List<string>();
+				General.WriteLogLine(e.ToString());
+			}
+
+			cancellation.Dispose();
+
+			// Loading might have been canceled outside of here, so make sure that the location is still in the list.
+			// See https://github.com/jewalky/UltimateDoomBuilder/issues/813
+			if (loadingrequiredarchives.ContainsKey(location) && loadingrequiredarchives[location] == cancellation)
+			{
+				General.WriteLogLine(string.Format("Resource check completed for: {0} (Match = {1}, RequiredArchives = {2})", location, loadingrequiredarchives[location] == cancellation, string.Join(",", loc.requiredarchives)));
+				loadingrequiredarchives.Remove(location);
+				RefreshLoading();
+			}
+
+			// if nothing is loading, update warnings if any
+			if (loadingrequiredarchives.Count == 0)
+				UpdateWarnings();
+		}
+
+		private void ShowWarning(string text, bool loading)
+        {
+			Panel p = new Panel();
+			Controls.Add(p);
+
+			// find offset
+			int lastTop = 0;
+			foreach (Warning w in warnings)
+				lastTop = Math.Max(lastTop, w.Wrapper.Bottom + 8);
+
+			p.Top = lastTop;
+			p.Left = 0;
+			p.Width = Width;
+			p.Height = 48;
+			p.BackColor = SystemColors.Info;
+			p.BorderStyle = BorderStyle.FixedSingle;
+			p.ForeColor = SystemColors.InfoText;
+
+			PictureBox pb = new PictureBox();
+			pb.Width = 16;
+			pb.Height = 16;
+			pb.Left = 8;
+			pb.Top = 8;
+			pb.Image = loading ? Properties.Resources.Loader: Properties.Resources.Warning;
+			p.Controls.Add(pb);
+
+			Label l = new Label();
+			l.Left = 8 + 16 + 8;
+			l.Top = 10;
+			l.MinimumSize = new Size(Width - 32 - 8, 0);
+			l.MaximumSize = new Size(Width - 32 - 8, 640);
+			l.Width = l.MinimumSize.Width;
+			l.Height = 48;
+			l.Text = text;
+			l.AutoSize = true;
+			p.Controls.Add(l);
+
+			// resize panel
+			p.Height = 22 + l.Height;
+
+			Controls.SetChildIndex(p, 0);
+
+			warnings.Add(new Warning(p, pb, l));
+
+			lastTop = p.Bottom + 8;
+
+			resourceitems.Height = Height - lastTop - 32;
+			resourceitems.Top = lastTop;
+        }
+
+		private int GetWarningsHeight()
+        {
+			int lastTop = 0;
+			foreach (Warning w in warnings)
+				lastTop = Math.Max(lastTop, w.Wrapper.Bottom + 8);
+
+			return lastTop;
+		}
+
+		private void UpdateWarnings()
+        {
+			int lastH = GetWarningsHeight();
+
+			foreach (Warning w in warnings)
+				w.Wrapper.Dispose();
+
+			warnings.Clear();
+
+			HandleResize(this, null);
+
+			List<string> requiredarchives = new List<string>();
+			foreach (ListViewItem item in resourceitems.Items)
+			{
+				DataLocation loc = (DataLocation)item.Tag;
+				if (loc.requiredarchives != null)
+					requiredarchives.AddRange(loc.requiredarchives);
+			}
+
+			General.WriteLogLine(string.Format("Archive check: RequiredArchives = {0}", string.Join(",", requiredarchives)));
+
+			// warning 1: you do not have a required file
+			if (GameConfiguration != null)
+            {
+				foreach (RequiredArchive arc in GameConfiguration.RequiredArchives)
+                {
+					if (!requiredarchives.Contains(arc.ID))
+						ShowWarning(string.Format("Warning: a resource archive is required for this game configuration, but not present:\n  \"{0}\"\nWithout it, UDB will have severely limited capabilities.", arc.FileName), false);
+                }
+            }
+
+			// warning 2: map without any resources. this makes sense only on map open dialog and not game configurations dialog
+			if (IsMapControl)
+            {
+				if (resourceitems.Items.Count == 0)
+					ShowWarning("Warning: you are about to edit a map without any resources.\nTextures, flats and sprites may not be shown correctly or may not show up at all.", false);
+            }
+
+			// warning 3: multiple instances of the same required file
+			if (GameConfiguration != null)
+			{
+				for (int i = 0; i < requiredarchives.Count; i++)
+				{
+					if (requiredarchives.IndexOf(requiredarchives[i]) != i)
+					{
+						foreach (RequiredArchive arc in GameConfiguration.RequiredArchives)
+						{
+							if (arc.ID == requiredarchives[i])
+								ShowWarning(string.Format("Warning: required archive was added more than once:\n  \"{0}\"\nThis will most likely not work.", arc.FileName), false);
+						}
+					}
+				}
+			}
+
+			int h = GetWarningsHeight();
+			if (lastH != h && OnWarningsChanged != null)
+			{
+				OnWarningsChanged(h);
+				// possibly recalculate size
+				HandleResize(this, null);
+			}
+        }
+
+		private void RefreshLoading()
+        {
+			resourceitems.BeginUpdate();
+
+			bool anyLoading = false;
+
+			foreach (ListViewItem item in resourceitems.Items)
+            {
+				DataLocation dl = (DataLocation)item.Tag;
+				if (IsLoading(dl.location))
+				{
+					item.ImageIndex = GetLoaderIndex();
+					anyLoading |= true;
+				}
+				else item.ImageIndex = GetIconIndex(dl.type, item.ForeColor != SystemColors.WindowText);
+            }
+
+			resourceitems.EndUpdate();
+
+			if (anyLoading)
+            {
+				foreach (Warning w in warnings)
+					w.Picture.Image = Properties.Resources.Loader;
+            }
+			else
+            {
+				foreach (Warning w in warnings)
+					w.Picture.Image = Properties.Resources.Warning;
+			}
+		}
+
+		private void CancelLoading(string location)
+        {
+			General.WriteLogLine(string.Format("Resource check cancelled for: {0}", location));
+			if (loadingrequiredarchives.ContainsKey(location))
+			{
+				loadingrequiredarchives[location].Cancel();
+				loadingrequiredarchives.Remove(location);
+			}
+        }
+
+		private bool IsLoading(string location)
+        {
+			return loadingrequiredarchives.ContainsKey(location);
+        }
+
+		private int GetLoaderIndex()
+        {
+			return 6;
+        }
 		
 		// This will show a fixed list
 		public void FixedResourceLocationList(DataLocationList list)
@@ -123,8 +405,11 @@ namespace CodeImp.DoomBuilder.Controls
 			for(int i = resourceitems.Items.Count - 1; i >= 0; i--)
 			{
 				// Remove item if not fixed
-				if(resourceitems.Items[i].ForeColor != SystemColors.WindowText)
+				if (resourceitems.Items[i].ForeColor != SystemColors.WindowText)
+				{
+					CancelLoading(((DataLocation)resourceitems.Items[i].Tag).location);
 					resourceitems.Items.RemoveAt(i);
+				}
 				else
 					currentitems.Add((DataLocation)resourceitems.Items[i].Tag); //mxd
 			}
@@ -138,17 +423,25 @@ namespace CodeImp.DoomBuilder.Controls
 				// Add item as fixed
 				resourceitems.Items.Insert(0, new ListViewItem(list[i].location));
 				resourceitems.Items[0].Tag = list[i];
-				resourceitems.Items[0].ImageIndex = GetIconIndex(list[i].type, true);
+				resourceitems.Items[0].ImageIndex = IsLoading(list[i].location) ? GetLoaderIndex() : GetIconIndex(list[i].type, true);
 
 				// Set disabled
 				resourceitems.Items[0].ForeColor = SystemColors.GrayText;
 
 				// Validate path (mxd)
 				resourceitems.Items[0].BackColor = (list[i].IsValid() ? resourceitems.BackColor : Color.MistyRose);
+
+				// Check if resource has no info about membership in Game configuration's requiredarchives
+				// This normally happens if it was imported from old DBS or drag-dropped
+				if (list[i].requiredarchives == null)
+					StartRequiredArchivesCheck(list[i].location);
 			}
 
 			// Done
 			resourceitems.EndUpdate();
+
+			if (loadingrequiredarchives.Count == 0)
+				UpdateWarnings();
 		}
 
 		// This will edit the given list
@@ -165,8 +458,11 @@ namespace CodeImp.DoomBuilder.Controls
 			for(int i = resourceitems.Items.Count - 1; i >= 0; i--)
 			{
 				// Remove item unless fixed
-				if(resourceitems.Items[i].ForeColor == SystemColors.WindowText)
+				if (resourceitems.Items[i].ForeColor == SystemColors.WindowText)
+				{
+					CancelLoading(((DataLocation)resourceitems.Items[i].Tag).location);
 					resourceitems.Items.RemoveAt(i);
+				}
 			}
 
 			// Go for all items
@@ -175,6 +471,9 @@ namespace CodeImp.DoomBuilder.Controls
 				// Add item
 				AddItem(dl);
 			}
+
+			if (loadingrequiredarchives.Count == 0)
+				UpdateWarnings();
 
 			// Done
 			resourceitems.EndUpdate();
@@ -208,7 +507,7 @@ namespace CodeImp.DoomBuilder.Controls
 			int index = resourceitems.Items.Count;
 			resourceitems.Items.Add(new ListViewItem(rl.location));
 			resourceitems.Items[index].Tag = rl;
-			resourceitems.Items[index].ImageIndex = GetIconIndex(rl.type, false);
+			resourceitems.Items[index].ImageIndex = IsLoading(rl.location) ? GetLoaderIndex() : GetIconIndex(rl.type, false);
 			
 			// Set normal color
 			resourceitems.Items[index].ForeColor = SystemColors.WindowText;
@@ -218,6 +517,12 @@ namespace CodeImp.DoomBuilder.Controls
 
 			// Done
 			resourceitems.EndUpdate();
+
+			// Check if resource has no info about membership in Game configuration's requiredarchives
+			// This normally happens if it was imported from old DBS or drag-dropped
+			if (rl.requiredarchives == null)
+				StartRequiredArchivesCheck(rl.location);
+
 			return true;
 		}
 		
@@ -240,6 +545,7 @@ namespace CodeImp.DoomBuilder.Controls
 		{
 			// Open resource options dialog
 			ResourceOptionsForm resoptions = new ResourceOptionsForm(new DataLocation(), "Add Resource", StartPath);
+			resoptions.GameConfiguration = GameConfiguration;
 			resoptions.StartPosition = FormStartPosition.Manual;
 			Rectangle startposition = new Rectangle(dialogoffset.X, dialogoffset.Y, 1, 1);
 			startposition = this.RectangleToScreen(startposition);
@@ -257,6 +563,9 @@ namespace CodeImp.DoomBuilder.Controls
 					General.Interface.DisplayStatus(StatusType.Warning, "Resource already added!"); //mxd
 					return; //mxd
 				}
+
+				if (loadingrequiredarchives.Count == 0)
+					UpdateWarnings();
 			}
 
 			// Raise content changed event
@@ -274,6 +583,7 @@ namespace CodeImp.DoomBuilder.Controls
 
 				// Open resource options dialog
 				ResourceOptionsForm resoptions = new ResourceOptionsForm((DataLocation)selecteditem.Tag, "Resource Options", StartPath);
+				resoptions.GameConfiguration = GameConfiguration;
 				resoptions.StartPosition = FormStartPosition.Manual;
 				Rectangle startposition = new Rectangle(dialogoffset.X, dialogoffset.Y, 1, 1);
 				startposition = this.RectangleToScreen(startposition);
@@ -292,13 +602,20 @@ namespace CodeImp.DoomBuilder.Controls
 					DataLocation rl = resoptions.ResourceLocation;
 					selecteditem.Text = rl.location;
 					selecteditem.Tag = rl;
-					selecteditem.ImageIndex = GetIconIndex(rl.type, false);
+					selecteditem.ImageIndex = IsLoading(rl.location) ? GetLoaderIndex() : GetIconIndex(rl.type, false);
 					
 					// Done
 					resourceitems.EndUpdate();
-					
+
+					// Check if resource has no info about membership in Game configuration's requiredarchives
+					// This normally happens if it was imported from old DBS or drag-dropped
+					if (rl.requiredarchives == null)
+						StartRequiredArchivesCheck(rl.location);
+					else if (loadingrequiredarchives.Count == 0)
+						UpdateWarnings();
+
 					// Raise content changed event
-					if(OnContentChanged != null) OnContentChanged();
+					if (OnContentChanged != null) OnContentChanged();
 				}
 			}
 		}
@@ -402,19 +719,19 @@ namespace CodeImp.DoomBuilder.Controls
 						{
 							case ".wad":
                             case ".iwad":
-								if(AddItem(new DataLocation(DataLocation.RESOURCE_WAD, path, false, false, false))) addedfiles++;
+								if(AddItem(new DataLocation(DataLocation.RESOURCE_WAD, path, false, false, false, null))) addedfiles++;
 								break;
 							case ".pk7":
 							case ".pk3":
                             case ".ipk3":
                             case ".ipk7":
-								if(AddItem(new DataLocation(DataLocation.RESOURCE_PK3, path, false, false, false))) addedfiles++;
+								if(AddItem(new DataLocation(DataLocation.RESOURCE_PK3, path, false, false, false, null))) addedfiles++;
 								break;
 						}
 					}
 					else if(Directory.Exists(path))
 					{
-						if(AddItem(new DataLocation(DataLocation.RESOURCE_DIRECTORY, path, false, false, false))) addedfiles++;
+						if(AddItem(new DataLocation(DataLocation.RESOURCE_DIRECTORY, path, false, false, false, null))) addedfiles++;
 					}
 				}
 
@@ -424,9 +741,12 @@ namespace CodeImp.DoomBuilder.Controls
 					return;
 				}
 			}
-			
+
+			if (loadingrequiredarchives.Count == 0)
+				UpdateWarnings();
+
 			// Raise content changed event
-			if(OnContentChanged != null) OnContentChanged();
+			if (OnContentChanged != null) OnContentChanged();
 		}
 
 		// Client size changed
@@ -469,8 +789,11 @@ namespace CodeImp.DoomBuilder.Controls
 				// Display notification
 				General.Interface.DisplayStatus(StatusType.Info, pastedcount + " Resource" + (pastedcount > 1 ? "s" : "") + " Pasted");
 
+				if (loadingrequiredarchives.Count == 0)
+					UpdateWarnings();
+
 				// Raise content changed event
-				if(OnContentChanged != null) OnContentChanged();
+				if (OnContentChanged != null) OnContentChanged();
 			}
 		}
 
@@ -500,8 +823,11 @@ namespace CodeImp.DoomBuilder.Controls
 				// Display notification
 				General.Interface.DisplayStatus(StatusType.Info, pastedcount + " Resource" + (pastedcount > 1 ? "s" : "") + " Replaced");
 
+				if (loadingrequiredarchives.Count == 0)
+					UpdateWarnings();
+
 				// Raise content changed event
-				if(OnContentChanged != null) OnContentChanged();
+				if (OnContentChanged != null) OnContentChanged();
 			}
 		}
 
@@ -519,8 +845,11 @@ namespace CodeImp.DoomBuilder.Controls
 
 			ResizeColumnHeader();
 
+			if (loadingrequiredarchives.Count == 0)
+				UpdateWarnings();
+
 			// Raise content changed event
-			if(OnContentChanged != null) OnContentChanged();
+			if (OnContentChanged != null) OnContentChanged();
 		}
 
 		#endregion
@@ -580,14 +909,19 @@ namespace CodeImp.DoomBuilder.Controls
 
 		#endregion
 
+
 		#region ================== Events (mxd)
 
 		//mxd. Because anchor-based alignment fails when using high-Dpi settings...
-		private void ResourceListEditor_Resize(object sender, EventArgs e)
+		private void HandleResize(object sender, EventArgs e)
 		{
+			int warningsH = GetWarningsHeight();
+
 			resourceitems.Width = this.Width;
-			resourceitems.Height = this.Height - addresource.Height - addresource.Margin.Top - addresource.Margin.Bottom;
-			
+			resourceitems.Top = warningsH;
+			resourceitems.Left = 0;
+			resourceitems.Height = this.Height - addresource.Height - addresource.Margin.Top - addresource.Margin.Bottom - resourceitems.Top;
+
 			addresource.Top = resourceitems.Bottom + addresource.Margin.Top;
 			editresource.Top = addresource.Top;
 			deleteresources.Top = addresource.Top;

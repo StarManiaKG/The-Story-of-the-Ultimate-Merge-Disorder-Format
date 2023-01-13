@@ -72,6 +72,10 @@ namespace CodeImp.DoomBuilder.BuilderModes.Interface
 			ceiling.Enabled = cbOverrideCeilingTexture.Checked;
 			General.Map.Options.OverrideCeilingTexture = cbOverrideCeilingTexture.Checked;
 
+			// If we don't set the default texture here it'll not be set until a different texture is selected
+			if (ceiling.Enabled)
+				General.Map.Options.DefaultCeilingTexture = ceiling.TextureName;
+
 			getsectortexturesfromselection.Enabled = (cbOverrideCeilingTexture.Checked || cbOverrideFloorTexture.Checked);
 		}
 
@@ -79,12 +83,22 @@ namespace CodeImp.DoomBuilder.BuilderModes.Interface
 		{
 			floor.Enabled = cbOverrideFloorTexture.Checked;
 			General.Map.Options.OverrideFloorTexture = cbOverrideFloorTexture.Checked;
+
+			// If we don't set the default texture here it'll not be set until a different texture is selected
+			if (floor.Enabled)
+				General.Map.Options.DefaultFloorTexture = floor.TextureName;
+
+			getsectortexturesfromselection.Enabled = (cbOverrideCeilingTexture.Checked || cbOverrideFloorTexture.Checked);
 		}
 
 		private void cbOverrideTopTexture_CheckedChanged(object sender, EventArgs e) 
 		{
 			top.Enabled = cbOverrideTopTexture.Checked;
 			General.Map.Options.OverrideTopTexture = cbOverrideTopTexture.Checked;
+
+			// If we don't set the default texture here it'll not be set until a different texture is selected
+			if (top.Enabled)
+				General.Map.Options.DefaultTopTexture = top.TextureName;
 
 			getsidetexturesfromselection.Enabled = (cbOverrideTopTexture.Checked || cbOverrideMiddleTexture.Checked || cbOverrideBottomTexture.Checked);
 		}
@@ -94,6 +108,10 @@ namespace CodeImp.DoomBuilder.BuilderModes.Interface
 			middle.Enabled = cbOverrideMiddleTexture.Checked;
 			General.Map.Options.OverrideMiddleTexture = cbOverrideMiddleTexture.Checked;
 
+			// If we don't set the default texture here it'll not be set until a different texture is selected
+			if (middle.Enabled)
+				General.Map.Options.DefaultWallTexture = middle.TextureName;
+
 			getsidetexturesfromselection.Enabled = (cbOverrideTopTexture.Checked || cbOverrideMiddleTexture.Checked || cbOverrideBottomTexture.Checked);
 		}
 
@@ -101,6 +119,10 @@ namespace CodeImp.DoomBuilder.BuilderModes.Interface
 		{
 			bottom.Enabled = cbOverrideBottomTexture.Checked;
 			General.Map.Options.OverrideBottomTexture = cbOverrideBottomTexture.Checked;
+
+			// If we don't set the default texture here it'll not be set until a different texture is selected
+			if (bottom.Enabled)
+				General.Map.Options.DefaultBottomTexture = bottom.TextureName;
 
 			getsidetexturesfromselection.Enabled = (cbOverrideTopTexture.Checked || cbOverrideMiddleTexture.Checked || cbOverrideBottomTexture.Checked);
 		}

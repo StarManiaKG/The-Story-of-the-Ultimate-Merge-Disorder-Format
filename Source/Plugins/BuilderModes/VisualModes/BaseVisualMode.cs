@@ -2770,9 +2770,33 @@ namespace CodeImp.DoomBuilder.BuilderModes
 			PostAction();
 	    }
 
+		[BeginAction("raisemapelementbygridsize")]
+		public void RaiseMapElementByGridSize()
+		{
+			PreAction(UndoGroup.SectorHeightChange);
+			List<IVisualEventReceiver> objs = GetSelectedObjects(true, true, true, true, true);
+			bool hasvisualslopehandles = objs.Any(o => o is VisualSlope);
+			foreach (IVisualEventReceiver i in objs) // If slope handles are selected only apply the action to them
+				if (!hasvisualslopehandles || (hasvisualslopehandles && i is VisualSlope))
+					i.OnChangeTargetHeight(General.Map.Grid.GridSize);
+			PostAction();
+		}
 
-        //mxd
-        [BeginAction("raisesectortonearest")]
+		[BeginAction("lowermapelementbygridsize")]
+		public void LowerMapElementByGridSize()
+		{
+			PreAction(UndoGroup.SectorHeightChange);
+			List<IVisualEventReceiver> objs = GetSelectedObjects(true, true, true, true, true);
+			bool hasvisualslopehandles = objs.Any(o => o is VisualSlope);
+			foreach (IVisualEventReceiver i in objs) // If slope handles are selected only apply the action to them
+				if (!hasvisualslopehandles || (hasvisualslopehandles && i is VisualSlope))
+					i.OnChangeTargetHeight(-General.Map.Grid.GridSize);
+			PostAction();
+		}
+
+
+		//mxd
+		[BeginAction("raisesectortonearest")]
 		public void RaiseSectorToNearest() 
 		{
 			List<VisualSidedefSlope> selectedhandles = GetSelectedSlopeHandles();
@@ -3666,8 +3690,15 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		public void ToggleGravity()
 		{
 			BuilderPlug.Me.UseGravity = !BuilderPlug.Me.UseGravity;
-			string onoff = BuilderPlug.Me.UseGravity ? "ON" : "OFF";
-			General.Interface.DisplayStatus(StatusType.Action, "Gravity is now " + onoff + ".");
+
+			string shortmessage = "Gravity is now " + (BuilderPlug.Me.UseGravity ? "ON" : "OFF") + ".";
+			string message = shortmessage;
+			string key = Actions.Action.GetShortcutKeyDesc(General.Actions.Current.ShortcutKey);
+
+			if (!string.IsNullOrEmpty(key))
+				message += $" Press '{key}' to toggle.";
+
+			General.ToastManager.ShowToast("togglegravity", ToastType.INFO, "Changed gravity", message, new StatusInfo(StatusType.Action, shortmessage));
 		}
 
 		[BeginAction("resettexture")]
@@ -3876,8 +3907,11 @@ namespace CodeImp.DoomBuilder.BuilderModes
 			List<IVisualEventReceiver> objs = GetSelectedObjects(true, true, true, true, false);
             foreach (IVisualEventReceiver i in objs)
             {
-                if (i is BaseVisualThing)
-                    visiblethings.Remove((BaseVisualThing)i); // [ZZ] if any
+				if (i is BaseVisualThing)
+				{
+					visiblethings.Remove((BaseVisualThing)i); // [ZZ] if any
+					allthings.Remove(((BaseVisualThing)i).Thing);
+				}
                 i.OnDelete();
             }
             PostAction();
@@ -4473,7 +4507,12 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		{
 			if (!General.Map.UDMF)
 			{
-				General.Interface.DisplayStatus(StatusType.Warning, "Visual sloping is supported in UDMF only!");
+				General.ToastManager.ShowToast(ToastMessages.VISUALSLOPING, ToastType.WARNING, "Visual sloping", "Visual sloping is supported in UDMF only.");
+				return;
+			}
+			else if(!General.Map.Config.PlaneEquationSupport)
+			{
+				General.ToastManager.ShowToast(ToastMessages.VISUALSLOPING, ToastType.WARNING, "Visual sloping", "Visual sloping is not supported in this game configuration.");
 				return;
 			}
 
@@ -4499,7 +4538,12 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		{
 			if (!General.Map.UDMF)
 			{
-				General.Interface.DisplayStatus(StatusType.Warning, "Visual sloping is supported in UDMF only!");
+				General.ToastManager.ShowToast(ToastMessages.VISUALSLOPING, ToastType.WARNING, "Visual sloping", "Visual sloping is supported in UDMF only.");
+				return;
+			}
+			else if (!General.Map.Config.PlaneEquationSupport)
+			{
+				General.ToastManager.ShowToast(ToastMessages.VISUALSLOPING, ToastType.WARNING, "Visual sloping", "Visual sloping is not supported in this game configuration.");
 				return;
 			}
 
@@ -4525,7 +4569,12 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		{
 			if (!General.Map.UDMF)
 			{
-				General.Interface.DisplayStatus(StatusType.Warning, "Visual sloping is supported in UDMF only!");
+				General.ToastManager.ShowToast(ToastMessages.VISUALSLOPING, ToastType.WARNING, "Visual sloping", "Visual sloping is not supported in this game configuration.");
+				return;
+			}
+			else if (!General.Map.Config.PlaneEquationSupport)
+			{
+				General.ToastManager.ShowToast(ToastMessages.VISUALSLOPING, ToastType.WARNING, "Visual sloping", "Visual sloping is not supported in this game configuration.");
 				return;
 			}
 
@@ -4735,6 +4784,7 @@ namespace CodeImp.DoomBuilder.BuilderModes
 			{
 				t.Rotate(General.Map.VisualCamera.AngleXY - Angle2D.PI);
 				t.SetPitch((int)Angle2D.RadToDeg(General.Map.VisualCamera.AngleZ - Angle2D.PI));
+				((BaseVisualThing)allthings[t]).Rebuild();
 			}
 		}
 

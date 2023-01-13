@@ -129,7 +129,9 @@ namespace CodeImp.DoomBuilder.TagExplorer
 		public void Setup() 
 		{
 			if(this.ParentForm != null) this.ParentForm.Activated += ParentForm_Activated;
-			UpdateTree(true);
+			
+			if(Visible)
+				UpdateTree(true);
 		}
 
 		public void Terminate() 
@@ -146,6 +148,9 @@ namespace CodeImp.DoomBuilder.TagExplorer
 
 		private void UpdateTree(bool focusDisplay) 
 		{
+			if (!General.Map.Map.IsSafeToAccess)
+				return;
+
 			bool showTags = (currentDisplayMode == DISPLAY_TAGS || currentDisplayMode == DISPLAY_TAGS_AND_ACTIONS);
 			bool showActions = (currentDisplayMode == DISPLAY_ACTIONS || currentDisplayMode == DISPLAY_TAGS_AND_ACTIONS);
 			bool hasComment;
@@ -167,7 +172,7 @@ namespace CodeImp.DoomBuilder.TagExplorer
 
 			List<TreeNode> nodes = new List<TreeNode>();
 
-//add things
+			//add things
 			if(General.Map.FormatInterface.HasThingAction || General.Map.FormatInterface.HasThingTag) 
 			{
 				ICollection<Thing> things = General.Map.Map.Things;
@@ -331,7 +336,7 @@ namespace CodeImp.DoomBuilder.TagExplorer
 				}
 			}
 
-//add sectors
+			//add sectors
 			nodes = new List<TreeNode>();
 			ICollection<Sector> sectors = General.Map.Map.Sectors;
 
@@ -516,7 +521,7 @@ namespace CodeImp.DoomBuilder.TagExplorer
 				}
 			}
 
-//add linedefs
+			//add linedefs
 			nodes = new List<TreeNode>();
 			ICollection<Linedef> linedefs = General.Map.Map.Linedefs;
 
@@ -1098,6 +1103,10 @@ namespace CodeImp.DoomBuilder.TagExplorer
 		private void updatetimer_Tick(object sender, EventArgs e) 
 		{
 			updatetimer.Stop();
+
+			if(!BuilderPlug.Me.IsDockerActive())
+				return;
+
 			UpdateTree(Form.ActiveForm == General.Interface);
 		}
 
@@ -1149,6 +1158,12 @@ namespace CodeImp.DoomBuilder.TagExplorer
 				General.ErrorLogger.Add(ErrorType.Error, "Failed to save tag info: " + ex.Message);
 				General.Interface.DisplayStatus(StatusType.Info, "Failed to save tag info...");
 			}
+		}
+
+		private void TagExplorer_VisibleChanged(object sender, EventArgs e)
+		{
+			if (Visible)
+				UpdateTree(true);
 		}
 
 		#endregion

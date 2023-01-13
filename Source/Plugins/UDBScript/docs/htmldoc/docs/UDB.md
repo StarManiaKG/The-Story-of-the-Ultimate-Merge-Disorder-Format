@@ -11,6 +11,11 @@ let rad = UDB.Angle2D.degToRad(46);
 ```
 
 ---
+<span style="float:right;font-weight:normal;font-size:66%">Version: 5</span>
+### BlockMap
+Instantiable class that contains methods related to blockmaps. See [BlockMap][BlockMap.md) for more information.
+
+---
 ### Data
 Class containing methods related to the game data. See [Data](Data.md) for more information.
 
@@ -39,6 +44,11 @@ let sectors = UDB.Map.getSelectedOrHighlightedSectors();
 ```
 
 ---
+<span style="float:right;font-weight:normal;font-size:66%">Version: 5</span>
+### Plane
+Instantiable class that contains methods related to a three-dimensional Plane. See [Plane](Plane.md) for more information.
+
+---
 ### QueryOptions
 Class containing methods and properties related to querying options from the user at runtime. See [QueryOptions](QueryOptions.md) for more information.
 
@@ -65,40 +75,44 @@ let v = new UDB.Vector2D(32, 64);
 ---
 ### Vector3D
 Instantiable class that contains methods related to three-dimensional vectors. See [Vector3D](Vector3D.md) for more information.
+
+```js
+let v = new UDB.Vector3D(32, 64, 128);
+```
 ## Methods
 
 ---
-### die(s=null)
+### die(s: string)
 Exist the script prematurely with undoing its changes.
 #### Parameters
 * s: Text to show in the status bar (optional)
 
 ---
-### exit(s=null)
+### exit(s: string)
 Exist the script prematurely without undoing its changes.
 #### Parameters
 * s: Text to show in the status bar (optional)
 
 ---
-### log(text)
+### log(text: object)
 Adds a line to the script log. Also shows the script running dialog.
 #### Parameters
 * text: Line to add to the script log
 
 ---
-### setProgress(value)
+### setProgress(value: int)
 Set the progress of the script in percent. Value can be between 0 and 100. Also shows the script running dialog.
 #### Parameters
 * value: Number between 0 and 100
 
 ---
-### showMessage(message)
+### showMessage(message: object)
 Shows a message box with an "OK" button.
 #### Parameters
 * message: Message to show
 
 ---
-### showMessageYesNo(message)
+### showMessageYesNo(message: object)
 Shows a message box with an "Yes" and "No" button.
 #### Parameters
 * message: Message to show

@@ -111,7 +111,7 @@ namespace CodeImp.DoomBuilder.Config
 			// Add textures to flats
 			foreach(KeyValuePair<long, ImageData> t in textures) 
 			{
-				if(!flats.ContainsKey(t.Key)) flats.Add(t.Key, t.Value);
+				if(!flats.ContainsKey(t.Key) || t.Value.TextureNamespace == TextureNamespace.TEXTURE) flats[t.Key] = t.Value;
 			}
 
 			// Add flats to textures

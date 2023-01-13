@@ -98,6 +98,8 @@ namespace CodeImp.DoomBuilder.Config
 		private bool showfps;
 		private int[] colordialogcustomcolors;
 		private bool autolaunchontest;
+		private bool parallelizedlinedefplotting;
+		private bool parallelizedvertexplotting;
 
 		//mxd. Script editor settings
 		private string scriptfontname;
@@ -148,7 +150,9 @@ namespace CodeImp.DoomBuilder.Config
 		
 		//volte
 		private bool classicRendering;
-		
+		private bool flatShadeVertices;
+		private bool alwaysShowVertices;
+
 		// These are not stored in the configuration, only used at runtime
 		private int defaultbrightness;
 		private int defaultfloorheight;
@@ -212,6 +216,8 @@ namespace CodeImp.DoomBuilder.Config
 		public bool ShowFPS { get { return showfps; } internal set { showfps = value; } }
 		public int[] ColorDialogCustomColors { get { return colordialogcustomcolors; } internal set { colordialogcustomcolors = value; } }
 		public bool AutoLaunchOnTest { get { return autolaunchontest; } internal set { autolaunchontest = value; } }
+		public bool ParallelizedLinedefPlotting { get { return parallelizedlinedefplotting; } internal set { parallelizedlinedefplotting = value; } }
+		public bool ParallelizedVertexPlotting { get { return parallelizedvertexplotting; } internal set { parallelizedvertexplotting = value; } }
 
 		//mxd. Highlight mode
 		public bool UseHighlight
@@ -276,6 +282,10 @@ namespace CodeImp.DoomBuilder.Config
 		
 		//volte
 		public bool ClassicRendering { get { return classicRendering; } internal set { classicRendering = value; } }
+
+		public bool FlatShadeVertices {  get { return flatShadeVertices; } internal set { flatShadeVertices = value;  } }
+
+		public bool AlwaysShowVertices {  get { return alwaysShowVertices; } internal set { alwaysShowVertices = value; } }
 
 		//mxd. Left here for compatibility reasons...
 		public string DefaultTexture { get { return General.Map != null ? General.Map.Options.DefaultWallTexture : "-"; } set { if(General.Map != null) General.Map.Options.DefaultWallTexture = value; } }
@@ -363,6 +373,8 @@ namespace CodeImp.DoomBuilder.Config
 				switchviewmodes = cfg.ReadSetting("switchviewmodes", false); //mxd
 				showfps = cfg.ReadSetting("showfps", false);
 				autolaunchontest = cfg.ReadSetting("autolaunchontest", false);
+				parallelizedlinedefplotting = cfg.ReadSetting("parallelizedlinedefplotting", true);
+				parallelizedvertexplotting = cfg.ReadSetting("parallelizedvertexplotting", false);
 
 				//mxd. Script editor
 				scriptfontname = cfg.ReadSetting("scriptfontname", "Courier New");
@@ -412,7 +424,9 @@ namespace CodeImp.DoomBuilder.Config
 
 				// volte
 				classicRendering = cfg.ReadSetting("classicrendering", false);
-				
+				alwaysShowVertices = cfg.ReadSetting("alwaysshowvertices", true);
+				flatShadeVertices = cfg.ReadSetting("flatshadevertices", false);
+
 				//mxd. Sector defaults
 				defaultceilheight = cfg.ReadSetting("defaultceilheight", 128);
 				defaultfloorheight = cfg.ReadSetting("defaultfloorheight", 0);
@@ -555,6 +569,11 @@ namespace CodeImp.DoomBuilder.Config
 
 			//volte
 			cfg.WriteSetting("classicrendering", classicRendering);
+			cfg.WriteSetting("alwaysshowvertices", alwaysShowVertices);
+			cfg.WriteSetting("flatshadevertices", flatShadeVertices);
+
+			// Toasts
+			General.ToastManager.WriteSettings(cfg);
 			
 			//mxd. Sector defaults
 			cfg.WriteSetting("defaultceilheight", defaultceilheight);
@@ -736,6 +755,21 @@ namespace CodeImp.DoomBuilder.Config
 			{
 				for (int i = 0; i < t.Args.Length; i++)
 					t.Args[i] = (int)tti.Args[i].DefaultValue;
+
+				// Add user vars
+				if (tti.Actor != null)
+				{
+					Dictionary<string, UniversalType> uservars = tti.Actor.GetAllUserVars();
+					Dictionary<string, object> uservardefaults = tti.Actor.GetAllUserVarDefaults();
+
+					t.BeforeFieldsChange();
+
+					foreach (string fname in uservars.Keys)
+					{
+						if (uservardefaults.ContainsKey(fname))
+							t.Fields[fname] = new UniValue(uservars[fname], uservardefaults[fname]);
+					}
+				}
 			}
 		}
 
@@ -763,6 +797,21 @@ namespace CodeImp.DoomBuilder.Config
 			{
 				for (int i = 0; i < t.Args.Length; i++)
 					t.Args[i] = (int)tti.Args[i].DefaultValue;
+
+				// Add user vars
+				if (tti.Actor != null)
+				{
+					Dictionary<string, UniversalType> uservars = tti.Actor.GetAllUserVars();
+					Dictionary<string, object> uservardefaults = tti.Actor.GetAllUserVarDefaults();
+
+					t.BeforeFieldsChange();
+
+					foreach (string fname in uservars.Keys)
+					{
+						if (uservardefaults.ContainsKey(fname))
+							t.Fields[fname] = new UniValue(uservars[fname], uservardefaults[fname]);
+					}
+				}
 			}
 		}
 

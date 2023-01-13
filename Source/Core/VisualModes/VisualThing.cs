@@ -668,7 +668,7 @@ namespace CodeImp.DoomBuilder.VisualModes
 		public void UpdateLight()
 		{
             lightType = thing.DynamicLightType;
-            if (lightType == null)
+            if (lightType == null || lightType.LightType == GZGeneral.LightType.SUN)
                 return;
             GZGeneral.LightData ld = lightType;
 			if (ld.LightDef != GZGeneral.LightDef.VAVOOM_GENERIC &&
@@ -678,11 +678,14 @@ namespace CodeImp.DoomBuilder.VisualModes
                 {
                     if (ld.LightDef != GZGeneral.LightDef.POINT_SUBTRACTIVE) // normal, additive, attenuated
                     {
+						// ZDRay static lights have an intensity that's set through the thing's alpha value
+						float intensity = ld.LightRenderStyle == GZGeneral.LightRenderStyle.STATIC ? (float)thing.Fields.GetValue("alpha", 1.0) : 1.0f;
+
                         //lightColor.Alpha used in shader to perform some calculations based on light type
                         lightColor = new Color4(
-                            thing.Args[0] / DYNLIGHT_INTENSITY_SCALER,
-                            thing.Args[1] / DYNLIGHT_INTENSITY_SCALER,
-                            thing.Args[2] / DYNLIGHT_INTENSITY_SCALER,
+                            thing.Args[0] / DYNLIGHT_INTENSITY_SCALER * intensity,
+                            thing.Args[1] / DYNLIGHT_INTENSITY_SCALER * intensity,
+                            thing.Args[2] / DYNLIGHT_INTENSITY_SCALER * intensity,
                             (float)ld.LightRenderStyle / 100.0f);
                     }
                     else // negative
@@ -714,10 +717,13 @@ namespace CodeImp.DoomBuilder.VisualModes
 
                     if (ld.LightDef != GZGeneral.LightDef.SPOT_SUBTRACTIVE)
                     {
-                        lightColor = new Color4(
-                            c1 / DYNLIGHT_INTENSITY_SCALER,
-                            c2 / DYNLIGHT_INTENSITY_SCALER,
-                            c3 / DYNLIGHT_INTENSITY_SCALER,
+						// ZDRay static lights have an intensity that's set through the thing's alpha value
+						float intensity = ld.LightRenderStyle == GZGeneral.LightRenderStyle.STATIC ? (float)thing.Fields.GetValue("alpha", 1.0) : 1.0f;
+
+						lightColor = new Color4(
+                            c1 / DYNLIGHT_INTENSITY_SCALER * intensity,
+                            c2 / DYNLIGHT_INTENSITY_SCALER * intensity,
+                            c3 / DYNLIGHT_INTENSITY_SCALER * intensity,
                             (float)ld.LightRenderStyle / 100.0f);
                     }
                     else

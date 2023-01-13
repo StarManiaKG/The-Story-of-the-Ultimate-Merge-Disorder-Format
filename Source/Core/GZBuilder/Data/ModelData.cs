@@ -22,6 +22,7 @@ namespace CodeImp.DoomBuilder.GZBuilder.Data
 
 		private ModelLoadState loadstate;
 		private Vector3f scale;
+		private Vector3f rotationcenter;
 		private Matrix transform;
         private Matrix transformrotation;
 		private Matrix transformstretched;
@@ -40,6 +41,7 @@ namespace CodeImp.DoomBuilder.GZBuilder.Data
 		internal GZModel Model;
 
 		internal Vector3f Scale { get { return scale; } }
+		internal Vector3f RotationCenter { get { return rotationcenter; } set { rotationcenter = value; } }
 		internal Matrix Transform { get { /* return (General.Settings.GZStretchView ? transformstretched : transform); */ return transformstretched; } }
         internal Matrix TransformRotation { get { return transformrotation; } }
 		internal bool OverridePalette; // Used for voxel models only 
@@ -47,6 +49,7 @@ namespace CodeImp.DoomBuilder.GZBuilder.Data
 		internal bool InheritActorPitch;
 		internal bool UseActorPitch;
 		internal bool UseActorRoll;
+		internal bool UseRotationCenter;
 
 		internal bool IsVoxel;
 

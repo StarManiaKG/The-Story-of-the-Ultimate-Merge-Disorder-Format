@@ -116,10 +116,11 @@ namespace CodeImp.DoomBuilder.Windows
 			}
 
 			//mxd. Add "All" texture set
-			count = (browseflats ? General.Map.Data.AllTextureSet.Flats.Count : General.Map.Data.AllTextureSet.Textures.Count);
-			item = tvTextureSets.Nodes.Add(General.Map.Data.AllTextureSet.Name + " [" + count + "]");
-			item.Name = General.Map.Data.AllTextureSet.Name;
-			item.Tag = new TreeNodeData { Set = General.Map.Data.AllTextureSet, FolderName = General.Map.Data.AllTextureSet.Name };
+			AllTextureSet alltextureset = browseflats ? General.Map.Data.FlatTextureSet : General.Map.Data.WallTextureSet;
+			count = (browseflats ? alltextureset.Flats.Count : alltextureset.Textures.Count);
+			item = tvTextureSets.Nodes.Add(alltextureset.Name + " [" + count + "]");
+			item.Name = alltextureset.Name;
+			item.Tag = new TreeNodeData { Set = alltextureset, FolderName = alltextureset.Name };
 			item.ImageIndex = 1;
 			item.SelectedImageIndex = item.ImageIndex;
 
@@ -304,7 +305,7 @@ namespace CodeImp.DoomBuilder.Windows
 					if(i == parts.Length - 2) 
 					{
 						ResourceTextureSet curTs = ((TreeNodeData)curNode.Tag).Set as ResourceTextureSet;
-						if(image.IsFlat)
+						if(image.TextureNamespace == TextureNamespace.FLAT)
 							curTs.AddFlat(image);
 						else
 							curTs.AddTexture(image);
@@ -545,7 +546,7 @@ namespace CodeImp.DoomBuilder.Windows
 			else
 			{
 				// Add all available textures
-				foreach(ImageData img in set.Textures) browser.AddItem(img);
+				foreach (ImageData img in set.Textures)	browser.AddItem(img);
 			}
 
 			browser.MakeTexturesUnique(); // biwa

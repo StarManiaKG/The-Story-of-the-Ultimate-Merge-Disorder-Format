@@ -18,8 +18,10 @@
 
 using System;
 using System.Collections.Generic;
-using CodeImp.DoomBuilder.Map;
+using System.Linq;
 using System.Threading;
+using CodeImp.DoomBuilder.Map;
+using CodeImp.DoomBuilder.Geometry;
 
 #endregion
 
@@ -61,6 +63,9 @@ namespace CodeImp.DoomBuilder.BuilderModes
 				// Check if not already done
 				if(!donelines.ContainsKey(l))
 				{
+					// Temporary line
+					Line2D tl = l.Line;
+
 					// And go for all the linedefs that could overlap
 					List<BlockEntry> blocks = blockmap.GetLineBlocks(l.Start.Position, l.End.Position);
 					Dictionary<Linedef, Linedef> doneblocklines = new Dictionary<Linedef, Linedef>(blocks.Count * 3);
@@ -72,6 +77,40 @@ namespace CodeImp.DoomBuilder.BuilderModes
 							if(!object.ReferenceEquals(l, d) && !doneblocklines.ContainsKey(d))
 							{
 								double lu, du;
+
+								// Temporary line
+								Line2D td;
+
+								// If vertices are off-grid and far from the map's origin the calculation of the intersection can go wrong because of rounding errors.
+								// So if any vertex is off-grid we'll to the calculations with lines that are closer to the origin. This is pretty ugly :(
+								// See https://github.com/jewalky/UltimateDoomBuilder/issues/713
+								if (General.Map.FormatInterface.VertexDecimals > 0 &&
+									l.Line.v1.x % 1 != 0.0 && l.Line.v1.y % 1 != 0.0 && l.Line.v2.x % 1 != 0.0 && l.Line.v2.y % 1 != 0.0 &&
+									d.Line.v1.x % 1 != 0.0 && d.Line.v1.y % 1 != 0.0 && d.Line.v2.x % 1 != 0.0 && d.Line.v2.y % 1 != 0.0)
+								{
+									HashSet<Vertex> vertices = new HashSet<Vertex>() { l.Start, l.End, d.Start, d.End };
+
+									// Create the offset we want to move the lines by. It is getting the most extreme values of the vertices
+									Vector2D offset = new Vector2D(
+										(int)vertices.OrderBy(v => Math.Abs(v.Position.x)).First().Position.x,
+										(int)vertices.OrderBy(v => Math.Abs(v.Position.y)).First().Position.y
+									);
+
+									// Create the two lines to check. this takes the original values, applies the offset, then rounds them to the map format's precision
+									tl = new Line2D(
+										new Vector2D(Math.Round(tl.v1.x - offset.x, General.Map.FormatInterface.VertexDecimals), Math.Round(tl.v1.y - offset.y, General.Map.FormatInterface.VertexDecimals)),
+										new Vector2D(Math.Round(tl.v2.x - offset.x, General.Map.FormatInterface.VertexDecimals), Math.Round(tl.v2.y - offset.y, General.Map.FormatInterface.VertexDecimals))
+									);
+
+									td = new Line2D(
+										new Vector2D(Math.Round(d.Line.v1.x - offset.x, General.Map.FormatInterface.VertexDecimals), Math.Round(d.Line.v1.y - offset.y, General.Map.FormatInterface.VertexDecimals)),
+										new Vector2D(Math.Round(d.Line.v2.x - offset.x, General.Map.FormatInterface.VertexDecimals), Math.Round(d.Line.v2.y - offset.y, General.Map.FormatInterface.VertexDecimals))
+									);
+								}
+								else
+								{
+									td = d.Line;
+								}
 								
 								//mxd. This can also happen. I suppose. Some people manage to do this. I dunno how, but they do...
 								if((l.Start.Position == d.Start.Position && l.End.Position == d.End.Position)
@@ -80,7 +119,7 @@ namespace CodeImp.DoomBuilder.BuilderModes
 									SubmitResult(new ResultLineOverlapping(l, d));
 									donelines[d] = d;
 								} 
-								else if(l.Line.GetIntersection(d.Line, out du, out lu)) 
+								else if(tl.GetIntersection(td, out du, out lu)) 
 								{
 									// Check if the lines touch. Note that I don't include 0.0 and 1.0 here because
 									// the lines may be touching at the ends when sharing the same vertex.
@@ -89,22 +128,22 @@ namespace CodeImp.DoomBuilder.BuilderModes
 										lu = Math.Round(lu, General.Map.FormatInterface.VertexDecimals);
 										du = Math.Round(du, General.Map.FormatInterface.VertexDecimals);
 									}
-									
-									if((lu > 0.0) && (lu < 1.0) && (du > 0.0) && (du < 1.0))
+
+									if ((lu > 0.0) && (lu < 1.0) && (du > 0.0) && (du < 1.0))
 									{
 										// Check if not the same sector on all sides
 										Sector samesector = null;
-										if(l.Front != null) samesector = l.Front.Sector;
-										else if(l.Back != null) samesector = l.Back.Sector;
-										else if(d.Front != null) samesector = d.Front.Sector;
-										else if(d.Back != null) samesector = d.Back.Sector;
-										
-										if((l.Front == null) || (l.Front.Sector != samesector)) samesector = null;
-										else if((l.Back == null) || (l.Back.Sector != samesector)) samesector = null;
-										else if((d.Front == null) || (d.Front.Sector != samesector)) samesector = null;
-										else if((d.Back == null) || (d.Back.Sector != samesector)) samesector = null;
+										if (l.Front != null) samesector = l.Front.Sector;
+										else if (l.Back != null) samesector = l.Back.Sector;
+										else if (d.Front != null) samesector = d.Front.Sector;
+										else if (d.Back != null) samesector = d.Back.Sector;
 
-										if(samesector == null)
+										if ((l.Front == null) || (l.Front.Sector != samesector)) samesector = null;
+										else if ((l.Back == null) || (l.Back.Sector != samesector)) samesector = null;
+										else if ((d.Front == null) || (d.Front.Sector != samesector)) samesector = null;
+										else if ((d.Back == null) || (d.Back.Sector != samesector)) samesector = null;
+
+										if (samesector == null)
 										{
 											SubmitResult(new ResultLineOverlapping(l, d));
 											donelines[d] = d;

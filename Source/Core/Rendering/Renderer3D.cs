@@ -281,6 +281,13 @@ namespace CodeImp.DoomBuilder.Rendering
 			
 			// Make the projection matrix
 			projection = Matrix.PerspectiveFov(fovy, aspect, PROJ_NEAR_PLANE, General.Settings.ViewDistance);
+
+			// We also need to re-create the 2D matrices, otherwise the corsshair will be distorted after the viewport is resized. See
+			// https://github.com/jewalky/UltimateDoomBuilder/issues/321
+			// and
+			// https://github.com/jewalky/UltimateDoomBuilder/issues/777
+			CreateMatrices2D();
+			crosshairverts = null;
 		}
 		
 		// This creates matrices for a camera view
@@ -355,6 +362,7 @@ namespace CodeImp.DoomBuilder.Rendering
 			graphics.SetUniform(UniformName.fogsettings, new Vector4f(-1.0f));
 			graphics.SetUniform(UniformName.fogcolor, General.Colors.Background.ToColorValue());
 			graphics.SetUniform(UniformName.texturefactor, new Color4(1f, 1f, 1f, 1f));
+			graphics.SetUniform(UniformName.doomlightlevels, General.Map.Config.DoomLightLevels);
             graphics.SetUniform(UniformName.highlightcolor, new Color4()); //mxd
             TextureFilter texFilter = (!General.Settings.ClassicRendering && General.Settings.VisualBilinear) ? TextureFilter.Linear : TextureFilter.Nearest;
             MipmapFilter mipFilter = General.Settings.ClassicRendering ? MipmapFilter.None : MipmapFilter.Linear;
@@ -600,6 +608,7 @@ namespace CodeImp.DoomBuilder.Rendering
 					case GZGeneral.LightRenderStyle.VAVOOM: lightOffsets[0]++; break;
 					case GZGeneral.LightRenderStyle.ADDITIVE: lightOffsets[2]++; break;
                     case GZGeneral.LightRenderStyle.SUBTRACTIVE: lightOffsets[3]++; break;
+					case GZGeneral.LightRenderStyle.STATIC: // Static lights look the same as attenuated lights
 					default: lightOffsets[1]++; break; // attenuated
 				}
 			}
@@ -950,7 +959,7 @@ namespace CodeImp.DoomBuilder.Rendering
 						}
 						
 						// volte: set sector light level for classic rendering mode
-						graphics.SetUniform(UniformName.lightLevel, sector.Sector.Brightness);
+						graphics.SetUniform(UniformName.sectorLightLevel, sector.Sector.Brightness);
 
 						//mxd. Set variables for fog rendering?
 						if(wantedshaderpass > ShaderName.world3d_p7)
@@ -1023,7 +1032,7 @@ namespace CodeImp.DoomBuilder.Rendering
 							world = CreateThingPositionMatrix(t);
 
 							//mxd. If current thing is light - set it's color to light color
-							if(t.LightType != null && t.LightType.LightInternal && !fullbrightness && !General.Settings.ClassicRendering) 
+							if(t.LightType != null && t.LightType.LightInternal && t.LightType.LightType != GZGeneral.LightType.SUN && !fullbrightness && !General.Settings.ClassicRendering) 
 							{
 								wantedshaderpass += 4; // Render using one of passes, which uses World3D.VertexColor
 								vertexcolor = t.LightColor;
@@ -1060,7 +1069,7 @@ namespace CodeImp.DoomBuilder.Rendering
 							// Set the colors to use
 							if (t.Thing.Sector != null)
 							{
-								graphics.SetUniform(UniformName.lightLevel, t.Thing.Sector.Brightness);
+								graphics.SetUniform(UniformName.sectorLightLevel, t.Thing.Sector.Brightness);
 								graphics.SetUniform(UniformName.sectorfogcolor, t.Thing.Sector.FogColor);
 							}
                             graphics.SetUniform(UniformName.vertexColor, vertexcolor);
@@ -1594,7 +1603,10 @@ namespace CodeImp.DoomBuilder.Rendering
 				Matrix modelscale = Matrix.Scaling((float)sx, (float)sx, (float)sy);
 				Matrix modelrotation = Matrix.RotationY((float)-t.Thing.RollRad) * Matrix.RotationX((float)-t.Thing.PitchRad) * Matrix.RotationZ((float)t.Thing.Angle);
 
-				world = General.Map.Data.ModeldefEntries[t.Thing.Type].Transform * modelscale * modelrotation * t.Position;
+				if(General.Map.Data.ModeldefEntries[t.Thing.Type].UseRotationCenter)
+					world = General.Map.Data.ModeldefEntries[t.Thing.Type].Transform * modelscale * Matrix.Translation(-General.Map.Data.ModeldefEntries[t.Thing.Type].RotationCenter) * modelrotation * Matrix.Translation(General.Map.Data.ModeldefEntries[t.Thing.Type].RotationCenter) * t.Position;
+				else
+					world = General.Map.Data.ModeldefEntries[t.Thing.Type].Transform * modelscale * modelrotation  * t.Position;
                 graphics.SetUniform(UniformName.world, world);
 
                 // Set variables for fog rendering

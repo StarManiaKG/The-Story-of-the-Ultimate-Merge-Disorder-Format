@@ -1,3 +1,5 @@
+/// <reference path="../../../udbscript.d.ts" />
+
 // Inspired by ribbiks's DBX Lua script: https://github.com/ribbiks/doom_lua/
 
 `#version 4`;

@@ -60,6 +60,7 @@ namespace CodeImp.DoomBuilder.Config
 		private string name;
 		private int type;
 		private object defaultvalue;
+		private bool thingtypespecific;
 		private EnumList enumlist;
 		private Dictionary<string, UDMFFieldAssociation> associations;
 
@@ -70,6 +71,7 @@ namespace CodeImp.DoomBuilder.Config
 		public string Name { get { return name; } }
 		public int Type { get { return type; } }
 		public object Default { get { return defaultvalue; } }
+		public bool ThingTypeSpecific { get { return thingtypespecific; } }
 		public EnumList Enum { get { return enumlist; } }
 		public Dictionary<string, UDMFFieldAssociation> Associations { get { return associations; } }
 
@@ -87,14 +89,38 @@ namespace CodeImp.DoomBuilder.Config
 			associations = new Dictionary<string, UDMFFieldAssociation>();
 
 			// Read type
-			this.type = cfg.ReadSetting(setting + ".type", int.MinValue);
-			this.defaultvalue = cfg.ReadSettingObject(setting + ".default", null);
+			type = cfg.ReadSetting(setting + ".type", int.MinValue);
+			defaultvalue = cfg.ReadSettingObject(setting + ".default", null);
+			thingtypespecific = cfg.ReadSetting(setting + ".thingtypespecific", false);
+
+			// Read enum
+			object enumsetting = cfg.ReadSettingObject(setting + ".enum", null);
+			if (enumsetting != null)
+			{
+				// Reference to existing enums list?
+				if (enumsetting is string)
+				{
+					// Link to it
+					enumlist = enums[enumsetting.ToString()];
+				}
+				else if (enumsetting is IDictionary)
+				{
+					// Make list
+					enumlist = new EnumList(enumsetting as IDictionary);
+				}
+			}
 
 			//mxd. Check type
-			if(this.type == int.MinValue)
+			if (this.type == int.MinValue)
 			{
 				General.ErrorLogger.Add(ErrorType.Warning, "No type is defined for universal field \"" + name + "\" defined in \"" + configname + "\". Integer type will be used.");
 				this.type = (int)UniversalType.Integer;
+			}
+
+			if(type == (int)UniversalType.EnumOption && enumsetting == null)
+			{
+				General.ErrorLogger.Add(ErrorType.Warning, "Universal field \"" + name + "\" defined in \"" + configname + "\" is of type enum (" + this.type + "), but has no enum values set. Falling back to integer type");
+				type = (int)UniversalType.Integer;
 			}
 
 			TypeHandler th = General.Types.GetFieldHandler(this);
@@ -107,23 +133,6 @@ namespace CodeImp.DoomBuilder.Config
 
 			//mxd. Default value is missing? Get it from typehandler
 			if(this.defaultvalue == null) this.defaultvalue = th.GetDefaultValue();
-			
-			// Read enum
-			object enumsetting = cfg.ReadSettingObject(setting + ".enum", null);
-			if(enumsetting != null)
-			{
-				// Reference to existing enums list?
-				if(enumsetting is string)
-				{
-					// Link to it
-					enumlist = enums[enumsetting.ToString()];
-				}
-				else if(enumsetting is IDictionary)
-				{
-					// Make list
-					enumlist = new EnumList(enumsetting as IDictionary);
-				}
-			}
 
 			// Read associations
 			IDictionary assocdict = cfg.ReadSetting(setting + ".associations", new Hashtable());
@@ -150,6 +159,13 @@ namespace CodeImp.DoomBuilder.Config
 
 			// We have no destructor
 			GC.SuppressFinalize(this);
+		}
+
+		internal UniversalFieldInfo(string name, int type, object defaultvalue)
+		{
+			this.name = name.ToLowerInvariant();
+			this.type = type;
+			this.defaultvalue = defaultvalue;
 		}
 
 		#endregion

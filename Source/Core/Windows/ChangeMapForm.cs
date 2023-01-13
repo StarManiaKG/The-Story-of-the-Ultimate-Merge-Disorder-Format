@@ -111,7 +111,15 @@ namespace CodeImp.DoomBuilder.Windows
 					{
 						// Count the lump when it is marked as required
 						string lumpname = wadfile.Lumps[scanindex + checkoffset].Name;
-						if(ci.Configuration.ReadSetting("maplumpnames." + lumpname + ".required", false))
+
+						// Lump cannot be present in current map format, fail this check
+						if (ci.Configuration.ReadSetting("maplumpnames." + lumpname + ".forbidden", false))
+						{
+							lumpsfound = -1;
+							break;
+						}
+
+						if (ci.Configuration.ReadSetting("maplumpnames." + lumpname + ".required", false))
 							lumpsfound++;
 
 						// Check the next lump

@@ -31,12 +31,14 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 {
 	internal struct Angle2DWrapper
 	{
+		#region ================== Methods
+
 		/// <summary>
 		/// Converts a Doom angle (where 0° is east) to a real world angle (where 0° is north).
 		/// </summary>
 		/// <param name="doomangle">Doom angle in degrees</param>
 		/// <returns>Doom angle in degrees</returns>
-		public static double doomToReal(int doomangle)
+		public double doomToReal(int doomangle)
 		{
 			return normalized(doomangle + 90);
 		}
@@ -46,7 +48,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// </summary>
 		/// <param name="doomangle">Doom angle in degrees</param>
 		/// <returns>Doom angle in radians</returns>
-		public static double doomToRealRad(int doomangle)
+		public double doomToRealRad(int doomangle)
 		{
 			return Angle2D.DoomToReal(doomangle);
 		}
@@ -56,17 +58,17 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// </summary>
 		/// <param name="realangle">Real world angle in degrees</param>
 		/// <returns>Doom angle in degrees</returns>
-		public static int realToDoom(double realangle)
+		public int realToDoom(double realangle)
 		{
 			return normalized((int)(realangle - 90));
 		}
 
 		/// <summary>
-		/// Converts a real world  angle (where 0° is north) to a Doom angle (where 0° is east) in radians.
+		/// Converts a real world angle (where 0° is north) to a Doom angle (where 0° is east) in radians.
 		/// </summary>
 		/// <param name="realangle">Real world angle in radians</param>
 		/// <returns>Doom angle in degrees</returns>
-		public static int realToDoomRad(double realangle)
+		public int realToDoomRad(double realangle)
 		{
 			return Angle2D.RealToDoom(realangle);
 		}
@@ -76,7 +78,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// </summary>
 		/// <param name="rad">Angle in radians</param>
 		/// <returns>Angle in degrees</returns>
-		public static double radToDeg(double rad)
+		public double radToDeg(double rad)
 		{
 			return Angle2D.RadToDeg(rad);
 		}
@@ -86,7 +88,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// </summary>
 		/// <param name="deg">Angle in degrees</param>
 		/// <returns>Angle in radians</returns>
-		public static double degToRad(double deg)
+		public double degToRad(double deg)
 		{
 			return Angle2D.DegToRad(deg);
 		}
@@ -96,7 +98,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// </summary>
 		/// <param name="angle">Angle in degrees</param>
 		/// <returns>Normalized angle in degrees</returns>
-		public static int normalized(int angle)
+		public int normalized(int angle)
 		{
 			while (angle < 0) angle += 360;
 			while (angle >= 360) angle -= 360;
@@ -108,7 +110,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// </summary>
 		/// <param name="angle">Angle in radians</param>
 		/// <returns>Normalized angle in radians</returns>
-		public static double normalizedRad(double angle)
+		public double normalizedRad(double angle)
 		{
 			return Angle2D.Normalized(angle);
 		}
@@ -120,13 +122,13 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <param name="p2">Second position</param>
 		/// <param name="p3">Third position</param>
 		/// <returns>Angle in degrees</returns>
-		public static double getAngle(object p1, object p2, object p3)
+		public double getAngle(object p1, object p2, object p3)
 		{
 			try
 			{
-				Vector2D v1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(p1, false);
-				Vector2D v2 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(p2, false);
-				Vector2D v3 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(p3, false);
+				Vector2D v1 = BuilderPlug.Me.GetVector3DFromObject(p1);
+				Vector2D v2 = BuilderPlug.Me.GetVector3DFromObject(p2);
+				Vector2D v3 = BuilderPlug.Me.GetVector3DFromObject(p3);
 
 				return Angle2D.RadToDeg(Angle2D.GetAngle(v1, v2, v3));
 			}
@@ -143,13 +145,13 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <param name="p2">Second position</param>
 		/// <param name="p3">Third position</param>
 		/// <returns>Angle in radians</returns>
-		public static double getAngleRad(object p1, object p2, object p3)
+		public double getAngleRad(object p1, object p2, object p3)
 		{
 			try
 			{
-				Vector2D v1 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(p1, false);
-				Vector2D v2 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(p2, false);
-				Vector2D v3 = (Vector2D)BuilderPlug.Me.GetVectorFromObject(p3, false);
+				Vector2D v1 = BuilderPlug.Me.GetVector3DFromObject(p1);
+				Vector2D v2 = BuilderPlug.Me.GetVector3DFromObject(p2);
+				Vector2D v3 = BuilderPlug.Me.GetVector3DFromObject(p3);
 
 				return Angle2D.GetAngle(v1, v2, v3);
 			}
@@ -158,5 +160,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 				throw BuilderPlug.Me.ScriptRunner.CreateRuntimeException(e.Message);
 			}
 		}
+
+		#endregion
 	}
 }

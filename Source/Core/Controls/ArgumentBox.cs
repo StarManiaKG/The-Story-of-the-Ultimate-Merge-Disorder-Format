@@ -45,6 +45,11 @@ namespace CodeImp.DoomBuilder.Controls
 
 		public override string Text { get { return combobox.Text; }	} //mxd
 
+		[Browsable(true)]
+		[Category("Action")]
+		[Description("Invoked when user clicks button")]
+		public event EventHandler ValueChanged;
+
 		#endregion
 
 		#region ================== Constructor
@@ -142,6 +147,8 @@ namespace CodeImp.DoomBuilder.Controls
 				forcevalidate = false;
 				combobox_Validating(sender, new CancelEventArgs());
 			}
+
+			ValueChanged?.Invoke(sender, EventArgs.Empty);
 		}
 
 		// Mouse wheel used

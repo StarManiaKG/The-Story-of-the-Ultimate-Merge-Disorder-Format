@@ -26,6 +26,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using CodeImp.DoomBuilder.Map;
@@ -35,6 +36,7 @@ using Jint;
 using Jint.Runtime;
 using Jint.Runtime.Interop;
 using Esprima;
+using Jint.Native;
 
 #endregion
 
@@ -147,9 +149,9 @@ namespace CodeImp.DoomBuilder.UDBScript
 			throw new DieScriptException(s);
 		}
 
-		public JavaScriptException CreateRuntimeException(string message)
+		public ScriptRuntimeException CreateRuntimeException(string message)
 		{
-			return new JavaScriptException(engine.Realm.Intrinsics.Error, message);
+			return new ScriptRuntimeException(message);
 		}
 
 		/// <summary>
@@ -169,8 +171,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 			{
 				try
 				{
-					ParserOptions po = new ParserOptions(file.Remove(0, General.AppPath.Length));
-					engine.Execute(File.ReadAllText(file), po);
+					engine.Execute(File.ReadAllText(file), file.Remove(0, General.AppPath.Length));
 				}
 				catch (ParserException e)
 				{
@@ -182,7 +183,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 				{
 					if (e.Error.Type != Jint.Runtime.Types.String)
 					{
-						UDBScriptErrorForm sef = new UDBScriptErrorForm(e.Message, e.StackTrace);
+						UDBScriptErrorForm sef = new UDBScriptErrorForm(e.Message, e.JavaScriptStackTrace, e.StackTrace);
 						sef.ShowDialog();
 					}
 					else
@@ -213,15 +214,15 @@ namespace CodeImp.DoomBuilder.UDBScript
 				MessageBox.Show("There is an error while parsing the script:\n\n" + e.Message, "Script error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				abort = true;
 			}
-			else if(e is JavaScriptException)
+			else if(e is JavaScriptException jse)
 			{
-				if (((JavaScriptException)e).Error.Type != Jint.Runtime.Types.String)
+				if (jse.Error.Type != Jint.Runtime.Types.String)
 				{
-					UDBScriptErrorForm sef = new UDBScriptErrorForm(e.Message, e.StackTrace);
+					UDBScriptErrorForm sef = new UDBScriptErrorForm(jse.Message, jse.JavaScriptStackTrace, jse.StackTrace);
 					sef.ShowDialog();
 				}
 				else
-					General.Interface.DisplayStatus(StatusType.Warning, e.Message); // We get here if "throw" is used in a script
+					General.Interface.DisplayStatus(StatusType.Warning, jse.Message); // We get here if "throw" is used in a script
 
 				abort = true;
 			}
@@ -243,7 +244,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 			}
 			else // Catch anything else we didn't think about
 			{
-				UDBScriptErrorForm sef = new UDBScriptErrorForm(e.Message, e.StackTrace);
+				UDBScriptErrorForm sef = new UDBScriptErrorForm(e.Message, string.Empty, e.StackTrace);
 				sef.ShowDialog();
 
 				abort = true;
@@ -252,6 +253,44 @@ namespace CodeImp.DoomBuilder.UDBScript
 			if (abort)
 				General.Map.UndoRedo.WithdrawUndo();
 		}
+
+		/// <summary>
+		/// Makes sure that only properties for the currect feature version are available to scripts.
+		/// </summary>
+		/// <param name="info">MemberInfo about the property that's being accessed</param>
+		/// <returns>true if property can be accessed, false otherwise</returns>
+		private bool MemberFilter(MemberInfo info)
+		{
+			if (info.Name == nameof(GetType))
+				return false;
+
+			if (info.GetCustomAttribute(typeof(UDBScriptSettingsAttribute)) is UDBScriptSettingsAttribute sa)
+				return sa.MinVersion <= scriptinfo.Version;
+
+			return true;
+		}
+
+		/*
+		private JsValue GetObjectMember(Engine engine, object target, string memberName)
+		{
+			Type t = target.GetType();
+			MethodInfo mi = t.GetMethod(memberName);
+			if (mi != null)
+			{
+				var attr = mi.GetCustomAttribute<UDBScriptSettingsAttribute>(false);
+				if (attr != null && scriptinfo.Version < attr.MinVersion)
+					throw BuilderPlug.Me.ScriptRunner.CreateRuntimeException($"{t.Name} requires UDBScript version {attr.MinVersion} or higher.");
+
+			}
+			if (t.GetCustomAttribute(typeof(UDBScriptSettingsAttribute)) is UDBScriptSettingsAttribute sa)
+			{
+				if (scriptinfo.Version < sa.MinVersion)
+					throw BuilderPlug.Me.ScriptRunner.CreateRuntimeException($"{t.Name} requires UDBScript version {sa.MinVersion} or higher.");
+			}
+
+			return null;
+		}
+		*/
 
 		/// <summary>
 		/// Sets everything up for running the script. This has to be done on the UI thread.
@@ -279,10 +318,27 @@ namespace CodeImp.DoomBuilder.UDBScript
 			Options options = new Options();
 			options.CancellationToken(cancellationtoken);
 			options.AllowOperatorOverloading();
+
 			options.SetTypeResolver(new TypeResolver
 			{
-				MemberFilter = member => member.Name != nameof(GetType)
+				MemberFilter = MemberFilter// member => member.Name != nameof(GetType)
 			});
+
+			//options.SetMemberAccessor(GetObjectMember);
+
+			/*
+			options.SetWrapObjectHandler((eng, obj) =>
+			{
+				var wrapper = new ObjectWrapper(eng, obj);
+				if (wrapper.IsArrayLike || obj is BlockMapQueryResult)
+				{
+					wrapper.SetPrototypeOf(eng.Realm.Intrinsics.Array.PrototypeObject);
+				}
+				return wrapper;
+			});
+			*/
+
+			options.CatchClrExceptions(e => e is ScriptRuntimeException || e is CantConvertToVectorException);
 
 			// Create the script engine
 			engine = new Engine(options);
@@ -352,10 +408,9 @@ namespace CodeImp.DoomBuilder.UDBScript
 			string script = File.ReadAllText(scriptinfo.ScriptFile);
 
 			// Run the script file
-			ParserOptions po = new ParserOptions(scriptinfo.ScriptFile.Remove(0, General.AppPath.Length));
-
+			stopwatch.Reset();
 			stopwatch.Start();
-			engine.Execute(script, po);
+			engine.Execute(script, scriptinfo.ScriptFile.Remove(0, General.AppPath.Length));
 			stopwatch.Stop();
 		}
 
@@ -377,6 +432,11 @@ namespace CodeImp.DoomBuilder.UDBScript
 			// Enable processing again, if required
 			for (int i = 0; i < oldprocessingcount; i++)
 				General.Interface.EnableProcessing();
+		}
+
+		public string GetRuntimeString()
+		{
+			return string.Format("{0:D2}:{1:D2}:{2:D2}.{3:D}", stopwatch.Elapsed.Hours, stopwatch.Elapsed.Minutes, stopwatch.Elapsed.Seconds, stopwatch.Elapsed.Milliseconds);
 		}
 
 		#endregion

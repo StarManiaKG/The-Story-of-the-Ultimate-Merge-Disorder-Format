@@ -24,7 +24,7 @@ The map coordinates of the mouse position as a `Vector2D`. Read-only.
 ## Methods
 
 ---
-### clearAllMarks(mark=false)
+### clearAllMarks(mark: bool)
 Sets the `marked` property of all map elements. Can be passed `true` to mark all map elements.
 #### Parameters
 * mark: `false` to set the `marked` property to `false` (default), `true` to set the `marked` property to `true`
@@ -34,31 +34,31 @@ Sets the `marked` property of all map elements. Can be passed `true` to mark all
 Clears all selected map elements.
 
 ---
-### clearMarkeLinedefs(mark=false)
+### clearMarkeLinedefs(mark: bool)
 Sets the `marked` property of all `Linedef`s. Can be passed `true` to mark all `Linedef`s.
 #### Parameters
 * mark: `false` to set the `marked` property to `false` (default), `true` to set the `marked` property to `true`
 
 ---
-### clearMarkeSectors(mark = false)
+### clearMarkeSectors(mark: bool)
 Sets the `marked` property of all `Sector`s. Can be passed `true` to mark all `Sector`s.
 #### Parameters
 * mark: `false` to set the `marked` property to `false` (default), `true` to set the `marked` property to `true`
 
 ---
-### clearMarkeSidedefs(mark = false)
+### clearMarkeSidedefs(mark: bool)
 Sets the `marked` property of all `Sidedef`s. Can be passed `true` to mark all `Sidedef`s.
 #### Parameters
 * mark: `false` to set the `marked` property to `false` (default), `true` to set the `marked` property to `true`
 
 ---
-### clearMarkedThings(mark=false)
+### clearMarkedThings(mark: bool)
 Sets the `marked` property of all `Thing`s. Can be passed `true` to mark all `Thing`s.
 #### Parameters
 * mark: `false` to set the `marked` property to `false` (default), `true` to set the `marked` property to `true`
 
 ---
-### clearMarkedVertices(mark=false)
+### clearMarkedVertices(mark: bool)
 Sets the `marked` property of all vertices. Can be passed `true` to mark all vertices.
 #### Parameters
 * mark: `false` to set the `marked` property to `false` (default), `true` to set the `marked` property to `true`
@@ -76,7 +76,7 @@ Clears all selected `Thing`s.
 Clears all selected vertices.
 
 ---
-### createThing(pos, type=0)
+### createThing(pos: object, type: int)
 Creates a new `Thing` at the given position. The position can be a `Vector2D`, `Vector3D`, or an `Array` of two numbers or three numbers (note that the z position only works for game configurations that support vertical pos. A thing type can be supplied optionally.
 
 ```js
@@ -92,7 +92,7 @@ var t4 = UDB.Map.createThing([ 32, 64 ], 3001); // Create an Imp
 The new `Thing`
 
 ---
-### createVertex(pos)
+### createVertex(pos: object)
 Creates a new `Vertex` at the given position. The position can be a `Vector2D` or an `Array` of two numbers.
 
 ```js
@@ -105,7 +105,7 @@ var v2 = UDB.Map.createVertex([ 32, 64 ]);
 The created `Vertex`
 
 ---
-### drawLines(data)
+### drawLines(data: object)
 Draws lines. Data has to be an `Array` of `Array` of numbers, `Vector2D`s, `Vector3D`s, or objects with x and y properties. Note that the first and last element have to be at the same positions to make a complete drawing.
 
 ```js
@@ -161,7 +161,7 @@ Returns an `Array` of all `Linedef`s in the map.
 `Array` of `Linedef`s
 
 ---
-### getMarkedLinedefs(mark = true)
+### getMarkedLinedefs(mark: bool)
 Gets all marked (default) or unmarked `Linedef`s.
 #### Parameters
 * mark: `true` to get all marked `Linedef`s (default), `false` to get all unmarked `Linedef`s
@@ -169,7 +169,7 @@ Gets all marked (default) or unmarked `Linedef`s.
 *missing*
 
 ---
-### getMarkedSectors(mark = true)
+### getMarkedSectors(mark: bool)
 Gets all marked (default) or unmarked `Sector`s.
 #### Parameters
 * mark: `true` to get all marked `Sector`s (default), `false` to get all unmarked `Sector`s
@@ -177,7 +177,7 @@ Gets all marked (default) or unmarked `Sector`s.
 *missing*
 
 ---
-### getMarkedSidedefs(mark = true)
+### getMarkedSidedefs(mark: bool)
 Gets all marked (default) or unmarked `Sidedef`s.
 #### Parameters
 * mark: `true` to get all marked `Sidedef`s (default), `false` to get all unmarked `Sidedef`s
@@ -185,7 +185,7 @@ Gets all marked (default) or unmarked `Sidedef`s.
 *missing*
 
 ---
-### getMarkedThings(mark = true)
+### getMarkedThings(mark: bool)
 Gets all marked (default) or unmarked `Thing`s.
 #### Parameters
 * mark: `true` to get all marked `Thing`s (default), `false` to get all unmarked `Thing`s
@@ -193,7 +193,7 @@ Gets all marked (default) or unmarked `Thing`s.
 *missing*
 
 ---
-### getMarkedVertices(mark=true)
+### getMarkedVertices(mark: bool)
 Gets all marked (default) or unmarked vertices.
 #### Parameters
 * mark: `true` to get all marked vertices (default), `false` to get all unmarked vertices
@@ -201,7 +201,7 @@ Gets all marked (default) or unmarked vertices.
 *missing*
 
 ---
-### getMultipleNewTags(count)
+### getMultipleNewTags(count: int)
 Gets multiple new tags.
 #### Parameters
 * count: Number of tags to get
@@ -209,7 +209,7 @@ Gets multiple new tags.
 `Array` of the new tags
 
 ---
-### getNewTag(usedtags = null)
+### getNewTag(usedtags: int[])
 Gets a new tag.
 #### Parameters
 * usedtags: `Array` of tags to skip
@@ -223,7 +223,7 @@ Returns an `Array` of all `Sector`s in the map.
 `Array` of `Sector`s
 
 ---
-### getSelectedLinedefs(selected = true)
+### getSelectedLinedefs(selected: bool)
 Gets all selected (default) or unselected `Linedef`s.
 #### Parameters
 * selected: `true` to get all selected `Linedef`s, `false` to get all unselected ones
@@ -255,7 +255,7 @@ Gets the currently selected `Vertex`s *or*, if no `Vertex`s are selected, a curr
 `Array` of `Vertex`
 
 ---
-### getSelectedSectors(selected = true)
+### getSelectedSectors(selected: bool)
 Gets all selected (default) or unselected `Sector`s.
 #### Parameters
 * selected: `true` to get all selected `Sector`s, `false` to get all unselected ones
@@ -263,7 +263,7 @@ Gets all selected (default) or unselected `Sector`s.
 `Array` of `Sector`s
 
 ---
-### getSelectedThings(selected = true)
+### getSelectedThings(selected: bool)
 Gets all selected (default) or unselected `Thing`s.
 #### Parameters
 * selected: `true` to get all selected `Thing`s, `false` to get all unselected ones
@@ -271,7 +271,7 @@ Gets all selected (default) or unselected `Thing`s.
 `Array` of `Thing`s
 
 ---
-### getSelectedVertices(selected=true)
+### getSelectedVertices(selected: bool)
 Gets all selected (default) or unselected vertices.
 #### Parameters
 * selected: `true` to get all selected vertices, `false` to get all unselected ones
@@ -285,7 +285,7 @@ Returns an `Array` of all `Sidedef`s in the map.
 `Array` of `Sidedef`s
 
 ---
-### getSidedefsFromSelectedLinedefs(selected = true)
+### getSidedefsFromSelectedLinedefs(selected: bool)
 Gets all `Sidedef`s from the selected `Linedef`s.
 In classic modes this will return both sidedefs of 2-sided lines, in visual mode it will only return the actually selected `Sidedef`.
 #### Parameters
@@ -338,43 +338,43 @@ Inverts the `marked` property of all `Thing`s.
 Inverts the `marked` property of all vertices.
 
 ---
-### joinSectors(sectors)
+### joinSectors(sectors: Sector[])
 Joins `Sector`s, keeping lines shared by the `Sector`s. All `Sector`s will be joined with the first `Sector` in the array.
 #### Parameters
 * sectors: `Array` of `Sector`s
 
 ---
-### markSelectedLinedefs(mark = true)
+### markSelectedLinedefs(mark: bool)
 Marks (default) or unmarks all selected `Linedef`s.
 #### Parameters
 * mark: `true` to mark all selected `Linedef`s (default), `false` to unmark
 
 ---
-### markSelectedSectors(mark = true)
+### markSelectedSectors(mark: bool)
 Marks (default) or unmarks all selected `Sector`s.
 #### Parameters
 * mark: `true` to mark all selected `Sector`s (default), `false` to unmark
 
 ---
-### markSelectedThings(mark = true)
+### markSelectedThings(mark: bool)
 Marks (default) or unmarks all selected `Thing`s.
 #### Parameters
 * mark: `true` to mark all selected `Thing`s (default), `false` to unmark
 
 ---
-### markSelectedVertices(mark=true)
+### markSelectedVertices(mark: bool)
 Marks (default) or unmarks all selected vertices.
 #### Parameters
 * mark: `true` to mark all selected vertices (default), `false` to unmark
 
 ---
-### mergeSectors(sectors)
+### mergeSectors(sectors: Sector[])
 Merges `Sector`s, deleting lines shared by the `Sector`s. All `Sector`s will be merged into the first `Sector` in the array.
 #### Parameters
 * sectors: `Array` of `Sector`s
 
 ---
-### nearestLinedef(pos, maxrange = double.NaN)
+### nearestLinedef(pos: object, maxrange: double)
 Gets the `Linedef` that's nearest to the specified position.
 #### Parameters
 * pos: Position to check against
@@ -383,7 +383,7 @@ Gets the `Linedef` that's nearest to the specified position.
 Nearest `Linedef`
 
 ---
-### nearestSidedef(pos)
+### nearestSidedef(pos: object)
 Gets the `Sidedef` that's nearest to the specified position.
 #### Parameters
 * pos: Position to check against
@@ -392,7 +392,7 @@ Gets the `Sidedef` that's nearest to the specified position.
 Nearest `Sidedef`
 
 ---
-### nearestThing(pos, maxrange = double.NaN)
+### nearestThing(pos: object, maxrange: double)
 Gets the `Thing` that's nearest to the specified position.
 #### Parameters
 * pos: Position to check against
@@ -401,7 +401,7 @@ Gets the `Thing` that's nearest to the specified position.
 Nearest `Linedef`
 
 ---
-### nearestVertex(pos, maxrange = double.NaN)
+### nearestVertex(pos: object, maxrange: double)
 Gets the `Vertex` that's nearest to the specified position.
 #### Parameters
 * pos: Position to check against
@@ -410,13 +410,13 @@ Gets the `Vertex` that's nearest to the specified position.
 Nearest `Vertex`
 
 ---
-### snapAllToAccuracy(usepreciseposition = true)
+### snapAllToAccuracy(usepreciseposition: bool)
 Snaps all vertices and things to the map format accuracy. Call this to ensure the vertices and things are at valid coordinates.
 #### Parameters
 * usepreciseposition: `true` if decimal places defined by the map format should be used, `false` if no decimal places should be used
 
 ---
-### snappedToGrid(pos)
+### snappedToGrid(pos: object)
 Returns the given point snapped to the current grid.
 #### Parameters
 * pos: Point that should be snapped to the grid
@@ -424,9 +424,23 @@ Returns the given point snapped to the current grid.
 Snapped position as `Vector2D`
 
 ---
-### stitchGeometry(mergemode = MergeGeometryMode.CLASSIC)
+### stitchGeometry(mergemode: MergeGeometryMode)
 Stitches marked geometry with non-marked geometry.
 #### Parameters
-* mergemode: Mode to merge by
+* mergemode: Mode to merge by as `MergeGeometryMode`
 #### Return value
 `true` if successful, `false` if failed
+## Enums
+
+---
+<span style="float:right;font-weight:normal;font-size:66%">Version: 5</span>
+### MergeGeometryMode
+How geometry should be merged when geometry is stitched.
+
+```js
+UDB.Map.stitchGeometry(UDB.Map.MergeometryMode.MERGE);
+```
+#### Options
+* CLASSIC: Merge vertices only
+* MERGE: Merge vertices and lines
+* REPLACE: Merge vertices and lines, replacing sector geometry

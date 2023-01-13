@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Dynamic;
 using System.Linq;
+using System.Numerics;
 using CodeImp.DoomBuilder.Config;
 using CodeImp.DoomBuilder.Map;
 using CodeImp.DoomBuilder.Types;
@@ -62,7 +63,13 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// 
 		/// * it only works for fields that are not in the base UDMF standard, since those are handled directly in the respective class
 		/// * it does not work for flags. While they are technically also UDMF fields, they are handled in the `flags` field of the respective class (where applicable)
-		/// * JavaScript does not distinguish between integer and floating point numbers, it only has floating point numbers (of double precision). For fields where UDB knows that they are integers this it not a problem, since it'll automatically convert the floating point numbers to integers (dropping the fractional part). However, if you need to specify an integer value for an unknown or custom field you have to work around this limitation, using the `UniValue` class:
+		/// * JavaScript does not distinguish between integer and floating point numbers, it only has floating point numbers (of double precision). For fields where UDB knows that they are integers this it not a problem, since it'll automatically convert the floating point numbers to integers (dropping the fractional part). However, if you need to specify an integer value for an unknown or custom field you have to work around this limitation:
+		/// Version 5 and later:
+		/// You can use a `BigInt`. This is done by appending a `n` to the number. Note that this is just a convenient way to define whole numbers, it still only supports 32 bit integers:
+		/// ```
+		/// s.fields.user_myintfield = 25n; // Sets the 'user_myintfield' field to an integer value of 25
+		/// ```
+		/// In version 4 and earlier you have to use the `UniValue` class:
 		/// ```
 		/// s.fields.user_myintfield = new UDB.UniValue(0, 25); // Sets the 'user_myintfield' field to an integer value of 25
 		/// ```
@@ -116,21 +123,45 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 						if (so[pname] != null)
 						{
 							object oldvalue = element.Fields[pname].Value;
+							object proposedvalue;
 
-							if (so[pname] is double && ((oldvalue is int) || (oldvalue is double)))
+							if (so[pname] is UniValue)
+								proposedvalue = BuilderPlug.Me.GetConvertedUniValue((UniValue)so[pname]);
+							else if(so[pname] is BigInteger pv)
+							{
+								// Manually check the range, so that we can show a more useful error
+								if (pv > int.MaxValue)
+									throw BuilderPlug.Me.ScriptRunner.CreateRuntimeException($"Value {pv} for UDMF field \"{pname}\" is too big. Maximum value is {int.MaxValue}");
+
+								if (pv < int.MinValue)
+									throw BuilderPlug.Me.ScriptRunner.CreateRuntimeException($"Value {pv} for UDMF field \"{pname}\" is too small. Minimum value is {int.MinValue}");
+
+								proposedvalue = (int)pv;
+							}
+							else
+								proposedvalue = so[pname];
+
+							if (proposedvalue is double && (oldvalue is int || oldvalue is double))
 							{
 								if (oldvalue is int)
-									newvalue = Convert.ToInt32((double)so[pname]);
-								else if (oldvalue is double)
-									newvalue = (double)so[pname];
+									newvalue = Convert.ToInt32((double)proposedvalue);
+								else
+									newvalue = (double)proposedvalue;
 							}
-							else if (so[pname] is string && oldvalue is string)
+							else if(proposedvalue is int && (oldvalue is int || oldvalue is double))
 							{
-								newvalue = (string)so[pname];
+								if (oldvalue is int)
+									newvalue = (int)proposedvalue;
+								else
+									newvalue = Convert.ToDouble((int)proposedvalue);
 							}
-							else if (so[pname] is bool && oldvalue is bool)
+							else if (proposedvalue is string && oldvalue is string)
 							{
-								newvalue = (bool)so[pname];
+								newvalue = (string)proposedvalue;
+							}
+							else if (proposedvalue is bool && oldvalue is bool)
+							{
+								newvalue = (bool)proposedvalue;
 							}
 							else
 								throw BuilderPlug.Me.ScriptRunner.CreateRuntimeException("UDMF field '" + pname + "' is of incompatible type for value " + so[pname]);
@@ -200,9 +231,20 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 						else if (newvalue is int)
 							UniFields.SetInteger(element.Fields, pname, (int)newvalue);
 						else if (newvalue is string)
-							UniFields.SetString(element.Fields, pname, (string)newvalue, string.Empty);
+							UniFields.SetString(element.Fields, pname, (string)newvalue, null);
 						else if (newvalue is bool)
 							element.Fields[pname] = new UniValue(UniversalType.Boolean, (bool)newvalue);
+						else if (newvalue is BigInteger nv)
+						{
+							// Manually check the range, so that we can show a more useful error
+							if(nv > int.MaxValue)
+								throw BuilderPlug.Me.ScriptRunner.CreateRuntimeException($"Value {nv} for UDMF field \"{pname}\" is too big. Maximum value is {int.MaxValue}");
+
+							if (nv < int.MinValue)
+								throw BuilderPlug.Me.ScriptRunner.CreateRuntimeException($"Value {nv} for UDMF field \"{pname}\" is too small. Minimum value is {int.MinValue}");
+
+							UniFields.SetInteger(element.Fields, pname, (int)nv);
+						}
 					}
 
 					AfterFieldsUpdate();

@@ -46,6 +46,7 @@ namespace CodeImp.DoomBuilder.Data
 			this.scale.x = scalex;
 			this.scale.y = scaley;
 			this.lumpname = lumpname;
+			texturenamespace = TextureNamespace.TEXTURE;
 			SetName(name);
 			virtualname = "[Textures]/" + this.name; //mxd
 			

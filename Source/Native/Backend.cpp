@@ -66,9 +66,9 @@ Backend* Backend::Get()
 
 extern "C"
 {
-	RenderDevice* RenderDevice_New(void* disp, void* window)
+	RenderDevice* RenderDevice_New(void* disp, void* window, bool debug)
 	{
-		return Backend::Get()->NewRenderDevice(disp, window);
+		return Backend::Get()->NewRenderDevice(disp, window, debug);
 	}
 
 	void RenderDevice_Delete(RenderDevice* device)

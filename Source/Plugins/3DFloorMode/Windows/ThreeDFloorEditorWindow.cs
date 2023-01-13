@@ -37,6 +37,10 @@ namespace CodeImp.DoomBuilder.ThreeDFloorMode
 			this.Location = new Point(Screen.PrimaryScreen.WorkingArea.Width/2, Screen.PrimaryScreen.WorkingArea.Height/2);
 			controlpool = new List<ThreeDFloorHelperControl>();
 			InitializeComponent();
+
+			#if NO_WIN32
+			MaximumSize = new Size(10000, MaximumSize.Height);
+			#endif
 		}
 
 		private void ThreeDFloorEditorWindow_Load(object sender, EventArgs e)

@@ -100,6 +100,7 @@ namespace CodeImp.DoomBuilder.ZDoom
 		/// Gets a pair of a key and multiple values.
 		/// The key value pair looks like this:
 		/// key = value1 [, value2 [, value3 [...] ] ]
+		/// The value(s) can also be omitted.
 		/// </summary>
 		/// <param name="key">The key</param>
 		/// <param name="values">The list of values</param>
@@ -115,10 +116,15 @@ namespace CodeImp.DoomBuilder.ZDoom
 			
 			key = ReadToken().ToLowerInvariant();
 
-			SkipWhitespace(true);
+			SkipWhitespace(false);
 
 			token = ReadToken().ToLowerInvariant();
 
+			if(token.Length > 0 && IsWhitespace(token[0]))
+			{
+				// Keys actually don't need a value
+				return true;
+			}
 			if(token != "=")
 			{
 				ReportError("Expected \"=\", but got \"" + token + "\"");
@@ -168,7 +174,10 @@ namespace CodeImp.DoomBuilder.ZDoom
 				switch(key)
 				{
 					case "autoname":
-						iwad.AutoName = values[0];
+						if (values.Count == 0)
+							ReportError("'autoname' property has no value");
+						else
+							iwad.AutoName = values[0];
 						break;
 				}
 			}

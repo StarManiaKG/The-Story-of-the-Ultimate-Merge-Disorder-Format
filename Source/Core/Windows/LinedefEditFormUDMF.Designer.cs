@@ -80,6 +80,9 @@ namespace CodeImp.DoomBuilder.Windows
 			this.pfcFrontOffsetMid = new CodeImp.DoomBuilder.Controls.PairedFieldsControl();
 			this.pfcFrontOffsetBottom = new CodeImp.DoomBuilder.Controls.PairedFieldsControl();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
+			this.lightfrontlower = new CodeImp.DoomBuilder.Controls.SidedefPartLightControl();
+			this.lightfrontmiddle = new CodeImp.DoomBuilder.Controls.SidedefPartLightControl();
+			this.lightfrontupper = new CodeImp.DoomBuilder.Controls.SidedefPartLightControl();
 			this.resetfrontlight = new System.Windows.Forms.Button();
 			this.frontsector = new CodeImp.DoomBuilder.Controls.ButtonsNumericTextbox();
 			this.customfrontbutton = new System.Windows.Forms.Button();
@@ -92,6 +95,9 @@ namespace CodeImp.DoomBuilder.Windows
 			this.backside = new System.Windows.Forms.CheckBox();
 			this.backgroup = new System.Windows.Forms.GroupBox();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.lightbacklower = new CodeImp.DoomBuilder.Controls.SidedefPartLightControl();
+			this.lightbackmiddle = new CodeImp.DoomBuilder.Controls.SidedefPartLightControl();
+			this.lightbackupper = new CodeImp.DoomBuilder.Controls.SidedefPartLightControl();
 			this.resetbacklight = new System.Windows.Forms.Button();
 			this.backsector = new CodeImp.DoomBuilder.Controls.ButtonsNumericTextbox();
 			this.custombackbutton = new System.Windows.Forms.Button();
@@ -164,7 +170,7 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// label11
 			// 
-			label11.Location = new System.Drawing.Point(12, 23);
+			label11.Location = new System.Drawing.Point(15, 23);
 			label11.Name = "label11";
 			label11.Size = new System.Drawing.Size(80, 14);
 			label11.TabIndex = 13;
@@ -173,7 +179,7 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// label12
 			// 
-			label12.Location = new System.Drawing.Point(12, 23);
+			label12.Location = new System.Drawing.Point(15, 23);
 			label12.Name = "label12";
 			label12.Size = new System.Drawing.Size(80, 14);
 			label12.TabIndex = 16;
@@ -209,7 +215,7 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// labelLightFront
 			// 
-			this.labelLightFront.Location = new System.Drawing.Point(12, 53);
+			this.labelLightFront.Location = new System.Drawing.Point(15, 53);
 			this.labelLightFront.Name = "labelLightFront";
 			this.labelLightFront.Size = new System.Drawing.Size(80, 14);
 			this.labelLightFront.TabIndex = 25;
@@ -242,8 +248,8 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// actiongroup
 			// 
-			this.actiongroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.actiongroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.actiongroup.Controls.Add(this.argscontrol);
 			this.actiongroup.Controls.Add(this.actionhelp);
 			this.actiongroup.Controls.Add(label2);
@@ -297,9 +303,9 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// udmfactivates
 			// 
-			this.udmfactivates.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.udmfactivates.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.udmfactivates.AutoScroll = true;
 			this.udmfactivates.Columns = 2;
 			this.udmfactivates.Location = new System.Drawing.Point(18, 17);
@@ -311,8 +317,8 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// flagsgroup
 			// 
-			this.flagsgroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.flagsgroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.flagsgroup.Controls.Add(this.flags);
 			this.flagsgroup.Location = new System.Drawing.Point(8, 3);
 			this.flagsgroup.Name = "flagsgroup";
@@ -323,9 +329,9 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// flags
 			// 
-			this.flags.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.flags.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.flags.AutoScroll = true;
 			this.flags.Columns = 3;
 			this.flags.Location = new System.Drawing.Point(18, 15);
@@ -337,9 +343,9 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// tabs
 			// 
-			this.tabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.tabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.tabs.Controls.Add(this.tabproperties);
 			this.tabs.Controls.Add(this.tabfront);
 			this.tabs.Controls.Add(this.tabback);
@@ -373,8 +379,8 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// groupsettings
 			// 
-			this.groupsettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupsettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.groupsettings.Controls.Add(this.resetalpha);
 			this.groupsettings.Controls.Add(this.lockpick);
 			this.groupsettings.Controls.Add(this.alpha);
@@ -462,8 +468,8 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// idgroup
 			// 
-			this.idgroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.idgroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.idgroup.Controls.Add(this.tagsselector);
 			this.idgroup.Location = new System.Drawing.Point(8, 533);
 			this.idgroup.Name = "idgroup";
@@ -507,9 +513,9 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// frontgroup
 			// 
-			this.frontgroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.frontgroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.frontgroup.Controls.Add(this.frontflagsgroup);
 			this.frontgroup.Controls.Add(this.frontscalegroup);
 			this.frontgroup.Controls.Add(this.groupBox6);
@@ -528,23 +534,23 @@ namespace CodeImp.DoomBuilder.Windows
 			// frontflagsgroup
 			// 
 			this.frontflagsgroup.Controls.Add(this.flagsFront);
-			this.frontflagsgroup.Location = new System.Drawing.Point(12, 409);
+			this.frontflagsgroup.Location = new System.Drawing.Point(12, 490);
 			this.frontflagsgroup.Name = "frontflagsgroup";
-			this.frontflagsgroup.Size = new System.Drawing.Size(290, 190);
+			this.frontflagsgroup.Size = new System.Drawing.Size(290, 109);
 			this.frontflagsgroup.TabIndex = 45;
 			this.frontflagsgroup.TabStop = false;
 			this.frontflagsgroup.Text = " Flags ";
 			// 
 			// flagsFront
 			// 
-			this.flagsFront.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.flagsFront.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.flagsFront.AutoScroll = true;
 			this.flagsFront.Columns = 2;
 			this.flagsFront.Location = new System.Drawing.Point(16, 16);
 			this.flagsFront.Name = "flagsFront";
-			this.flagsFront.Size = new System.Drawing.Size(269, 168);
+			this.flagsFront.Size = new System.Drawing.Size(269, 87);
 			this.flagsFront.TabIndex = 0;
 			this.flagsFront.VerticalSpacing = 3;
 			this.flagsFront.OnValueChanged += new System.EventHandler(this.flagsFront_OnValueChanged);
@@ -557,7 +563,7 @@ namespace CodeImp.DoomBuilder.Windows
 			this.frontscalegroup.Controls.Add(this.pfcFrontScaleTop);
 			this.frontscalegroup.Controls.Add(this.pfcFrontScaleBottom);
 			this.frontscalegroup.Controls.Add(this.pfcFrontScaleMid);
-			this.frontscalegroup.Location = new System.Drawing.Point(12, 291);
+			this.frontscalegroup.Location = new System.Drawing.Point(12, 377);
 			this.frontscalegroup.Name = "frontscalegroup";
 			this.frontscalegroup.Size = new System.Drawing.Size(290, 112);
 			this.frontscalegroup.TabIndex = 44;
@@ -661,7 +667,7 @@ namespace CodeImp.DoomBuilder.Windows
 			this.groupBox6.Controls.Add(this.labelFrontOffsetTop);
 			this.groupBox6.Controls.Add(this.pfcFrontOffsetMid);
 			this.groupBox6.Controls.Add(this.pfcFrontOffsetBottom);
-			this.groupBox6.Location = new System.Drawing.Point(12, 142);
+			this.groupBox6.Location = new System.Drawing.Point(12, 228);
 			this.groupBox6.Name = "groupBox6";
 			this.groupBox6.Size = new System.Drawing.Size(290, 143);
 			this.groupBox6.TabIndex = 43;
@@ -780,6 +786,9 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// groupBox5
 			// 
+			this.groupBox5.Controls.Add(this.lightfrontlower);
+			this.groupBox5.Controls.Add(this.lightfrontmiddle);
+			this.groupBox5.Controls.Add(this.lightfrontupper);
 			this.groupBox5.Controls.Add(this.resetfrontlight);
 			this.groupBox5.Controls.Add(this.frontsector);
 			this.groupBox5.Controls.Add(label11);
@@ -789,14 +798,35 @@ namespace CodeImp.DoomBuilder.Windows
 			this.groupBox5.Controls.Add(this.cbLightAbsoluteFront);
 			this.groupBox5.Location = new System.Drawing.Point(12, 19);
 			this.groupBox5.Name = "groupBox5";
-			this.groupBox5.Size = new System.Drawing.Size(290, 117);
+			this.groupBox5.Size = new System.Drawing.Size(290, 203);
 			this.groupBox5.TabIndex = 42;
 			this.groupBox5.TabStop = false;
+			// 
+			// lightfrontlower
+			// 
+			this.lightfrontlower.Location = new System.Drawing.Point(0, 137);
+			this.lightfrontlower.Name = "lightfrontlower";
+			this.lightfrontlower.Size = new System.Drawing.Size(262, 29);
+			this.lightfrontlower.TabIndex = 29;
+			// 
+			// lightfrontmiddle
+			// 
+			this.lightfrontmiddle.Location = new System.Drawing.Point(0, 107);
+			this.lightfrontmiddle.Name = "lightfrontmiddle";
+			this.lightfrontmiddle.Size = new System.Drawing.Size(262, 29);
+			this.lightfrontmiddle.TabIndex = 29;
+			// 
+			// lightfrontupper
+			// 
+			this.lightfrontupper.Location = new System.Drawing.Point(0, 77);
+			this.lightfrontupper.Name = "lightfrontupper";
+			this.lightfrontupper.Size = new System.Drawing.Size(262, 29);
+			this.lightfrontupper.TabIndex = 29;
 			// 
 			// resetfrontlight
 			// 
 			this.resetfrontlight.Image = global::CodeImp.DoomBuilder.Properties.Resources.Reset;
-			this.resetfrontlight.Location = new System.Drawing.Point(233, 50);
+			this.resetfrontlight.Location = new System.Drawing.Point(236, 50);
 			this.resetfrontlight.Name = "resetfrontlight";
 			this.resetfrontlight.Size = new System.Drawing.Size(23, 23);
 			this.resetfrontlight.TabIndex = 28;
@@ -816,7 +846,7 @@ namespace CodeImp.DoomBuilder.Windows
 			this.frontsector.ButtonStepSmall = 0.1F;
 			this.frontsector.ButtonStepsUseModifierKeys = false;
 			this.frontsector.ButtonStepsWrapAround = false;
-			this.frontsector.Location = new System.Drawing.Point(96, 19);
+			this.frontsector.Location = new System.Drawing.Point(99, 19);
 			this.frontsector.Name = "frontsector";
 			this.frontsector.Size = new System.Drawing.Size(130, 24);
 			this.frontsector.StepValues = null;
@@ -824,7 +854,7 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// customfrontbutton
 			// 
-			this.customfrontbutton.Location = new System.Drawing.Point(96, 79);
+			this.customfrontbutton.Location = new System.Drawing.Point(98, 170);
 			this.customfrontbutton.Name = "customfrontbutton";
 			this.customfrontbutton.Size = new System.Drawing.Size(130, 25);
 			this.customfrontbutton.TabIndex = 3;
@@ -844,7 +874,7 @@ namespace CodeImp.DoomBuilder.Windows
 			this.lightFront.ButtonStepSmall = 1F;
 			this.lightFront.ButtonStepsUseModifierKeys = true;
 			this.lightFront.ButtonStepsWrapAround = false;
-			this.lightFront.Location = new System.Drawing.Point(96, 49);
+			this.lightFront.Location = new System.Drawing.Point(99, 49);
 			this.lightFront.Name = "lightFront";
 			this.lightFront.Size = new System.Drawing.Size(62, 24);
 			this.lightFront.StepValues = null;
@@ -855,7 +885,7 @@ namespace CodeImp.DoomBuilder.Windows
 			// cbLightAbsoluteFront
 			// 
 			this.cbLightAbsoluteFront.AutoSize = true;
-			this.cbLightAbsoluteFront.Location = new System.Drawing.Point(164, 54);
+			this.cbLightAbsoluteFront.Location = new System.Drawing.Point(167, 54);
 			this.cbLightAbsoluteFront.Name = "cbLightAbsoluteFront";
 			this.cbLightAbsoluteFront.Size = new System.Drawing.Size(67, 17);
 			this.cbLightAbsoluteFront.TabIndex = 27;
@@ -924,9 +954,9 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// backgroup
 			// 
-			this.backgroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.backgroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.backgroup.Controls.Add(this.groupBox4);
 			this.backgroup.Controls.Add(this.backflagsgroup);
 			this.backgroup.Controls.Add(this.backscalegroup);
@@ -944,6 +974,9 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// groupBox4
 			// 
+			this.groupBox4.Controls.Add(this.lightbacklower);
+			this.groupBox4.Controls.Add(this.lightbackmiddle);
+			this.groupBox4.Controls.Add(this.lightbackupper);
 			this.groupBox4.Controls.Add(this.resetbacklight);
 			this.groupBox4.Controls.Add(this.backsector);
 			this.groupBox4.Controls.Add(label12);
@@ -953,14 +986,35 @@ namespace CodeImp.DoomBuilder.Windows
 			this.groupBox4.Controls.Add(this.cbLightAbsoluteBack);
 			this.groupBox4.Location = new System.Drawing.Point(12, 19);
 			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(290, 117);
+			this.groupBox4.Size = new System.Drawing.Size(290, 203);
 			this.groupBox4.TabIndex = 46;
 			this.groupBox4.TabStop = false;
+			// 
+			// lightbacklower
+			// 
+			this.lightbacklower.Location = new System.Drawing.Point(0, 137);
+			this.lightbacklower.Name = "lightbacklower";
+			this.lightbacklower.Size = new System.Drawing.Size(262, 29);
+			this.lightbacklower.TabIndex = 32;
+			// 
+			// lightbackmiddle
+			// 
+			this.lightbackmiddle.Location = new System.Drawing.Point(0, 107);
+			this.lightbackmiddle.Name = "lightbackmiddle";
+			this.lightbackmiddle.Size = new System.Drawing.Size(262, 29);
+			this.lightbackmiddle.TabIndex = 33;
+			// 
+			// lightbackupper
+			// 
+			this.lightbackupper.Location = new System.Drawing.Point(0, 77);
+			this.lightbackupper.Name = "lightbackupper";
+			this.lightbackupper.Size = new System.Drawing.Size(262, 29);
+			this.lightbackupper.TabIndex = 34;
 			// 
 			// resetbacklight
 			// 
 			this.resetbacklight.Image = global::CodeImp.DoomBuilder.Properties.Resources.Reset;
-			this.resetbacklight.Location = new System.Drawing.Point(233, 50);
+			this.resetbacklight.Location = new System.Drawing.Point(236, 50);
 			this.resetbacklight.Name = "resetbacklight";
 			this.resetbacklight.Size = new System.Drawing.Size(23, 23);
 			this.resetbacklight.TabIndex = 31;
@@ -980,7 +1034,7 @@ namespace CodeImp.DoomBuilder.Windows
 			this.backsector.ButtonStepSmall = 0.1F;
 			this.backsector.ButtonStepsUseModifierKeys = false;
 			this.backsector.ButtonStepsWrapAround = false;
-			this.backsector.Location = new System.Drawing.Point(96, 19);
+			this.backsector.Location = new System.Drawing.Point(99, 19);
 			this.backsector.Name = "backsector";
 			this.backsector.Size = new System.Drawing.Size(130, 24);
 			this.backsector.StepValues = null;
@@ -988,7 +1042,8 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// custombackbutton
 			// 
-			this.custombackbutton.Location = new System.Drawing.Point(96, 79);
+			this.custombackbutton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.custombackbutton.Location = new System.Drawing.Point(98, 170);
 			this.custombackbutton.Name = "custombackbutton";
 			this.custombackbutton.Size = new System.Drawing.Size(130, 25);
 			this.custombackbutton.TabIndex = 3;
@@ -1008,7 +1063,7 @@ namespace CodeImp.DoomBuilder.Windows
 			this.lightBack.ButtonStepSmall = 1F;
 			this.lightBack.ButtonStepsUseModifierKeys = true;
 			this.lightBack.ButtonStepsWrapAround = false;
-			this.lightBack.Location = new System.Drawing.Point(96, 49);
+			this.lightBack.Location = new System.Drawing.Point(99, 49);
 			this.lightBack.Name = "lightBack";
 			this.lightBack.Size = new System.Drawing.Size(62, 24);
 			this.lightBack.StepValues = null;
@@ -1018,7 +1073,7 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// labelLightBack
 			// 
-			this.labelLightBack.Location = new System.Drawing.Point(12, 53);
+			this.labelLightBack.Location = new System.Drawing.Point(15, 53);
 			this.labelLightBack.Name = "labelLightBack";
 			this.labelLightBack.Size = new System.Drawing.Size(80, 14);
 			this.labelLightBack.TabIndex = 28;
@@ -1029,7 +1084,7 @@ namespace CodeImp.DoomBuilder.Windows
 			// cbLightAbsoluteBack
 			// 
 			this.cbLightAbsoluteBack.AutoSize = true;
-			this.cbLightAbsoluteBack.Location = new System.Drawing.Point(164, 54);
+			this.cbLightAbsoluteBack.Location = new System.Drawing.Point(167, 54);
 			this.cbLightAbsoluteBack.Name = "cbLightAbsoluteBack";
 			this.cbLightAbsoluteBack.Size = new System.Drawing.Size(67, 17);
 			this.cbLightAbsoluteBack.TabIndex = 30;
@@ -1041,23 +1096,23 @@ namespace CodeImp.DoomBuilder.Windows
 			// backflagsgroup
 			// 
 			this.backflagsgroup.Controls.Add(this.flagsBack);
-			this.backflagsgroup.Location = new System.Drawing.Point(12, 409);
+			this.backflagsgroup.Location = new System.Drawing.Point(12, 490);
 			this.backflagsgroup.Name = "backflagsgroup";
-			this.backflagsgroup.Size = new System.Drawing.Size(290, 190);
+			this.backflagsgroup.Size = new System.Drawing.Size(290, 109);
 			this.backflagsgroup.TabIndex = 45;
 			this.backflagsgroup.TabStop = false;
 			this.backflagsgroup.Text = " Flags ";
 			// 
 			// flagsBack
 			// 
-			this.flagsBack.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.flagsBack.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.flagsBack.AutoScroll = true;
 			this.flagsBack.Columns = 2;
 			this.flagsBack.Location = new System.Drawing.Point(16, 16);
 			this.flagsBack.Name = "flagsBack";
-			this.flagsBack.Size = new System.Drawing.Size(269, 168);
+			this.flagsBack.Size = new System.Drawing.Size(269, 87);
 			this.flagsBack.TabIndex = 1;
 			this.flagsBack.VerticalSpacing = 3;
 			this.flagsBack.OnValueChanged += new System.EventHandler(this.flagsBack_OnValueChanged);
@@ -1070,7 +1125,7 @@ namespace CodeImp.DoomBuilder.Windows
 			this.backscalegroup.Controls.Add(this.pfcBackScaleTop);
 			this.backscalegroup.Controls.Add(this.pfcBackScaleBottom);
 			this.backscalegroup.Controls.Add(this.pfcBackScaleMid);
-			this.backscalegroup.Location = new System.Drawing.Point(12, 291);
+			this.backscalegroup.Location = new System.Drawing.Point(12, 377);
 			this.backscalegroup.Name = "backscalegroup";
 			this.backscalegroup.Size = new System.Drawing.Size(290, 112);
 			this.backscalegroup.TabIndex = 44;
@@ -1174,7 +1229,7 @@ namespace CodeImp.DoomBuilder.Windows
 			this.groupBox1.Controls.Add(this.pfcBackOffsetMid);
 			this.groupBox1.Controls.Add(this.pfcBackOffsetBottom);
 			this.groupBox1.Controls.Add(this.backTextureOffset);
-			this.groupBox1.Location = new System.Drawing.Point(12, 142);
+			this.groupBox1.Location = new System.Drawing.Point(12, 228);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(290, 143);
 			this.groupBox1.TabIndex = 43;
@@ -1337,9 +1392,9 @@ namespace CodeImp.DoomBuilder.Windows
 			// 
 			// commenteditor
 			// 
-			this.commenteditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.commenteditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.commenteditor.Location = new System.Drawing.Point(3, 3);
 			this.commenteditor.Name = "commenteditor";
 			this.commenteditor.Size = new System.Drawing.Size(543, 615);
@@ -1361,9 +1416,9 @@ namespace CodeImp.DoomBuilder.Windows
 			// fieldslist
 			// 
 			this.fieldslist.AllowInsert = true;
-			this.fieldslist.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.fieldslist.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.fieldslist.AutoInsertUserPrefix = true;
 			this.fieldslist.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.fieldslist.Location = new System.Drawing.Point(11, 11);
@@ -1399,7 +1454,7 @@ namespace CodeImp.DoomBuilder.Windows
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "LinedefEditFormUDMF";
-			this.Opacity = 0;
+			this.Opacity = 0D;
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -1531,5 +1586,11 @@ namespace CodeImp.DoomBuilder.Windows
 		private System.Windows.Forms.Button resetfrontlight;
 		private System.Windows.Forms.Button resetbacklight;
 		private System.Windows.Forms.Button resetalpha;
+		private Controls.SidedefPartLightControl lightfrontupper;
+		private Controls.SidedefPartLightControl lightfrontlower;
+		private Controls.SidedefPartLightControl lightfrontmiddle;
+		private Controls.SidedefPartLightControl lightbacklower;
+		private Controls.SidedefPartLightControl lightbackmiddle;
+		private Controls.SidedefPartLightControl lightbackupper;
 	}
 }

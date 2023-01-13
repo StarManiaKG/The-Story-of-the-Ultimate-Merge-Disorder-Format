@@ -245,7 +245,7 @@ namespace CodeImp.DoomBuilder.SoundPropagationMode
 			for(int i = 0; i < soundenvironmenthings.Count; i++)
 			{
 				//mxd. Make sure same environments use the same color
-				int seid = (soundenvironmenthings[i].Args[0] << 8) + soundenvironmenthings[i].Args[1];
+				int seid = (Math.Abs(soundenvironmenthings[i].Args[0])%256 << 8) + Math.Abs(soundenvironmenthings[i].Args[1])%256;
 				secolor[soundenvironmenthings[i]] = distinctcolors[seid % distinctcolors.Count];
 				senumber.Add(soundenvironmenthings[i], i + 1);
 			}

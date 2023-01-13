@@ -106,7 +106,8 @@ namespace CodeImp.DoomBuilder.ZDoom
                             }
 
                             //mxd. Range check
-                            if ((doomednum < General.Map.FormatInterface.MinThingType) || (doomednum > General.Map.FormatInterface.MaxThingType))
+                            // Only check In a map is opened, otherwise we run into problems with the resource checker
+                            if (General.Map != null && ((doomednum < General.Map.FormatInterface.MinThingType) || (doomednum > General.Map.FormatInterface.MaxThingType)))
                             {
                                 // Out of bounds!
                                 parser.ReportError("Actor \"" + classname + "\" has invalid editor number. Editor number must be between "
@@ -394,60 +395,64 @@ namespace CodeImp.DoomBuilder.ZDoom
             // parsing done, process thing arguments
             ParseCustomArguments();
 
-            //mxd. Check if baseclass is valid
-            if (inheritclass.ToLowerInvariant() != "actor" && doomednum > -1)
+            // Only check if a map is opened. Otherwise we run into problems with the resource checker
+            if (General.Map != null)
             {
-                //check if this class inherits from a class defined in game configuration
-                Dictionary<int, ThingTypeInfo> things = General.Map.Config.GetThingTypes();
-                string inheritclasscheck = inheritclass.ToLowerInvariant();
-
-                foreach (KeyValuePair<int, ThingTypeInfo> ti in things)
+                //mxd. Check if baseclass is valid
+                if (inheritclass.ToLowerInvariant() != "actor" && doomednum > -1)
                 {
-                    if (!string.IsNullOrEmpty(ti.Value.ClassName) && ti.Value.ClassName.ToLowerInvariant() == inheritclasscheck)
+                    //check if this class inherits from a class defined in game configuration
+                    Dictionary<int, ThingTypeInfo> things = General.Map.Config.GetThingTypes();
+                    string inheritclasscheck = inheritclass.ToLowerInvariant();
+
+                    foreach (KeyValuePair<int, ThingTypeInfo> ti in things)
                     {
-                        //states
-                        // [ZZ] allow internal prefix here. it can inherit MapSpot, light, or other internal stuff.
-                        if (states.Count == 0 && !string.IsNullOrEmpty(ti.Value.Sprite))
-                            states.Add("spawn", new StateStructure(ti.Value.Sprite.StartsWith(DataManager.INTERNAL_PREFIX) ? ti.Value.Sprite : ti.Value.Sprite.Substring(0, 5)));
-
-                        if (baseclass == null)
+                        if (!string.IsNullOrEmpty(ti.Value.ClassName) && ti.Value.ClassName.ToLowerInvariant() == inheritclasscheck)
                         {
-                            //flags
-                            if (ti.Value.Hangs && !flags.ContainsKey("spawnceiling"))
-                                flags["spawnceiling"] = true;
+                            //states
+                            // [ZZ] allow internal prefix here. it can inherit MapSpot, light, or other internal stuff.
+                            if (states.Count == 0 && !string.IsNullOrEmpty(ti.Value.Sprite))
+                                states.Add("spawn", new StateStructure(ti.Value.Sprite.StartsWith(DataManager.INTERNAL_PREFIX) ? ti.Value.Sprite : ti.Value.Sprite.Substring(0, 5)));
 
-                            if (ti.Value.Blocking > 0 && !flags.ContainsKey("solid"))
-                                flags["solid"] = true;
-
-                            //properties
-                            if (!props.ContainsKey("height"))
-                                props["height"] = new List<string> { ti.Value.Height.ToString() };
-
-                            if (!props.ContainsKey("radius"))
-                                props["radius"] = new List<string> { ti.Value.Radius.ToString() };
-                        }
-
-                        // [ZZ] inherit arguments from game configuration
-                        //      
-                        if (!props.ContainsKey("$clearargs"))
-                        {
-                            for (int i = 0; i < 5; i++)
+                            if (baseclass == null)
                             {
-                                if (args[i] != null)
-                                    continue; // don't touch it if we already have overrides
+                                //flags
+                                if (ti.Value.Hangs && !flags.ContainsKey("spawnceiling"))
+                                    flags["spawnceiling"] = true;
 
-                                ArgumentInfo arg = ti.Value.Args[i];
-                                if (arg != null && arg.Used)
-                                    args[i] = arg;
+                                if (ti.Value.Blocking > 0 && !flags.ContainsKey("solid"))
+                                    flags["solid"] = true;
+
+                                //properties
+                                if (!props.ContainsKey("height"))
+                                    props["height"] = new List<string> { ti.Value.Height.ToString() };
+
+                                if (!props.ContainsKey("radius"))
+                                    props["radius"] = new List<string> { ti.Value.Radius.ToString() };
                             }
+
+                            // [ZZ] inherit arguments from game configuration
+                            //      
+                            if (!props.ContainsKey("$clearargs"))
+                            {
+                                for (int i = 0; i < 5; i++)
+                                {
+                                    if (args[i] != null)
+                                        continue; // don't touch it if we already have overrides
+
+                                    ArgumentInfo arg = ti.Value.Args[i];
+                                    if (arg != null && arg.Used)
+                                        args[i] = arg;
+                                }
+                            }
+
+                            return;
                         }
-
-                        return;
                     }
-                }
 
-                if (baseclass == null)
-                    parser.LogWarning("Unable to find \"" + inheritclass + "\" class to inherit from, while parsing \"" + classname + ":" + doomednum + "\"");
+                    if (baseclass == null)
+                        parser.LogWarning("Unable to find \"" + inheritclass + "\" class to inherit from, while parsing \"" + classname + ":" + doomednum + "\"");
+                }
             }
         }
 

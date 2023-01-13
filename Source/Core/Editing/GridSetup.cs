@@ -259,7 +259,7 @@ namespace CodeImp.DoomBuilder.Editing
 		public static Vector2D SnappedToGrid(Vector2D v, double gridsize, double gridsizeinv, double gridrotate = 0.0f, double gridoriginx = 0, double gridoriginy = 0)
 		{
 			Vector2D origin = new Vector2D(gridoriginx, gridoriginy);
-			bool transformed = Math.Abs(gridrotate) > 1e-4 || gridoriginx != 0 || gridoriginx != 0;
+			bool transformed = Math.Abs(gridrotate) > 1e-4 || gridoriginx != 0 || gridoriginy != 0;
 			if (transformed)
 			{
 				// Grid is transformed, so reverse the transformation first

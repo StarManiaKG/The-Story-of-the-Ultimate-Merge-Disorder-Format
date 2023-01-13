@@ -1,9 +1,9 @@
 # Angle2D
 
-## Static methods
+## Methods
 
 ---
-### degToRad(deg)
+### degToRad(deg: double)
 Converts degrees to radians.
 #### Parameters
 * deg: Angle in degrees
@@ -11,7 +11,7 @@ Converts degrees to radians.
 Angle in radians
 
 ---
-### doomToReal(doomangle)
+### doomToReal(doomangle: int)
 Converts a Doom angle (where 0° is east) to a real world angle (where 0° is north).
 #### Parameters
 * doomangle: Doom angle in degrees
@@ -19,7 +19,7 @@ Converts a Doom angle (where 0° is east) to a real world angle (where 0° is no
 Doom angle in degrees
 
 ---
-### doomToRealRad(doomangle)
+### doomToRealRad(doomangle: int)
 Converts a Doom angle (where 0° is east) to a real world angle (where 0° is north) in radians.
 #### Parameters
 * doomangle: Doom angle in degrees
@@ -27,7 +27,7 @@ Converts a Doom angle (where 0° is east) to a real world angle (where 0° is no
 Doom angle in radians
 
 ---
-### getAngle(p1, p2, p3)
+### getAngle(p1: object, p2: object, p3: object)
 Returns the angle between three positions.
 #### Parameters
 * p1: First position
@@ -37,7 +37,7 @@ Returns the angle between three positions.
 Angle in degrees
 
 ---
-### getAngleRad(p1, p2, p3)
+### getAngleRad(p1: object, p2: object, p3: object)
 Returns the angle between three positions in radians.
 #### Parameters
 * p1: First position
@@ -47,7 +47,7 @@ Returns the angle between three positions in radians.
 Angle in radians
 
 ---
-### normalized(angle)
+### normalized(angle: int)
 Normalizes an angle in degrees so that it is bigger or equal to 0° and smaller than 360°.
 #### Parameters
 * angle: Angle in degrees
@@ -55,7 +55,7 @@ Normalizes an angle in degrees so that it is bigger or equal to 0° and smaller 
 Normalized angle in degrees
 
 ---
-### normalizedRad(angle)
+### normalizedRad(angle: double)
 Normalizes an angle in radians so that it is bigger or equal to 0 and smaller than 2 Pi.
 #### Parameters
 * angle: Angle in radians
@@ -63,7 +63,7 @@ Normalizes an angle in radians so that it is bigger or equal to 0 and smaller th
 Normalized angle in radians
 
 ---
-### radToDeg(rad)
+### radToDeg(rad: double)
 Converts radians to degrees.
 #### Parameters
 * rad: Angle in radians
@@ -71,7 +71,7 @@ Converts radians to degrees.
 Angle in degrees
 
 ---
-### realToDoom(realangle)
+### realToDoom(realangle: double)
 Converts a real world angle (where 0° is north) to a Doom angle (where 0° is east).
 #### Parameters
 * realangle: Real world angle in degrees
@@ -79,8 +79,8 @@ Converts a real world angle (where 0° is north) to a Doom angle (where 0° is e
 Doom angle in degrees
 
 ---
-### realToDoomRad(realangle)
-Converts a real world  angle (where 0° is north) to a Doom angle (where 0° is east) in radians.
+### realToDoomRad(realangle: double)
+Converts a real world angle (where 0° is north) to a Doom angle (where 0° is east) in radians.
 #### Parameters
 * realangle: Real world angle in radians
 #### Return value
