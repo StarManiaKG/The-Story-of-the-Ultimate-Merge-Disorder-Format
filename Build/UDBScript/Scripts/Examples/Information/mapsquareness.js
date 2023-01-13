@@ -1,4 +1,4 @@
-/// <reference path="../../../udbscript.d.ts" />
+/// <reference path="../../../uzbscript.d.ts" />
 
 `#version 4`;
 
@@ -9,7 +9,7 @@
 let totalLength = 0;
 let orthogonalLength = 0;
 
-UDB.Map.getLinedefs().forEach(ld => {
+UZB.Map.getLinedefs().forEach(ld => {
     totalLength += ld.length;
     
     if(ld.angle % 90 == 0)
@@ -18,4 +18,4 @@ UDB.Map.getLinedefs().forEach(ld => {
 
 orthogonalPercentage = (orthogonalLength / totalLength * 100).toFixed(2);
 
-UDB.showMessage('The map is ' + orthogonalPercentage + '% square.');
+UZB.showMessage('The map is ' + orthogonalPercentage + '% square.');

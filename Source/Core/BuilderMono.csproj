@@ -11,7 +11,7 @@
     <RootNamespace>CodeImp.DoomBuilder</RootNamespace>
     <AssemblyName>Builder</AssemblyName>
     <StartupObject>CodeImp.DoomBuilder.General</StartupObject>
-    <ApplicationIcon>Resources\UDB2.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\UZB2.ico</ApplicationIcon>
     <Win32Resource>
     </Win32Resource>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
@@ -889,7 +889,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Updater.ico" />
-    <None Include="Resources\UDB2.ico" />
+    <None Include="Resources\UZB2.ico" />
     <None Include="app.manifest" />
     <EmbeddedResource Include="Controls\Scripting\ScriptEditorControl.resx">
       <DependentUpon>ScriptEditorControl.cs</DependentUpon>
@@ -1378,7 +1378,7 @@
     <None Include="Resources\AboutBack.png" />
     <Content Include="Resources\DB2.ico" />
     <None Include="Resources\GZDB2.ico" />
-    <None Include="Resources\UDB.ico" />
+    <None Include="Resources\UZB.ico" />
     <None Include="Resources\fog.png" />
     <None Include="Resources\GZDB_Logo_small.png" />
     <None Include="Resources\InfoLine.png" />

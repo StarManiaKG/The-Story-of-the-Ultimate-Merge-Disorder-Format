@@ -21,7 +21,7 @@
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript.Wrapper
+namespace CodeImp.DoomBuilder.UZBScript.Wrapper
 {
 	interface IMoreTags
 	{

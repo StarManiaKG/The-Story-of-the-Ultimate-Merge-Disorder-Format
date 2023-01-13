@@ -37,7 +37,7 @@ There are some restrictions, though:
 
 * it only works for fields that are not in the base UDMF standard, since those are handled directly in the respective class
 * it does not work for flags. While they are technically also UDMF fields, they are handled in the `flags` field of the respective class (where applicable)
-* JavaScript does not distinguish between integer and floating point numbers, it only has floating point numbers (of double precision). For fields where UDB knows that they are integers this it not a problem, since it'll automatically convert the floating point numbers to integers (dropping the fractional part). However, if you need to specify an integer value for an unknown or custom field you have to work around this limitation:
+* JavaScript does not distinguish between integer and floating point numbers, it only has floating point numbers (of double precision). For fields where UZB knows that they are integers this it not a problem, since it'll automatically convert the floating point numbers to integers (dropping the fractional part). However, if you need to specify an integer value for an unknown or custom field you have to work around this limitation:
 Version 5 and later:
 You can use a `BigInt`. This is done by appending a `n` to the number. Note that this is just a convenient way to define whole numbers, it still only supports 32 bit integers:
 
@@ -47,7 +47,7 @@ s.fields.user_myintfield = 25n; // Sets the 'user_myintfield' field to an intege
 In version 4 and earlier you have to use the `UniValue` class:
 
 ```js
-s.fields.user_myintfield = new UDB.UniValue(0, 25); // Sets the 'user_myintfield' field to an integer value of 25
+s.fields.user_myintfield = new UZB.UniValue(0, 25); // Sets the 'user_myintfield' field to an integer value of 25
 ```
 To remove a field you have to assign `null` to it:
 
@@ -94,8 +94,8 @@ t.position.y = 64;
 It's also possible to set all fields immediately by assigning either a `Vector2D`, `Vector3D`, or an array of numbers:
 
 ```js
-t.position = new UDB.Vector2D(32, 64);
-t.position = new UDB.Vector3D(32, 64, 128);
+t.position = new UZB.Vector2D(32, 64);
+t.position = new UZB.Vector3D(32, 64, 128);
 t.position = [ 32, 64 ];
 t.position = [ 32, 64, 128 ];
 ```
@@ -136,7 +136,7 @@ Deletes the `Thing`.
 Gets the distance between this `Thing` and the given point. The point can be either a `Vector2D` or an array of numbers.
 
 ```js
-t.distanceToSq(new UDB.Vector2D(32, 64));
+t.distanceToSq(new UZB.Vector2D(32, 64));
 t.distanceToSq([ 32, 64 ]);
 ```
 #### Parameters
@@ -150,7 +150,7 @@ Gets the squared distance between this `Thing` and the given point.
 The point can be either a `Vector2D` or an array of numbers.
 
 ```js
-t.distanceToSq(new UDB.Vector2D(32, 64));
+t.distanceToSq(new UZB.Vector2D(32, 64));
 t.distanceToSq([ 32, 64 ]);
 ```
 #### Parameters

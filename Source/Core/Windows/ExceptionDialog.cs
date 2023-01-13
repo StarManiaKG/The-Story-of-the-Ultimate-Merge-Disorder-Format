@@ -12,7 +12,7 @@ namespace CodeImp.DoomBuilder.Windows
 {
 	public partial class ExceptionDialog : Form
 	{
-		private const string CRASH_DUMP_FILE = "UDBCrash.txt";
+		private const string CRASH_DUMP_FILE = "UZBCrash.txt";
 
 		private readonly bool isterminating;
 		private readonly string logpath;
@@ -74,7 +74,7 @@ namespace CodeImp.DoomBuilder.Windows
 				"At least it's not BSoD...",
 				"User Error. Please Replace User",
 				"Brought to you by MaxED!",
-				"Ultimate Doom Builder proudly presents:",
+				"Ultimate Zone Builder proudly presents:",
 				"You aren't expected to understand this",
 				"Back to the drawing board...",
 				"I'm sorry... :(",
@@ -105,7 +105,7 @@ namespace CodeImp.DoomBuilder.Windows
 				"Freeze mode enabled",
 				"You feel strange...",
 				"That doesn't seem to work",
-				"This function is only available in the retail version of Ultimate Doom Builder",
+				"This function is only available in the retail version of Ultimate Zone Builder",
 				"You picked up the Random Exception.",
 				"Pinky says that you're the new hope. Bear that in mind.",
 				"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -168,7 +168,7 @@ namespace CodeImp.DoomBuilder.Windows
 			}
 
             // Get GZDB version
-            result += "UDB: R" + General.ThisAssembly.GetName().Version.Revision + Environment.NewLine;
+            result += "UZB: R" + General.ThisAssembly.GetName().Version.Revision + Environment.NewLine;
             result += "Platform: " + (Environment.Is64BitProcess ? "x64" : "x86") + Environment.NewLine + Environment.NewLine;
 
 			return result;

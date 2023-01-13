@@ -27,7 +27,7 @@ using CodeImp.DoomBuilder.Geometry;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript.Wrapper
+namespace CodeImp.DoomBuilder.UZBScript.Wrapper
 {
 	internal struct Angle2DWrapper
 	{

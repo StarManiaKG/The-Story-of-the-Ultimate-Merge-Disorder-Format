@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Ultimate Doom Builder Updater")]
+[assembly: AssemblyTitle("Ultimate Zone Builder Updater")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("CodeImp, MaxED, ZZYZX, boris, dpJudas and others")]
-[assembly: AssemblyProduct("Ultimate Doom Builder")]
+[assembly: AssemblyProduct("Ultimate Zone Builder")]
 [assembly: AssemblyCopyright("Copyright В© 2007, 2016, 2017-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

@@ -364,7 +364,7 @@ namespace CodeImp.DoomBuilder.IO
 		}
 
 		/// <summary>
-		/// This writes UDMF data UDB doesn't know about to the map.
+		/// This writes UDMF data UZB doesn't know about to the map.
 		/// </summary>
 		/// <param name="data">Collection of universal entries.</param>
 		/// <param name="textmap">The map</param>

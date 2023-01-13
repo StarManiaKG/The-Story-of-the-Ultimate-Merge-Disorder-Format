@@ -1,4 +1,4 @@
-/// <reference path="../../udbscript.d.ts" />
+/// <reference path="../../uzbscript.d.ts" />
 
 `#version 4`;
 
@@ -8,14 +8,14 @@
 
 // Put all selected map elements into an array
 let elements = [
-    ...UDB.Map.getSelectedThings(),
-    ...UDB.Map.getSelectedVertices(),
-    ...UDB.Map.getSelectedLinedefs(),
-    ...UDB.Map.getSelectedSectors()
+    ...UZB.Map.getSelectedThings(),
+    ...UZB.Map.getSelectedVertices(),
+    ...UZB.Map.getSelectedLinedefs(),
+    ...UZB.Map.getSelectedSectors()
 ];
 
 // Clear current selection
-UDB.Map.clearAllSelected();
+UZB.Map.clearAllSelected();
 
 // Keep going as long as there are elements in the array
 while(elements.length > 0)

@@ -31,7 +31,7 @@ using CodeImp.DoomBuilder.Windows;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript
+namespace CodeImp.DoomBuilder.UZBScript
 {
 	public partial class PreferencesForm : Form
 	{

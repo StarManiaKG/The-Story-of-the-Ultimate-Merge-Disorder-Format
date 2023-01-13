@@ -34,7 +34,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CodeImp.DoomBuilder.Windows;
 
-namespace CodeImp.DoomBuilder.UDBScript
+namespace CodeImp.DoomBuilder.UZBScript
 {
 	public partial class QueryOptionsForm : DelayedForm
 	{

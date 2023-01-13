@@ -42,7 +42,7 @@ IF EXIST "%DB_OUTDIR%\Changelog.xml" DEL /F /Q "%DB_OUTDIR%\Changelog.xml" > NUL
 (
 echo [OB]?xml version="1.0" encoding="UTF-8"?[CB]
 echo [OB]log[CB]
-git.exe log master --since=2012-04-17 --pretty=format:"[OB]logentry commit=\"%%h\"[CB]%%n[OB]author[CB]%%an[OB]/author[CB]%%n[OB]date[CB]%%aI[OB]/date[CB]%%n[OB]msg[CB]%%B[OB]/msg[CB]%%n[OB]/logentry[CB]"
+git.exe log main --since=2012-04-17 --pretty=format:"[OB]logentry commit=\"%%h\"[CB]%%n[OB]author[CB]%%an[OB]/author[CB]%%n[OB]date[CB]%%aI[OB]/date[CB]%%n[OB]msg[CB]%%B[OB]/msg[CB]%%n[OB]/logentry[CB]"
 echo [OB]/log[CB]
 ) >"%DB_OUTDIR%\Changelog.xml"
 IF %ERRORLEVEL% NEQ 0 GOTO ERRORFAIL
@@ -94,7 +94,7 @@ CALL "setenv.bat"
 DEL /F /Q "setenv.bat"
 
 ECHO.
-ECHO Compiling Doom Builder...
+ECHO Compiling Ultimate Zone Builder...
 ECHO.
 IF DEFINED EXPERIMENTALNAME (
 	echo ##### BUILDING EXPERIMENTAL VERSION %EXPERIMENTALNAME%
@@ -130,27 +130,27 @@ ECHO.
 
 IF NOT DEFINED BUILD_RELEASE GOTO PACKGIT
 
-set DEL_PATHSPEC="%DB_OUTDIR%\UltimateDoomBuilder-Setup*-%PLATFORM%.exe"
+set DEL_PATHSPEC="%DB_OUTDIR%\UltimateZoneBuilder-Setup*-%PLATFORM%.exe"
 IF EXIST %DEL_PATHSPEC% DEL /F /Q %DEL_PATHSPEC% > NUL
-"%ISSDIR%\iscc.exe" /DUDB_arch=%PLATFORM% "Setup\UDBuilder_setup.iss"
+"%ISSDIR%\iscc.exe" /DUZB_arch=%PLATFORM% "Setup\UZBuilder_setup.iss"
 IF %ERRORLEVEL% NEQ 0 GOTO ERRORFAIL
 IF NOT EXIST "%DB_OUTDIR%\Setup.exe" GOTO FILEFAIL
 
-REN "%DB_OUTDIR%\Setup.exe" "UltimateDoomBuilder-Setup-R%REVISIONNUMBER%-%PLATFORM%.exe"
+REN "%DB_OUTDIR%\Setup.exe" "UltimateZoneBuilder-Setup-R%REVISIONNUMBER%-%PLATFORM%.exe"
 
 REM GOTO BUILDDONE
 
 :PACKGIT
-SET DEL_PATHSPEC="%DB_OUTDIR%\UltimateDoomBuilder*-%PLATFORM%.7z"
+SET DEL_PATHSPEC="%DB_OUTDIR%\UltimateZoneBuilder*-%PLATFORM%.7z"
 IF EXIST %DEL_PATHSPEC% DEL /F /Q %DEL_PATHSPEC% > NUL
-IF EXIST "%DB_OUTDIR%\UDB_Updater-%PLATFORM%.7z" DEL /F /Q "%DB_OUTDIR%\UDB_Updater-%PLATFORM%.7z" > NUL
-"%SEVENZIPDIR%\7z" a %DB_OUTDIR%\udb.7z .\Build\* -xr!*.xml -xr!JetBrains.Profiler.Core.Api.dll -xr!ScintillaNET.3.5.pdb -x!Setup -x!OpenGLDebug.log -x!Builder.vshost.* -x!.gitignore -x!UDBScript\Scripts\*.js
-"%SEVENZIPDIR%\7z" a %DB_OUTDIR%\UDB_Updater-%PLATFORM%.7z .\Build\Updater.exe .\Build\Updater.ini
+IF EXIST "%DB_OUTDIR%\UZB_Updater-%PLATFORM%.7z" DEL /F /Q "%DB_OUTDIR%\UZB_Updater-%PLATFORM%.7z" > NUL
+"%SEVENZIPDIR%\7z" a %DB_OUTDIR%\uzb.7z .\Build\* -xr!*.xml -xr!JetBrains.Profiler.Core.Api.dll -xr!ScintillaNET.3.5.pdb -x!Setup -x!OpenGLDebug.log -x!Builder.vshost.* -x!.gitignore -x!UZBScript\Scripts\*.js
+"%SEVENZIPDIR%\7z" a %DB_OUTDIR%\UZB_Updater-%PLATFORM%.7z .\Build\Updater.exe .\Build\Updater.ini
 IF %ERRORLEVEL% NEQ 0 GOTO PACKFAIL
-IF NOT EXIST %DB_OUTDIR%\udb.7z GOTO FILEFAIL
-IF NOT EXIST %DB_OUTDIR%\UDB_Updater-%PLATFORM%.7z GOTO FILEFAIL
+IF NOT EXIST %DB_OUTDIR%\uzb.7z GOTO FILEFAIL
+IF NOT EXIST %DB_OUTDIR%\UZB_Updater-%PLATFORM%.7z GOTO FILEFAIL
 
-REN "%DB_OUTDIR%\udb.7z" UltimateDoomBuilder-r%REVISIONNUMBER%-%PLATFORM%.7z
+REN "%DB_OUTDIR%\uzb.7z" UltimateZoneBuilder-r%REVISIONNUMBER%-%PLATFORM%.7z
 
 IF EXIST "Build\Changelog.txt" DEL /F /Q "Build\Changelog.txt" > NUL
 

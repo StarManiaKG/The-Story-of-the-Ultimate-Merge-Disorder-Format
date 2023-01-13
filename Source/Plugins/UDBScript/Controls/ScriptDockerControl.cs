@@ -29,7 +29,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CodeImp.DoomBuilder.Controls;
 
-namespace CodeImp.DoomBuilder.UDBScript
+namespace CodeImp.DoomBuilder.UZBScript
 {
 	public partial class ScriptDockerControl : UserControl
 	{
@@ -119,7 +119,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 		/// <returns>The hotkey text</returns>
 		private string GetHotkeyText(int slot)
 		{
-			string actionname = "udbscript_udbscriptexecuteslot" + slot;
+			string actionname = "uzbscript_uzbscriptexecuteslot" + slot;
 			string keytext = "no hotkey";
 
 			Actions.Action action = General.Actions.GetActionByName(actionname);

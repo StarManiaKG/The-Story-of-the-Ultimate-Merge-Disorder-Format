@@ -7,8 +7,8 @@
     <ProjectGuid>{3088C327-5FFB-49A0-8D40-58E92D89DF07}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CodeImp.DoomBuilder.UDBScript</RootNamespace>
-    <AssemblyName>UDBScript</AssemblyName>
+    <RootNamespace>CodeImp.DoomBuilder.UZBScript</RootNamespace>
+    <AssemblyName>UZBScript</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -89,10 +89,10 @@
     <Compile Include="API\GameConfigurationWrapper.cs" />
     <Compile Include="API\ImageInfo.cs" />
     <Compile Include="API\PlaneWrapper.cs" />
-    <Compile Include="API\UDBWrapper.cs" />
+    <Compile Include="API\UZBWrapper.cs" />
     <Compile Include="API\Vector3DWrapper.cs" />
     <Compile Include="API\VisualCameraWrapper.cs" />
-    <Compile Include="UDBScriptSettingsAttribute.cs" />
+    <Compile Include="UZBScriptSettingsAttribute.cs" />
     <Compile Include="BuilderPlug.cs" />
     <Compile Include="Controls\ScriptDockerControl.cs">
       <SubType>UserControl</SubType>
@@ -143,11 +143,11 @@
     <Compile Include="Windows\ScriptRunnerForm.Designer.cs">
       <DependentUpon>ScriptRunnerForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Windows\UDBScriptErrorForm.cs">
+    <Compile Include="Windows\UZBScriptErrorForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Windows\UDBScriptErrorForm.Designer.cs">
-      <DependentUpon>UDBScriptErrorForm.cs</DependentUpon>
+    <Compile Include="Windows\UZBScriptErrorForm.Designer.cs">
+      <DependentUpon>UZBScriptErrorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="API\IMoreTags.cs" />
     <Compile Include="API\Line2DWrapper.cs" />
@@ -185,8 +185,8 @@
     <EmbeddedResource Include="Windows\ScriptRunnerForm.resx">
       <DependentUpon>ScriptRunnerForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Windows\UDBScriptErrorForm.resx">
-      <DependentUpon>UDBScriptErrorForm.cs</DependentUpon>
+    <EmbeddedResource Include="Windows\UZBScriptErrorForm.resx">
+      <DependentUpon>UZBScriptErrorForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

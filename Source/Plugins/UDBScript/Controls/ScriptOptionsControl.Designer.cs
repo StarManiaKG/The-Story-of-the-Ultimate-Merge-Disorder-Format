@@ -1,4 +1,4 @@
-﻿namespace CodeImp.DoomBuilder.UDBScript
+﻿namespace CodeImp.DoomBuilder.UZBScript
 {
 	partial class ScriptOptionsControl
 	{

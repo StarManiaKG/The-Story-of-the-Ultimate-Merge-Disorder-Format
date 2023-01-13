@@ -1,4 +1,4 @@
-/// <reference path="../../../udbscript.d.ts" />
+/// <reference path="../../../uzbscript.d.ts" />
 
 `#version 4`;
 
@@ -6,10 +6,10 @@
 
 `#description Calculates the area of the selected sectors.`
 
-let sectors = UDB.Map.getSelectedSectors();
+let sectors = UZB.Map.getSelectedSectors();
 
 if(sectors.length == 0)
-UDB.die('You need to select at least one sector.');
+UZB.die('You need to select at least one sector.');
 
 let area = 0;
 
@@ -19,4 +19,4 @@ sectors.forEach(s => {
     });
 });
 
-UDB.showMessage('The area of the selected sectors is ' + area + ' mu².');
+UZB.showMessage('The area of the selected sectors is ' + area + ' mu².');

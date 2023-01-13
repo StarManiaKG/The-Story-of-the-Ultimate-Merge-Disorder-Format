@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CodeImp.DoomBuilder.Config;
 
-namespace CodeImp.DoomBuilder.UDBScript
+namespace CodeImp.DoomBuilder.UZBScript
 {
 	public partial class ScriptOptionsControl : UserControl
 	{

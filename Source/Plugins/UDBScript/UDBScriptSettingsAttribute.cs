@@ -27,9 +27,9 @@ using System;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript
+namespace CodeImp.DoomBuilder.UZBScript
 {
-	sealed internal class UDBScriptSettingsAttribute : Attribute
+	sealed internal class UZBScriptSettingsAttribute : Attribute
 	{
 		#region ================== Properties
 
@@ -39,7 +39,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 
 		#region ================== Constructors
 
-		public UDBScriptSettingsAttribute()
+		public UZBScriptSettingsAttribute()
 		{
 		}
 

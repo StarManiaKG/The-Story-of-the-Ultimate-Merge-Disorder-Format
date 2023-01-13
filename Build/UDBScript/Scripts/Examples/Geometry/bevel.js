@@ -1,4 +1,4 @@
-/// <reference path="../../../udbscript.d.ts" />
+/// <reference path="../../../uzbscript.d.ts" />
 
 // Inspired by ribbiks's DBX Lua script: https://github.com/ribbiks/doom_lua/
 
@@ -18,7 +18,7 @@ size
 }
 `;
 
-let lines = UDB.Map.getSelectedLinedefs();
+let lines = UZB.Map.getSelectedLinedefs();
 
 if(lines.length < 2)
     die('You need to select at least 2 connected linedefs');
@@ -39,9 +39,9 @@ vertices.forEach(v => {
     // Split all lines at the given size from the vertex away
     v.getLinedefs().forEach(ld => {
         if(ld.start == v)
-            ld.split(ld.line.getCoordinatesAt(1.0 / ld.length * UDB.ScriptOptions.size));
+            ld.split(ld.line.getCoordinatesAt(1.0 / ld.length * UZB.ScriptOptions.size));
         else
-            ld.split(ld.line.getCoordinatesAt(1.0 - (1.0 / ld.length * UDB.ScriptOptions.size)));
+            ld.split(ld.line.getCoordinatesAt(1.0 - (1.0 / ld.length * UZB.ScriptOptions.size)));
     });
 
     // Get one of the connected linedef...

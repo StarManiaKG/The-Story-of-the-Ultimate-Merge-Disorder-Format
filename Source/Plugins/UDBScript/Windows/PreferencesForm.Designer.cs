@@ -1,4 +1,4 @@
-﻿namespace CodeImp.DoomBuilder.UDBScript
+﻿namespace CodeImp.DoomBuilder.UZBScript
 {
 	partial class PreferencesForm
 	{
@@ -48,13 +48,13 @@
 			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPage1.Size = new System.Drawing.Size(662, 346);
 			this.tabPage1.TabIndex = 0;
-			this.tabPage1.Text = "UDBScript";
+			this.tabPage1.Text = "UZBScript";
 			this.tabPage1.UseVisualStyleBackColor = true;
 			// 
 			// btnSelectExe
 			// 
 			this.btnSelectExe.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnSelectExe.Image = global::CodeImp.DoomBuilder.UDBScript.Properties.Resources.Folder;
+			this.btnSelectExe.Image = global::CodeImp.DoomBuilder.UZBScript.Properties.Resources.Folder;
 			this.btnSelectExe.Location = new System.Drawing.Point(633, 24);
 			this.btnSelectExe.Name = "btnSelectExe";
 			this.btnSelectExe.Size = new System.Drawing.Size(23, 22);

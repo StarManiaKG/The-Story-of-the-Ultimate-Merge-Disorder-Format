@@ -1012,7 +1012,7 @@ namespace CodeImp.DoomBuilder.Windows
 				foreach(Thing t in things)
 				{
 					// ZDRay static lights uses the alpha value for intensity, which can go higher than 1.0, so don't clamp the upper value.
-					// It doesn't look like UDB or GZDoom have problems with "normal" things having an alpha > 1.0
+					// It doesn't look like UZB or GZDoom have problems with "normal" things having an alpha > 1.0
 					// TODO: clamp based on thing type info?
 					double value = General.Clamp(alpha.GetResultFloat(t.Fields.GetValue("alpha", 1.0)), 0.0, double.MaxValue);
 					UniFields.SetFloat(t.Fields, "alpha", value, 1.0);

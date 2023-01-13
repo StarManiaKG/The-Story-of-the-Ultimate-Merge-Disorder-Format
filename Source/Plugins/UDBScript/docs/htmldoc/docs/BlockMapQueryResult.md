@@ -3,22 +3,22 @@
 A `BlockMapQueryResult` is an object returned by the `getLineBlocks` and `getRectangleBlocks` methods of the `BlockMap` class. It has methods It has methods to retrieve the linedefs, things, sectors, and vertices that are in the queried blocks. The object is also iterable, returning each block, in cases where more fine-grained control is needed.
 
 ```js
-const blockmap = new UDB.BlockMap();
+const blockmap = new UZB.BlockMap();
 const result = blockmap.getLineBlocks([ 0, 0 ], [ 512, 256 ]);
 
 // Print all linedefs in the blocks
-result.getLinedefs().forEach(ld => UDB.log(ld));
+result.getLinedefs().forEach(ld => UZB.log(ld));
 ```
 Looping over each block:
 
 ```js
-const blockmap = new UDB.BlockMap();
+const blockmap = new UZB.BlockMap();
 const result = blockmap.getLineBlocks([ 0, 0 ], [ 512, 256 ]);
 
 for(const block of result)
 {
-	UDB.log('--- New block ---');
-	block.getLinedefs().forEach(ld => UDB.log(ld));
+	UZB.log('--- New block ---');
+	block.getLinedefs().forEach(ld => UZB.log(ld));
 }
 ```
 !!! note

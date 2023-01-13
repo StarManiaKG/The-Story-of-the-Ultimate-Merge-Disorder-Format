@@ -1,4 +1,4 @@
-/// <reference path="../../../udbscript.d.ts" />
+/// <reference path="../../../uzbscript.d.ts" />
 
 `#version 4`;
 
@@ -30,16 +30,16 @@ function getRandomValue(min, max)
 }
 
 // Get selected vertices
-let vertices = UDB.Map.getSelectedVertices();
+let vertices = UZB.Map.getSelectedVertices();
 
 // No vertices selected? Get all vertices!
 if(vertices.length == 0)
-    vertices = UDB.Map.getVertices();
+    vertices = UZB.Map.getVertices();
 
 // Jitter each vertex
 vertices.forEach(v => {
     v.position += [
-        getRandomValue(UDB.ScriptOptions.min, UDB.ScriptOptions.max),
-        getRandomValue(UDB.ScriptOptions.min, UDB.ScriptOptions.max),
+        getRandomValue(UZB.ScriptOptions.min, UZB.ScriptOptions.max),
+        getRandomValue(UZB.ScriptOptions.min, UZB.ScriptOptions.max),
     ];
 });  

@@ -1,6 +1,6 @@
-﻿namespace CodeImp.DoomBuilder.UDBScript
+﻿namespace CodeImp.DoomBuilder.UZBScript
 {
-	partial class UDBScriptErrorForm
+	partial class UZBScriptErrorForm
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -117,7 +117,7 @@
 			this.tbInternalStackTrace.Size = new System.Drawing.Size(502, 163);
 			this.tbInternalStackTrace.TabIndex = 2;
 			// 
-			// UDBScriptErrorForm
+			// UZBScriptErrorForm
 			// 
 			this.AcceptButton = this.btnOK;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -130,7 +130,7 @@
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(550, 300);
-			this.Name = "UDBScriptErrorForm";
+			this.Name = "UZBScriptErrorForm";
 			this.ShowIcon = false;
 			this.Text = "Script Error";
 			this.tabControl1.ResumeLayout(false);

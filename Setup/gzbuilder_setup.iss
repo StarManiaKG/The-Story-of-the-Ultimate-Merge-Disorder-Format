@@ -2,14 +2,14 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 [Setup]
-AppName=Ultimate Doom Builder
-AppVerName=Ultimate Doom Builder
+AppName=Ultimate Zone Builder
+AppVerName=Ultimate Zone Builder
 AppPublisher=ZZYZX
 AppPublisherURL=https://forum.zdoom.org/memberlist.php?mode=viewprofile&u=7527
 AppSupportURL=https://forum.zdoom.org/viewtopic.php?f=232&t=66745
 AppUpdatesURL=https://devbuilds.drdteam.org/ultimatedoombuilder/
-DefaultDirName={pf}\Ultimate Doom Builder
-DefaultGroupName=Ultimate Doom Builder
+DefaultDirName={pf}\Ultimate Zone Builder
+DefaultGroupName=Ultimate Zone Builder
 AllowNoIcons=true
 LicenseFile=..\LICENSE.txt
 OutputDir=..\Release
@@ -38,7 +38,7 @@ Source: Setup\dotnetfx35setup.exe; DestDir: {tmp}; Flags: dontcopy
 Source: Setup\vcredist_x86.exe; DestDir: {tmp}; Flags: dontcopy
 Source: Builder.exe; DestDir: {app}; Flags: ignoreversion
 Source: Builder.exe.config; DestDir: {app}; Flags: ignoreversion
-Source: UDBuilder.default.cfg; DestDir: {app}; Flags: ignoreversion
+Source: UZBuilder.default.cfg; DestDir: {app}; Flags: ignoreversion
 //Source: Updater.exe; DestDir: {app}; Flags: ignoreversion
 Source: Updater.ini; DestDir: {app}; Flags: ignoreversion
 //Source: Refmanual.chm; DestDir: {app}; Flags: ignoreversion
@@ -52,7 +52,7 @@ Source: Compilers\*; DestDir: {app}\Compilers; Flags: ignoreversion recursesubdi
 Source: Configurations\*; DestDir: {app}\Configurations; Flags: ignoreversion recursesubdirs
 Source: Scripting\*; DestDir: {app}\Scripting; Flags: ignoreversion recursesubdirs
 Source: Snippets\*; DestDir: {app}\Snippets; Flags: ignoreversion recursesubdirs
-Source: UDBScript\*; DestDir: {app}\UDBScript; Flags: ignoreversion recursesubdirs
+Source: UZBScript\*; DestDir: {app}\UZBScript; Flags: ignoreversion recursesubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: Plugins\Dependencies\Esprima.dll; DestDir: {app}\Plugins\Dependencies; Flags: ignoreversion
 Source: Plugins\Dependencies\Jint.dll; DestDir: {app}\Plugins\Dependencies; Flags: ignoreversion
@@ -67,16 +67,16 @@ Source: Plugins\StairSectorBuilder.dll; DestDir: {app}\Plugins; Flags: ignorever
 Source: Plugins\TagExplorer.dll; DestDir: {app}\Plugins; Flags: ignoreversion
 Source: Plugins\TagRange.dll; DestDir: {app}\Plugins; Flags: ignoreversion
 Source: Plugins\ThreeDFloorMode.dll; DestDir: {app}\Plugins; Flags: ignoreversion
-Source: Plugins\UDBScript.dll; DestDir: {app}\Plugins; Flags: ignoreversion
+Source: Plugins\UZBScript.dll; DestDir: {app}\Plugins; Flags: ignoreversion
 Source: Plugins\VisplaneExplorer.dll; DestDir: {app}\Plugins; Flags: ignoreversion
 Source: Plugins\Loadorder.cfg; DestDir: {app}\Plugins; Flags: ignoreversion onlyifdoesntexist
 Source: Sprites\*; DestDir: {app}\Sprites; Flags: ignoreversion recursesubdirs
 Source: Textures\*; DestDir: {app}\Textures; Flags: ignoreversion
 
 [Icons]
-Name: {group}\Ultimate Doom Builder; Filename: {app}\Builder.exe
-Name: {group}\{cm:UninstallProgram,Ultimate Doom Builder}; Filename: {uninstallexe}
-Name: {commondesktop}\Ultimate Doom Builder; Filename: {app}\Builder.exe; Tasks: desktopicon
+Name: {group}\Ultimate Zone Builder; Filename: {app}\Builder.exe
+Name: {group}\{cm:UninstallProgram,Ultimate Zone Builder}; Filename: {uninstallexe}
+Name: {commondesktop}\Ultimate Zone Builder; Filename: {app}\Builder.exe; Tasks: desktopicon
 
 [UninstallDelete]
 Name: {app}; Type: filesandordirs
@@ -86,7 +86,7 @@ Name: {app}\Builder.pdb; Type: files
 Name: {app}\Builder.xml; Type: files
 
 [Registry]
-Root: HKLM; Subkey: SOFTWARE\UDB\Ultimate Doom Builder\; ValueType: string; ValueName: Location; ValueData: {app}; Flags: uninsdeletevalue
+Root: HKLM; Subkey: SOFTWARE\UZB\Ultimate Zone Builder\; ValueType: string; ValueName: Location; ValueData: {app}; Flags: uninsdeletevalue
 
 [Messages]
 ReadyLabel2a=Continue to begin with the installation, or click Back if you want to review or change any settings.

@@ -80,10 +80,10 @@ Clears all selected vertices.
 Creates a new `Thing` at the given position. The position can be a `Vector2D`, `Vector3D`, or an `Array` of two numbers or three numbers (note that the z position only works for game configurations that support vertical pos. A thing type can be supplied optionally.
 
 ```js
-var t1 = UDB.Map.createThing(new UDB.Vector2D(32, 64));
-var t2 = UDB.Map.createThing([ 32, 64 ]);
-var t3 = UDB.Map.createThing(new UDB.Vector2D(32, 64), 3001); // Create an Imp
-var t4 = UDB.Map.createThing([ 32, 64 ], 3001); // Create an Imp
+var t1 = UZB.Map.createThing(new UZB.Vector2D(32, 64));
+var t2 = UZB.Map.createThing([ 32, 64 ]);
+var t3 = UZB.Map.createThing(new UZB.Vector2D(32, 64), 3001); // Create an Imp
+var t4 = UZB.Map.createThing([ 32, 64 ], 3001); // Create an Imp
 ```
 #### Parameters
 * pos: Position where the `Thing` should be created at
@@ -96,8 +96,8 @@ The new `Thing`
 Creates a new `Vertex` at the given position. The position can be a `Vector2D` or an `Array` of two numbers.
 
 ```js
-var v1 = UDB.Map.createVertex(new Vector2D(32, 64));
-var v2 = UDB.Map.createVertex([ 32, 64 ]);
+var v1 = UZB.Map.createVertex(new Vector2D(32, 64));
+var v2 = UZB.Map.createVertex([ 32, 64 ]);
 ```
 #### Parameters
 * pos: Position where the `Vertex` should be created at
@@ -109,15 +109,15 @@ The created `Vertex`
 Draws lines. Data has to be an `Array` of `Array` of numbers, `Vector2D`s, `Vector3D`s, or objects with x and y properties. Note that the first and last element have to be at the same positions to make a complete drawing.
 
 ```js
-UDB.Map.drawLines([
-	new UDB.Vector2D(64, 0),
-	new UDB.Vector2D(128, 0),
-	new UDB.Vector2D(128, 64),
-	new UDB.Vector2D(64, 64),
-	new UDB.Vector2D(64, 0)
+UZB.Map.drawLines([
+	new UZB.Vector2D(64, 0),
+	new UZB.Vector2D(128, 0),
+	new UZB.Vector2D(128, 64),
+	new UZB.Vector2D(64, 64),
+	new UZB.Vector2D(64, 0)
 ]);
 
-UDB.Map.drawLines([
+UZB.Map.drawLines([
 	[ 0, 0 ],
 	[ 64, 0 ],
 	[ 64, 64 ],
@@ -438,7 +438,7 @@ Stitches marked geometry with non-marked geometry.
 How geometry should be merged when geometry is stitched.
 
 ```js
-UDB.Map.stitchGeometry(UDB.Map.MergeometryMode.MERGE);
+UZB.Map.stitchGeometry(UZB.Map.MergeometryMode.MERGE);
 ```
 #### Options
 * CLASSIC: Merge vertices only

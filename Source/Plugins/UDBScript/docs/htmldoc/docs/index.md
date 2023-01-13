@@ -1,6 +1,6 @@
 # Index
 
-## UDB script
+## UZB script
 
 - [Getting started](gettingstarted.md)
 - [Changes](changes.md)

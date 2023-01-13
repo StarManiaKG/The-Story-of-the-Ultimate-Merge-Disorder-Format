@@ -32,7 +32,7 @@ using System.Windows.Forms;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript
+namespace CodeImp.DoomBuilder.UZBScript
 {
 	/// <summary>
 	/// The `QueryOptions` class is used to query the user for their input. It effectively works the same as specifying script options in the script's metadata, except that the `QueryOptions` class works at run-time.

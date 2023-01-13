@@ -36,7 +36,7 @@ using Esprima;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript
+namespace CodeImp.DoomBuilder.UZBScript
 {
 	public class ScriptInfo
 	{

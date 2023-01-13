@@ -1,4 +1,4 @@
-﻿namespace CodeImp.DoomBuilder.UDBScript
+﻿namespace CodeImp.DoomBuilder.UZBScript
 {
 	partial class QueryOptionsForm
 	{
@@ -30,7 +30,7 @@
 		{
 			this.btnOK = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
-			this.parametersview = new CodeImp.DoomBuilder.UDBScript.ScriptOptionsControl();
+			this.parametersview = new CodeImp.DoomBuilder.UZBScript.ScriptOptionsControl();
 			this.SuspendLayout();
 			// 
 			// btnOK

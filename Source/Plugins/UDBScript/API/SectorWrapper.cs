@@ -36,7 +36,7 @@ using CodeImp.DoomBuilder.VisualModes;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript.Wrapper
+namespace CodeImp.DoomBuilder.UZBScript.Wrapper
 {
 	class SectorWrapper : MapElementWrapper, IMoreTags, IEquatable<SectorWrapper>
 	{
@@ -554,10 +554,10 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// Checks if the given point is in this `Sector` or not. The given point can be a `Vector2D` or an `Array` of two numbers.
 		/// ```
 		/// if(s.intersect(new Vector2D(32, 64)))
-		///		UDB.showMessage('Point is in the sector!');
+		///		UZB.showMessage('Point is in the sector!');
 		///		
 		/// if(s.intersect([ 32, 64 ]))
-		///		UDB.showMessage('Point is in the sector!');
+		///		UZB.showMessage('Point is in the sector!');
 		///	```
 		/// </summary>
 		/// <param name="p">Point to test</param>
@@ -754,16 +754,16 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// 
 		/// This example adds an imp to the label position of each sector in the map:
 		/// ```
-		/// UDB.Map.getSectors().forEach(s => {
+		/// UZB.Map.getSectors().forEach(s => {
 		///		const positions = s.getLabelPositions();
 		///		if(positions.length > 0)
-        ///			UDB.Map.createThing(positions[0], 3001);
+        ///			UZB.Map.createThing(positions[0], 3001);
 		///	});
 		///	```
 		/// </summary>
 		/// <returns>`Array` of `Vector2D` of all label positions</returns>
 		/// <version>5</version>
-		[UDBScriptSettings(MinVersion = 5)]
+		[UZBScriptSettings(MinVersion = 5)]
 		public Vector2DWrapper[] getLabelPositions()
 		{
 			return Tools.FindLabelPositions(sector).Select(lpi => new Vector2DWrapper(lpi.position)).ToArray();

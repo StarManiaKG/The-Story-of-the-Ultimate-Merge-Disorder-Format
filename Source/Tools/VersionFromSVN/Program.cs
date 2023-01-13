@@ -16,7 +16,7 @@ namespace mxd.VersionFromGIT
 	{
 		#region ======================== Constants
 
-		private const string GIT_INFO = "@echo off\r\ngit.exe rev-list --count origin/master\r\ngit.exe rev-parse --short=7 origin/master";
+		private const string GIT_INFO = "@echo off\r\ngit.exe rev-list --count origin/main\r\ngit.exe rev-parse --short=7 origin/main";
 
 		#endregion
 
@@ -244,7 +244,7 @@ namespace mxd.VersionFromGIT
 		{
 			Console.WriteLine("Version From GIT is a tool programmed by MaxED.\r\nThis tool requires that Git commandline client is installed.\r\nSee https://git-scm.com\r\n");
 			Console.WriteLine("Usage: versionfromgit.exe targetfile [targetfile ...] [options]");
-			Console.WriteLine("Where targetfile is AssemblyInfo.cs file in which AssemblyVersion property value must be replaced with the commits count of the GIT master branch.\r\n");
+			Console.WriteLine("Where targetfile is AssemblyInfo.cs file in which AssemblyVersion property value must be replaced with the commits count of the GIT Main branch.\r\n");
 
 			Console.WriteLine("Options:\r\n");
 			Console.WriteLine("-F number");

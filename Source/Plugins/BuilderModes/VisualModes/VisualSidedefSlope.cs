@@ -230,7 +230,7 @@ namespace CodeImp.DoomBuilder.VisualModes
 
 			if (level.extrafloor)
 			{
-				// The top side of 3D floors is the ceiling of the sector, but it's a "floor" in UDB, so the
+				// The top side of 3D floors is the ceiling of the sector, but it's a "floor" in UZB, so the
 				// ceiling of the control sector has to be modified
 				if (level.type == SectorLevelType.Floor)
 					applytoceiling = true;

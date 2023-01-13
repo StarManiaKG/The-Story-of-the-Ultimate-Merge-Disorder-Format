@@ -132,7 +132,7 @@ namespace CodeImp.DoomBuilder.Dehacked
 						{
 							if (frames.ContainsKey(initialframe))
 							{
-								// It doesn't seem to matter which rotation we select, UDB will automagically
+								// It doesn't seem to matter which rotation we select, UZB will automagically
 								// find the correct sprites later. We just try to find a sprite that's available
 								// in the loaded resources, either xxxxA0 (i.e. without rotations) or xxxxA1 (i.e. with rotations)
 								if (!string.IsNullOrEmpty(frames[initialframe].Sprite))

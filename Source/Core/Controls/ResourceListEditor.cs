@@ -305,7 +305,7 @@ namespace CodeImp.DoomBuilder.Controls
 				foreach (RequiredArchive arc in GameConfiguration.RequiredArchives)
                 {
 					if (!requiredarchives.Contains(arc.ID))
-						ShowWarning(string.Format("Warning: a resource archive is required for this game configuration, but not present:\n  \"{0}\"\nWithout it, UDB will have severely limited capabilities.", arc.FileName), false);
+						ShowWarning(string.Format("Warning: a resource archive is required for this game configuration, but not present:\n  \"{0}\"\nWithout it, UZB will have severely limited capabilities.", arc.FileName), false);
                 }
             }
 

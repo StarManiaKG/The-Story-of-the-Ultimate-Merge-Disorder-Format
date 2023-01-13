@@ -34,7 +34,7 @@ namespace mxd.GZDBUpdater
 	    private static BackgroundWorker worker;
 	    private static bool appclosing;
 	    private static MainForm me;
-		private const string MESSAGEBOX_TITLE = "Ultimate Doom Builder Updater";
+		private const string MESSAGEBOX_TITLE = "Ultimate Zone Builder Updater";
 		private bool useInstaller = false;
 
 		#endregion
@@ -60,7 +60,7 @@ namespace mxd.GZDBUpdater
 		public MainForm()
         {
 			// Check if we should use the installer or just unpack the update
-			string installLocation = (string)Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Ultimate Doom Builder", "Location", null);
+			string installLocation = (string)Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Ultimate Zone Builder", "Location", null);
 
 			if (installLocation != null)
 			{

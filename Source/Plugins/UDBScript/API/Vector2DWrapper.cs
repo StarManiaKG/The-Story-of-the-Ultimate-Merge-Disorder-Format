@@ -29,7 +29,7 @@ using CodeImp.DoomBuilder.Map;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript.Wrapper
+namespace CodeImp.DoomBuilder.UZBScript.Wrapper
 {
 	internal struct Vector2DWrapper
 	{
@@ -104,7 +104,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <summary>
 		/// Creates a new `Vector2D` from x and y coordinates
 		/// ```
-		/// let v = new UDB.Vector2D(32, 64);
+		/// let v = new UZB.Vector2D(32, 64);
 		/// ```
 		/// </summary>
 		/// <param name="x">The x coordinate</param>
@@ -119,7 +119,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <summary>
 		/// Creates a new `Vector2D` from a point.
 		/// ```
-		/// let v = new UDB.Vector2D([ 32, 64 ]);
+		/// let v = new UZB.Vector2D([ 32, 64 ]);
 		/// ```
 		/// </summary>
 		/// <param name="v">The vector to create the `Vector2D` from</param>

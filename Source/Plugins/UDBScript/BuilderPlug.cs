@@ -41,12 +41,12 @@ using CodeImp.DoomBuilder.IO;
 using CodeImp.DoomBuilder.Map;
 using CodeImp.DoomBuilder.Plugins;
 using CodeImp.DoomBuilder.Types;
-using CodeImp.DoomBuilder.UDBScript.Wrapper;
+using CodeImp.DoomBuilder.UZBScript.Wrapper;
 using CodeImp.DoomBuilder.Windows;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript
+namespace CodeImp.DoomBuilder.UZBScript
 {
 	internal class ScriptDirectoryStructure
 	{
@@ -72,8 +72,8 @@ namespace CodeImp.DoomBuilder.UDBScript
 	{
 		#region ================== Constants
 
-		private static readonly string SCRIPT_FOLDER = "udbscript";
-		public static readonly uint UDB_SCRIPT_VERSION = 5;
+		private static readonly string SCRIPT_FOLDER = "uzbscript";
+		public static readonly uint UZB_SCRIPT_VERSION = 5;
 
 		#endregion
 
@@ -128,7 +128,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 			scriptslots = new Dictionary<int, ScriptInfo>();
 
 			panel = new ScriptDockerControl(SCRIPT_FOLDER);
-			docker = new Docker("udbscript", "Scripts", panel);
+			docker = new Docker("uzbscript", "Scripts", panel);
 			General.Interface.AddDocker(docker);
 
 			General.Actions.BindMethods(this);
@@ -289,7 +289,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 		{
 			if(string.IsNullOrWhiteSpace(editorexepath))
 			{
-				MessageBox.Show("No external editor set. Please set the external editor in the UDBScript tab in the preferences.");
+				MessageBox.Show("No external editor set. Please set the external editor in the UZBScript tab in the preferences.");
 				return;
 			}
 
@@ -618,7 +618,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 
 		#region ================== Actions
 
-		[BeginAction("udbscriptexecute")]
+		[BeginAction("uzbscriptexecute")]
 		public void ScriptExecute()
 		{
 			if (currentscript == null)
@@ -628,39 +628,39 @@ namespace CodeImp.DoomBuilder.UDBScript
 			scriptrunnerform.ShowDialog();
 		}
 
-		[BeginAction("udbscriptexecuteslot1")]
-		[BeginAction("udbscriptexecuteslot2")]
-		[BeginAction("udbscriptexecuteslot3")]
-		[BeginAction("udbscriptexecuteslot4")]
-		[BeginAction("udbscriptexecuteslot5")]
-		[BeginAction("udbscriptexecuteslot6")]
-		[BeginAction("udbscriptexecuteslot7")]
-		[BeginAction("udbscriptexecuteslot8")]
-		[BeginAction("udbscriptexecuteslot9")]
-		[BeginAction("udbscriptexecuteslot10")]
-		[BeginAction("udbscriptexecuteslot11")]
-		[BeginAction("udbscriptexecuteslot12")]
-		[BeginAction("udbscriptexecuteslot13")]
-		[BeginAction("udbscriptexecuteslot14")]
-		[BeginAction("udbscriptexecuteslot15")]
-		[BeginAction("udbscriptexecuteslot16")]
-		[BeginAction("udbscriptexecuteslot17")]
-		[BeginAction("udbscriptexecuteslot18")]
-		[BeginAction("udbscriptexecuteslot19")]
-		[BeginAction("udbscriptexecuteslot20")]
-		[BeginAction("udbscriptexecuteslot21")]
-		[BeginAction("udbscriptexecuteslot22")]
-		[BeginAction("udbscriptexecuteslot23")]
-		[BeginAction("udbscriptexecuteslot24")]
-		[BeginAction("udbscriptexecuteslot25")]
-		[BeginAction("udbscriptexecuteslot26")]
-		[BeginAction("udbscriptexecuteslot27")]
-		[BeginAction("udbscriptexecuteslot28")]
-		[BeginAction("udbscriptexecuteslot29")]
-		[BeginAction("udbscriptexecuteslot30")]
+		[BeginAction("uzbscriptexecuteslot1")]
+		[BeginAction("uzbscriptexecuteslot2")]
+		[BeginAction("uzbscriptexecuteslot3")]
+		[BeginAction("uzbscriptexecuteslot4")]
+		[BeginAction("uzbscriptexecuteslot5")]
+		[BeginAction("uzbscriptexecuteslot6")]
+		[BeginAction("uzbscriptexecuteslot7")]
+		[BeginAction("uzbscriptexecuteslot8")]
+		[BeginAction("uzbscriptexecuteslot9")]
+		[BeginAction("uzbscriptexecuteslot10")]
+		[BeginAction("uzbscriptexecuteslot11")]
+		[BeginAction("uzbscriptexecuteslot12")]
+		[BeginAction("uzbscriptexecuteslot13")]
+		[BeginAction("uzbscriptexecuteslot14")]
+		[BeginAction("uzbscriptexecuteslot15")]
+		[BeginAction("uzbscriptexecuteslot16")]
+		[BeginAction("uzbscriptexecuteslot17")]
+		[BeginAction("uzbscriptexecuteslot18")]
+		[BeginAction("uzbscriptexecuteslot19")]
+		[BeginAction("uzbscriptexecuteslot20")]
+		[BeginAction("uzbscriptexecuteslot21")]
+		[BeginAction("uzbscriptexecuteslot22")]
+		[BeginAction("uzbscriptexecuteslot23")]
+		[BeginAction("uzbscriptexecuteslot24")]
+		[BeginAction("uzbscriptexecuteslot25")]
+		[BeginAction("uzbscriptexecuteslot26")]
+		[BeginAction("uzbscriptexecuteslot27")]
+		[BeginAction("uzbscriptexecuteslot28")]
+		[BeginAction("uzbscriptexecuteslot29")]
+		[BeginAction("uzbscriptexecuteslot30")]
 		public void ScriptExecuteSlot()
 		{
-			// Extract the slot number from the action name. The action name is something like udbscript__udbscriptexecuteslot1.
+			// Extract the slot number from the action name. The action name is something like uzbscript__uzbscriptexecuteslot1.
 			// Not super nice, but better than having 30 identical methods for each slot.
 			Regex re = new Regex(@"(\d+)$");
 			Match m = re.Match(General.Actions.Current.Name);

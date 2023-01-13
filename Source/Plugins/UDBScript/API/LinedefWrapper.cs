@@ -33,7 +33,7 @@ using CodeImp.DoomBuilder.Map;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript.Wrapper
+namespace CodeImp.DoomBuilder.UZBScript.Wrapper
 {
 	class LinedefWrapper : MapElementWrapper, IMoreTags, IEquatable<LinedefWrapper>
 	{

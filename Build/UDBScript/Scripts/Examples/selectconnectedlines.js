@@ -1,4 +1,4 @@
-/// <reference path="../../udbscript.d.ts" />
+/// <reference path="../../uzbscript.d.ts" />
 
 `#version 4`;
 
@@ -6,10 +6,10 @@
 
 `#description Recursively selects all linedefs that are connected to the currently selected linedef(s).`;
 
-let lines = UDB.Map.getSelectedOrHighlightedLinedefs();
+let lines = UZB.Map.getSelectedOrHighlightedLinedefs();
 
 if(lines.length == 0)
-    UDB.die('You have to select at least one linedef!');
+    UZB.die('You have to select at least one linedef!');
 
 let vertices_to_check = [];
 let checked_vertices = [];

@@ -1,4 +1,4 @@
-/// <reference path="../../../udbscript.d.ts" />
+/// <reference path="../../../uzbscript.d.ts" />
 
 `#version 4`;
 
@@ -44,60 +44,60 @@ looping
 `;
 
 // Make sure the has a correct minimum length
-if(UDB.ScriptOptions.length < 96)
+if(UZB.ScriptOptions.length < 96)
 	throw 'Voodoo doll closet has to be at least 96 map units long!';
 
 // Get the mouse position in the map, snapped to the grid
-let basepos = UDB.Map.snappedToGrid(UDB.Map.mousePosition);
+let basepos = UZB.Map.snappedToGrid(UZB.Map.mousePosition);
 
 // Closet width is static
 let closetwidth = 64;
 
 // Get the currently selected lines. Those will get actions to release the voodoo doll
-let triggerlines = UDB.Map.getSelectedLinedefs();
+let triggerlines = UZB.Map.getSelectedLinedefs();
 
 // The number of tags we need depend on the selected options
 let numnewtags = 1;
 let newtagindex = 0;
 
 // We need an additional tag if the player is blocked at the beginning
-if(UDB.ScriptOptions.inactive)
+if(UZB.ScriptOptions.inactive)
 	numnewtags++;
 
 // We need an additional tag if the closet should be looping
-if(UDB.ScriptOptions.looping)
+if(UZB.ScriptOptions.looping)
 	numnewtags++;
 
 // Get thew new tags
-let tags = UDB.Map.getMultipleNewTags(numnewtags);
+let tags = UZB.Map.getMultipleNewTags(numnewtags);
 
 // Create a pen for drawing geometry
 var p = new Pen();
 
 // Draw the closet
-p.setAngle(90 * UDB.ScriptOptions.direction).moveTo(basepos).drawVertex()
-.moveForward(UDB.ScriptOptions.length).drawVertex().turnRight()
+p.setAngle(90 * UZB.ScriptOptions.direction).moveTo(basepos).drawVertex()
+.moveForward(UZB.ScriptOptions.length).drawVertex().turnRight()
 .moveForward(closetwidth).drawVertex().turnRight()
-.moveForward(UDB.ScriptOptions.length).drawVertex();
+.moveForward(UZB.ScriptOptions.length).drawVertex();
 
 if(!p.finishDrawing(true))
 	throw "Something went wrong while drawing!";
 
 // Get the new sector, assign a tag, and set heights
-let sector = UDB.Map.getMarkedSectors()[0];
+let sector = UZB.Map.getMarkedSectors()[0];
 sector.tag = tags[newtagindex];
 sector.floorHeight = 0;
 sector.ceilingHeight = 56;
 
 // Draw the carrying line
-p.setAngle(90 * UDB.ScriptOptions.direction).moveTo(basepos).drawVertex()
+p.setAngle(90 * UZB.ScriptOptions.direction).moveTo(basepos).drawVertex()
 .moveForward(32).drawVertex();
 
 if(!p.finishDrawing())
 	throw 'Something went wrong while drawing!';
 
 // Assign the action and tag to the line
-let carryline = UDB.Map.getMarkedLinedefs()[0];
+let carryline = UZB.Map.getMarkedLinedefs()[0];
 carryline.action = 252;
 carryline.tag = tags[newtagindex];
 
@@ -105,10 +105,10 @@ carryline.tag = tags[newtagindex];
 newtagindex++;
 
 // Create the player blocking geometry if necessary
-if(UDB.ScriptOptions.inactive)
+if(UZB.ScriptOptions.inactive)
 {
 	// Draw the blocking sector
-	p.setAngle(90 * UDB.ScriptOptions.direction).moveTo(basepos)
+	p.setAngle(90 * UZB.ScriptOptions.direction).moveTo(basepos)
 	.moveForward(64).turnRight().moveForward(16).drawVertex()
 	.turnRight().moveForward(8).drawVertex()
 	.turnLeft().moveForward(closetwidth - 32).drawVertex();
@@ -117,7 +117,7 @@ if(UDB.ScriptOptions.inactive)
 		throw "Something went wrong while drawing!";
 	
 	// Get the new sectors and assign a tag
-	sector = UDB.Map.getMarkedSectors()[0];
+	sector = UZB.Map.getMarkedSectors()[0];
 	sector.tag = tags[newtagindex];
 	sector.floorHeight = 0;
 	sector.ceilingHeight = 55;
@@ -146,10 +146,10 @@ if(UDB.ScriptOptions.inactive)
 }
 
 // Create the looping teleporter geometry if necessary
-if(UDB.ScriptOptions.looping)
+if(UZB.ScriptOptions.looping)
 {
 	// Create the teleport destination line
-	p.setAngle(90 * UDB.ScriptOptions.direction).moveTo(basepos)
+	p.setAngle(90 * UZB.ScriptOptions.direction).moveTo(basepos)
 	.moveForward(32).turnRight().moveForward(8).drawVertex()
 	.moveForward(closetwidth - 16).drawVertex();
 
@@ -157,29 +157,29 @@ if(UDB.ScriptOptions.looping)
 		throw 'Something went wrong while drawing!';
 	
 	// The destination line only needs a tag and no action
-	let line = UDB.Map.getMarkedLinedefs(true)[0];
+	let line = UZB.Map.getMarkedLinedefs(true)[0];
 	line.tag = tags[newtagindex];
 	
 	// Create the teleport line
-	p.setAngle(90 * UDB.ScriptOptions.direction)
+	p.setAngle(90 * UZB.ScriptOptions.direction)
 	.moveTo(basepos)
-	.moveForward(UDB.ScriptOptions.length - 32).turnRight().moveForward(8).drawVertex()
+	.moveForward(UZB.ScriptOptions.length - 32).turnRight().moveForward(8).drawVertex()
 	.moveForward(closetwidth - 16).drawVertex();
 	
 	if(!p.finishDrawing())
 		throw 'Something went wrong while drawing!';
 	
 	// The teleport line needs a tag and an action
-	line = UDB.Map.getMarkedLinedefs(true)[0];
+	line = UZB.Map.getMarkedLinedefs(true)[0];
 	line.action = 263;
 	line.tag = tags[newtagindex];
 }
 
 // Compute the new voodoo doll position
-let newpos = new UDB.Vector2D(32, 32).getRotated(UDB.Angle2D.doomToReal(-90 * UDB.ScriptOptions.direction - 90)) + basepos;
+let newpos = new UZB.Vector2D(32, 32).getRotated(UZB.Angle2D.doomToReal(-90 * UZB.ScriptOptions.direction - 90)) + basepos;
 
 // Get all player 1 starts
-let playerthings = UDB.Map.getThings().filter(o => o.type == 1);
+let playerthings = UZB.Map.getThings().filter(o => o.type == 1);
 
 // The actual player always spawns on the last player 1 start that was placed, so
 // we need to move the last player 1 start to the monster closet and create a new
@@ -197,11 +197,11 @@ if(playerthings.length > 0)
 	pt.snapToAccuracy();
 
 	// Create a new player 1 start and move it to the old position	
-	let t = UDB.Map.createThing(oldpos, 1);
+	let t = UZB.Map.createThing(oldpos, 1);
 	t.angle = oldangle;
 }
 else
 {
-	let t = UDB.Map.createThing(newpos, 1);
+	let t = UZB.Map.createThing(newpos, 1);
 	t.snapToAccuracy();
 }

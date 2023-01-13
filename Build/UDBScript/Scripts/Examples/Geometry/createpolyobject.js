@@ -1,4 +1,4 @@
-/// <reference path="../../../udbscript.d.ts" />
+/// <reference path="../../../uzbscript.d.ts" />
 
 `#version 4`;
 
@@ -22,17 +22,17 @@ startspottype
 `;
 
 // Check if the mouse is in the map
-if(!UDB.Map.mousePosition.isFinite())
-	UDB.die('Mouse cursor is not at a valid map position');
+if(!UZB.Map.mousePosition.isFinite())
+	UZB.die('Mouse cursor is not at a valid map position');
 
 // Get the mouse position in the map, snapped to the grid
-var cursorpos = UDB.Map.snappedToGrid(UDB.Map.mousePosition);
+var cursorpos = UZB.Map.snappedToGrid(UZB.Map.mousePosition);
 
 // The polyobject number that will be used
 var polyobjectnumber = -1;
 
 // Get selected linedefs
-var lines = UDB.Map.getSelectedLinedefs();
+var lines = UZB.Map.getSelectedLinedefs();
 
 // Make sure exactly one linedef is selected
 if(lines.length != 1)
@@ -42,7 +42,7 @@ if(lines.length != 1)
 var usednumbers = []
 
 // Find all polyobject things and get their polyobject numbers
-UDB.Map.getThings().filter(o => o.type >= 9300 && o.type <= 9303).forEach(o => {
+UZB.Map.getThings().filter(o => o.type >= 9300 && o.type <= 9303).forEach(o => {
 		usednumbers.push(o.angle);
 });
 
@@ -65,9 +65,9 @@ lines[0].args[0] = polyobjectnumber;
 var anchorpos = lines[0].line.getCoordinatesAt(0.5); // Center of line
 
 // Create the polyobject start spot thing
-var t = UDB.Map.createThing(cursorpos, UDB.ScriptOptions.startspottype);
+var t = UZB.Map.createThing(cursorpos, UZB.ScriptOptions.startspottype);
 t.angle = polyobjectnumber;
 
 // Create the polyobject anchor thing
-t = UDB.Map.createThing(anchorpos, 9300); // 9300 = Polyobject Anchor
+t = UZB.Map.createThing(anchorpos, 9300); // 9300 = Polyobject Anchor
 t.angle = polyobjectnumber

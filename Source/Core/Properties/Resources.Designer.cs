@@ -1563,9 +1563,9 @@ namespace CodeImp.DoomBuilder.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon UDB2 {
+        internal static System.Drawing.Icon UZB2 {
             get {
-                object obj = ResourceManager.GetObject("UDB2", resourceCulture);
+                object obj = ResourceManager.GetObject("UZB2", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

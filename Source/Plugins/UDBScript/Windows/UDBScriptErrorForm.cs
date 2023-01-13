@@ -27,13 +27,13 @@ using CodeImp.DoomBuilder.Windows;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript
+namespace CodeImp.DoomBuilder.UZBScript
 {
-	public partial class UDBScriptErrorForm : DelayedForm
+	public partial class UZBScriptErrorForm : DelayedForm
 	{
 		#region ================== Constructors
 
-		public UDBScriptErrorForm(string message, string stacktrace, string internalstacktrace)
+		public UZBScriptErrorForm(string message, string stacktrace, string internalstacktrace)
 		{
 			InitializeComponent();
 

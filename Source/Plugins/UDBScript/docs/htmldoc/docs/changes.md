@@ -1,5 +1,5 @@
 # Changes
-This site lists all changes between different API version of UDBScript
+This site lists all changes between different API version of UZBScript
 
 ## Version 5
 
@@ -8,11 +8,11 @@ This site lists all changes between different API version of UDBScript
 - `Sector` class
     - Added `getLabelPositions` method to get the position of sector labels (where tags, effects etc. are displayed)
 - Added support for JavaScript BigInt for UDMF fields. This means it's not necessary anymore to use `UniValue` to assign integers to new UDMF fields. Instead it can be done like this: `sector.fields.my_int_field = 1n;`
-- Added type information file (udbscript.d.ts)
+- Added type information file (uzbscript.d.ts)
 
 ## Version 4
 
-- Moved all classes, object, and methods into the `UDB` namespace (everything has to be prefixed wiht `UDB.`)
+- Moved all classes, object, and methods into the `UZB` namespace (everything has to be prefixed wiht `UZB.`)
 - Added methods to report progress for long running scripts and script log output. See [Communicating with the user](gettingstarted.md#communicating-with-the-user) for more information
 
 ## Version 3

@@ -31,7 +31,7 @@ using System.Threading;
 using System.Windows.Forms;
 using CodeImp.DoomBuilder.Map;
 using CodeImp.DoomBuilder.Windows;
-using CodeImp.DoomBuilder.UDBScript.Wrapper;
+using CodeImp.DoomBuilder.UZBScript.Wrapper;
 using Jint;
 using Jint.Runtime;
 using Jint.Runtime.Interop;
@@ -40,7 +40,7 @@ using Jint.Native;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript
+namespace CodeImp.DoomBuilder.UZBScript
 {
 	class ScriptRunner
 	{
@@ -162,7 +162,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 		/// <returns>true if there were no errors, false if there were errors</returns>
 		private bool ImportLibraryCode(Engine engine, out string errortext)
 		{
-			string path = Path.Combine(General.AppPath, "UDBScript", "Libraries");
+			string path = Path.Combine(General.AppPath, "UZBScript", "Libraries");
 			string[] files = Directory.GetFiles(path, "*.js", SearchOption.AllDirectories);
 
 			errortext = string.Empty;
@@ -183,7 +183,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 				{
 					if (e.Error.Type != Jint.Runtime.Types.String)
 					{
-						UDBScriptErrorForm sef = new UDBScriptErrorForm(e.Message, e.JavaScriptStackTrace, e.StackTrace);
+						UZBScriptErrorForm sef = new UZBScriptErrorForm(e.Message, e.JavaScriptStackTrace, e.StackTrace);
 						sef.ShowDialog();
 					}
 					else
@@ -218,7 +218,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 			{
 				if (jse.Error.Type != Jint.Runtime.Types.String)
 				{
-					UDBScriptErrorForm sef = new UDBScriptErrorForm(jse.Message, jse.JavaScriptStackTrace, jse.StackTrace);
+					UZBScriptErrorForm sef = new UZBScriptErrorForm(jse.Message, jse.JavaScriptStackTrace, jse.StackTrace);
 					sef.ShowDialog();
 				}
 				else
@@ -244,7 +244,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 			}
 			else // Catch anything else we didn't think about
 			{
-				UDBScriptErrorForm sef = new UDBScriptErrorForm(e.Message, string.Empty, e.StackTrace);
+				UZBScriptErrorForm sef = new UZBScriptErrorForm(e.Message, string.Empty, e.StackTrace);
 				sef.ShowDialog();
 
 				abort = true;
@@ -264,7 +264,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 			if (info.Name == nameof(GetType))
 				return false;
 
-			if (info.GetCustomAttribute(typeof(UDBScriptSettingsAttribute)) is UDBScriptSettingsAttribute sa)
+			if (info.GetCustomAttribute(typeof(UZBScriptSettingsAttribute)) is UZBScriptSettingsAttribute sa)
 				return sa.MinVersion <= scriptinfo.Version;
 
 			return true;
@@ -277,15 +277,15 @@ namespace CodeImp.DoomBuilder.UDBScript
 			MethodInfo mi = t.GetMethod(memberName);
 			if (mi != null)
 			{
-				var attr = mi.GetCustomAttribute<UDBScriptSettingsAttribute>(false);
+				var attr = mi.GetCustomAttribute<UZBScriptSettingsAttribute>(false);
 				if (attr != null && scriptinfo.Version < attr.MinVersion)
-					throw BuilderPlug.Me.ScriptRunner.CreateRuntimeException($"{t.Name} requires UDBScript version {attr.MinVersion} or higher.");
+					throw BuilderPlug.Me.ScriptRunner.CreateRuntimeException($"{t.Name} requires UZBScript version {attr.MinVersion} or higher.");
 
 			}
-			if (t.GetCustomAttribute(typeof(UDBScriptSettingsAttribute)) is UDBScriptSettingsAttribute sa)
+			if (t.GetCustomAttribute(typeof(UZBScriptSettingsAttribute)) is UZBScriptSettingsAttribute sa)
 			{
 				if (scriptinfo.Version < sa.MinVersion)
-					throw BuilderPlug.Me.ScriptRunner.CreateRuntimeException($"{t.Name} requires UDBScript version {sa.MinVersion} or higher.");
+					throw BuilderPlug.Me.ScriptRunner.CreateRuntimeException($"{t.Name} requires UZBScript version {sa.MinVersion} or higher.");
 			}
 
 			return null;
@@ -300,11 +300,11 @@ namespace CodeImp.DoomBuilder.UDBScript
 		{
 			string importlibraryerrors;
 
-			// If the script requires a higher version of UDBScript than this version ask the user if they want
+			// If the script requires a higher version of UZBScript than this version ask the user if they want
 			// to execute it anyways. Remember the choice for this session if "yes" was selected.
-			if (scriptinfo.Version > BuilderPlug.UDB_SCRIPT_VERSION && !scriptinfo.IgnoreVersion)
+			if (scriptinfo.Version > BuilderPlug.UZB_SCRIPT_VERSION && !scriptinfo.IgnoreVersion)
 			{
-				if (MessageBox.Show("The script requires a higher version of the feature set than this version of UDBScript supports. Executing this script might fail\n\nRequired feature version: " + scriptinfo.Version + "\nUDBScript feature version: " + BuilderPlug.UDB_SCRIPT_VERSION + "\n\nExecute anyway?", "UDBScript feature version too low", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+				if (MessageBox.Show("The script requires a higher version of the feature set than this version of UZBScript supports. Executing this script might fail\n\nRequired feature version: " + scriptinfo.Version + "\nUZBScript feature version: " + BuilderPlug.UZB_SCRIPT_VERSION + "\n\nExecute anyway?", "UZBScript feature version too low", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
 					return;
 
 				scriptinfo.IgnoreVersion = true;
@@ -344,7 +344,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 			engine = new Engine(options);
 
 			// Scripts with API version smaller than 4 will use the old global objects, starting from API
-			// version 4 the new global "UDB" object
+			// version 4 the new global "UZB" object
 			if (scriptinfo.Version < 4)
 			{
 				engine.SetValue("showMessage", new Action<object>(ShowMessage));
@@ -372,7 +372,7 @@ namespace CodeImp.DoomBuilder.UDBScript
 			}
 			else
 			{
-				engine.SetValue("UDB", new UDBWrapper(engine, scriptinfo, progress, status, log));
+				engine.SetValue("UZB", new UZBWrapper(engine, scriptinfo, progress, status, log));
 			}
 
 #if DEBUG

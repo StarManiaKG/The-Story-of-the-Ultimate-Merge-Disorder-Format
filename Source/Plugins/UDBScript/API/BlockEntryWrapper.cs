@@ -27,7 +27,7 @@ using CodeImp.DoomBuilder.Map;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript.Wrapper
+namespace CodeImp.DoomBuilder.UZBScript.Wrapper
 {
 	/// <summary>
 	/// A `BlockEntry` is a single block in a `BlockMap`. It has methods to retrieve the linedefs, things, sectors, and vertices that are in this block.
@@ -55,7 +55,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// Gets all `Linedef`s in the blockmap entry.
 		/// </summary>
 		/// <returns>`Array` of `Linedef`s</returns>
-		[UDBScriptSettings(MinVersion = 5)]
+		[UZBScriptSettings(MinVersion = 5)]
 		public override LinedefWrapper[] getLinedefs()
 		{
 			return GetArray(entry.Lines, ref wrappedlines);
@@ -65,7 +65,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// Gets all `Thing`s in the blockmap entry.
 		/// </summary>
 		/// <returns>`Array` of `Thing`s</returns>
-		[UDBScriptSettings(MinVersion = 5)]
+		[UZBScriptSettings(MinVersion = 5)]
 		public override ThingWrapper[] getThings()
 		{
 			return GetArray(entry.Things, ref wrappedthings);
@@ -75,7 +75,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// Gets all `Sector`s in the blockmap entry.
 		/// </summary>
 		/// <returns>`Array` of `Sector`s</returns>
-		[UDBScriptSettings(MinVersion = 5)]
+		[UZBScriptSettings(MinVersion = 5)]
 		public override SectorWrapper[] getSectors()
 		{
 			return GetArray(entry.Sectors, ref wrappedsectors);
@@ -85,7 +85,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// Gets all `Vertex` in the blockmap entry.
 		/// </summary>
 		/// <returns>`Array` of `Vertex`</returns>
-		[UDBScriptSettings(MinVersion = 5)]
+		[UZBScriptSettings(MinVersion = 5)]
 		public override VertexWrapper[] getVertices()
 		{
 			return GetArray(entry.Vertices, ref wrappedvertices);

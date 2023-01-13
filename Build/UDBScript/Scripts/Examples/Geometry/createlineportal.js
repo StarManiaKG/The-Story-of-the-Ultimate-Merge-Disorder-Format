@@ -1,4 +1,4 @@
-/// <reference path="../../../udbscript.d.ts" />
+/// <reference path="../../../uzbscript.d.ts" />
 
 `#version 4`;
 
@@ -33,11 +33,11 @@ function drawPortalSector(line, depth)
     // the first and last point need to be at the same position
     // to get a complete drawing
     let points = [
-        new UDB.Vector2D(0, 0),
-        new UDB.Vector2D(0, depth),
-        new UDB.Vector2D(line.getLength(), depth),
-        new UDB.Vector2D(line.getLength(), 0),
-        new UDB.Vector2D(0, 0)
+        new UZB.Vector2D(0, 0),
+        new UZB.Vector2D(0, depth),
+        new UZB.Vector2D(line.getLength(), depth),
+        new UZB.Vector2D(line.getLength(), 0),
+        new UZB.Vector2D(0, 0)
     ];
 
     // The points need to be rotated by the line's angle and moved
@@ -49,19 +49,19 @@ function drawPortalSector(line, depth)
     }
 
     // Draw the lines
-    if(!UDB.Map.drawLines(points))
+    if(!UZB.Map.drawLines(points))
         throw 'Failed drawing space behind line ' + line;
     
     // Set the front middle texture for the new 1-sided linedefs
-    UDB.Map.getMarkedLinedefs().filter(ld => ld.back == null).forEach(ld => ld.front.middleTexture = UDB.ScriptOptions.texture)
+    UZB.Map.getMarkedLinedefs().filter(ld => ld.back == null).forEach(ld => ld.front.middleTexture = UZB.ScriptOptions.texture)
 }
 
 // The line action for portals only works in UDMF (GZDoom and Eternity Engine)
-if(!UDB.Map.isUDMF)
+if(!UZB.Map.isUDMF)
     throw 'This script only works in UDMF maps';
 
 // Get selected linedefs
-let lines = UDB.Map.getSelectedLinedefs();
+let lines = UZB.Map.getSelectedLinedefs();
 
 // Make sure exactly two lines are selected
 if(lines.length != 2)
@@ -73,7 +73,7 @@ if(lines[0].line.getLength() != lines[1].line.getLength())
     throw 'Both lines need to have the same length';
 
 // Get a new tag to use for the portal
-let newtag = UDB.Map.getNewTag();
+let newtag = UZB.Map.getNewTag();
 
 // Set the action, arg, and tag of both lines
 lines[0].action = lines[1].action = 301; // Line_QuickPortal
@@ -81,5 +81,5 @@ lines[0].args[0] = lines[1].args[0] = 0;
 lines[0].tag = lines[1].tag = newtag;
 
 // Draw the sectors behind the portal
-drawPortalSector(lines[0].line, UDB.ScriptOptions.depth);
-drawPortalSector(lines[1].line, UDB.ScriptOptions.depth);
+drawPortalSector(lines[0].line, UZB.ScriptOptions.depth);
+drawPortalSector(lines[1].line, UZB.ScriptOptions.depth);

@@ -24,11 +24,11 @@
 #region ================== Namespaces
 
 using CodeImp.DoomBuilder.Data;
-using CodeImp.DoomBuilder.UDBScript.Wrapper;
+using CodeImp.DoomBuilder.UZBScript.Wrapper;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript.Wrapper
+namespace CodeImp.DoomBuilder.UZBScript.Wrapper
 {
 	struct ImageInfo
 	{

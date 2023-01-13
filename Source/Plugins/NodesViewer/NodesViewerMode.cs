@@ -866,7 +866,7 @@ namespace CodeImp.DoomBuilder.Plugins.NodesViewer
 			//mxd
 			if(haveZnodes) 
 			{
-				// For whatever reason ZDBSP reorders the vertices when building the nodes, so if the map was modified in UDB
+				// For whatever reason ZDBSP reorders the vertices when building the nodes, so if the map was modified in UZB
 				// and then the Nodes Viewer is engaged the vertices in the ZNODES are not the same, resulting in an incorrect
 				// view or even a crash.
 				// See https://github.com/jewalky/UltimateDoomBuilder/issues/659

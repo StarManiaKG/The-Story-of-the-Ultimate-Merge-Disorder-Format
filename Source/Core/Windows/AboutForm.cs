@@ -53,13 +53,13 @@ namespace CodeImp.DoomBuilder.Windows
 			General.OpenWebsite("http://" + codeimplink.Text);
 		}
 
-		// UDB thread
+		// UZB thread
 		private void zdoomorglink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) 
 		{
 			General.OpenWebsite("https://forum.zdoom.org/viewtopic.php?f=232&t=66745");
 		}
 
-		// UDB repo
+		// UZB repo
 		private void gitlink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			General.OpenWebsite("https://github.com/jewalky/UltimateDoomBuilder");

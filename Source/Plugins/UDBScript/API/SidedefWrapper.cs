@@ -35,7 +35,7 @@ using CodeImp.DoomBuilder.VisualModes;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript.Wrapper
+namespace CodeImp.DoomBuilder.UZBScript.Wrapper
 {
 	class SidedefWrapper : MapElementWrapper, IEquatable<SidedefWrapper>
 	{

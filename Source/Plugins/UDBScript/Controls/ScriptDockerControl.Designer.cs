@@ -1,4 +1,4 @@
-﻿namespace CodeImp.DoomBuilder.UDBScript
+﻿namespace CodeImp.DoomBuilder.UZBScript
 {
 	partial class ScriptDockerControl
 	{
@@ -41,7 +41,7 @@
 			this.label4 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this.scriptoptions = new CodeImp.DoomBuilder.UDBScript.ScriptOptionsControl();
+			this.scriptoptions = new CodeImp.DoomBuilder.UZBScript.ScriptOptionsControl();
 			this.tableLayoutPanel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -129,7 +129,7 @@
 			// btnClearFilter
 			// 
 			this.btnClearFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnClearFilter.Image = global::CodeImp.DoomBuilder.UDBScript.Properties.Resources.SearchClear;
+			this.btnClearFilter.Image = global::CodeImp.DoomBuilder.UZBScript.Properties.Resources.SearchClear;
 			this.btnClearFilter.Location = new System.Drawing.Point(291, 5);
 			this.btnClearFilter.Name = "btnClearFilter";
 			this.btnClearFilter.Size = new System.Drawing.Size(22, 22);

@@ -154,7 +154,7 @@ namespace CodeImp.DoomBuilder.BuilderModes
 
 		#region ================== Properties
 
-		public override string Name { get { return "Ultimate Doom Builder"; } } //mxd
+		public override string Name { get { return "Ultimate Zone Builder"; } } //mxd
 		public static BuilderPlug Me { get { return me; } }
 
 		//mxd. BuilderModes.dll revision should always match the main module revision

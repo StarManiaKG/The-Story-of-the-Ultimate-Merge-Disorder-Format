@@ -61,4 +61,4 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         path: Build
-        name: "UDB_${{ matrix.config.name }}"
+        name: "UZB_${{ matrix.config.name }}"

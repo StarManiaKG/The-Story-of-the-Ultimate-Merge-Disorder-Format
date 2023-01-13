@@ -29,7 +29,7 @@ using CodeImp.DoomBuilder.Types;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript
+namespace CodeImp.DoomBuilder.UZBScript
 {
 	public class ScriptOption
 	{

@@ -1,4 +1,4 @@
-# UDB
+# UZB
 
 ## Properties
 
@@ -7,7 +7,7 @@
 Class containing methods related to angles. See [Angle2D](Angle2D.md) for more information.
 
 ```js
-let rad = UDB.Angle2D.degToRad(46);
+let rad = UZB.Angle2D.degToRad(46);
 ```
 
 ---
@@ -20,7 +20,7 @@ Instantiable class that contains methods related to blockmaps. See [BlockMap][Bl
 Class containing methods related to the game data. See [Data](Data.md) for more information.
 
 ```js
-let hasfireblu = UDB.Data.textureExists('FIREBLU1');
+let hasfireblu = UZB.Data.textureExists('FIREBLU1');
 ```
 
 ---
@@ -32,7 +32,7 @@ Class containing methods related to the game configuration. See [GameConfigurati
 Instantiable class that contains methods related to two-dimensional lines. See [Line2D](Line2D.md) for more information.
 
 ```js
-let line = new UDB.Line2D([ 32, 64 ], [ 96, 128 ]);
+let line = new UZB.Line2D([ 32, 64 ], [ 96, 128 ]);
 ```
 
 ---
@@ -40,7 +40,7 @@ let line = new UDB.Line2D([ 32, 64 ], [ 96, 128 ]);
 Object containing methods related to the map. See [Map](Map.md) for more information.
 
 ```js
-let sectors = UDB.Map.getSelectedOrHighlightedSectors();
+let sectors = UZB.Map.getSelectedOrHighlightedSectors();
 ```
 
 ---
@@ -61,7 +61,7 @@ Object containing the script options. See [Setting script options](gettingstarte
 The `UniValue` class. Is only needed when trying to assign integer values to UDMF fields.
 
 ```js
-s.fields.user_myintfield = new UDB.UniValue(0, 25);
+s.fields.user_myintfield = new UZB.UniValue(0, 25);
 ```
 
 ---
@@ -69,7 +69,7 @@ s.fields.user_myintfield = new UDB.UniValue(0, 25);
 Instantiable class that contains methods related to two-dimensional vectors. See [Vector2D](Vector2D.md) for more information.
 
 ```js
-let v = new UDB.Vector2D(32, 64);
+let v = new UZB.Vector2D(32, 64);
 ```
 
 ---
@@ -77,7 +77,7 @@ let v = new UDB.Vector2D(32, 64);
 Instantiable class that contains methods related to three-dimensional vectors. See [Vector3D](Vector3D.md) for more information.
 
 ```js
-let v = new UDB.Vector3D(32, 64, 128);
+let v = new UZB.Vector3D(32, 64, 128);
 ```
 ## Methods
 

@@ -35,9 +35,9 @@ using Jint.Runtime.Interop;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript.Wrapper
+namespace CodeImp.DoomBuilder.UZBScript.Wrapper
 {
-	internal class UDBWrapper
+	internal class UZBWrapper
 	{
 		#region ================== Variables
 
@@ -107,7 +107,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <summary>
 		/// Class containing methods related to angles. See [Angle2D](Angle2D.md) for more information.
 		/// ```js
-		/// let rad = UDB.Angle2D.degToRad(46);
+		/// let rad = UZB.Angle2D.degToRad(46);
 		/// ```
 		/// </summary>
 		public Angle2DWrapper Angle2D
@@ -121,7 +121,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <summary>
 		/// Class containing methods related to the game data. See [Data](Data.md) for more information.
 		/// ```js
-		/// let hasfireblu = UDB.Data.textureExists('FIREBLU1');
+		/// let hasfireblu = UZB.Data.textureExists('FIREBLU1');
 		/// ```
 		/// </summary>
 		public DataWrapper Data
@@ -135,7 +135,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <summary>
 		/// Instantiable class that contains methods related to two-dimensional lines. See [Line2D](Line2D.md) for more information.
 		/// ```js
-		/// let line = new UDB.Line2D([ 32, 64 ], [ 96, 128 ]);
+		/// let line = new UZB.Line2D([ 32, 64 ], [ 96, 128 ]);
 		/// ```
 		/// </summary>
 		public TypeReference Line2D
@@ -149,7 +149,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <summary>
 		/// Object containing methods related to the map. See [Map](Map.md) for more information.
 		/// ```js
-		/// let sectors = UDB.Map.getSelectedOrHighlightedSectors();
+		/// let sectors = UZB.Map.getSelectedOrHighlightedSectors();
 		/// ```
 		/// </summary>
 		public MapWrapper Map
@@ -163,7 +163,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <summary>
 		/// The `UniValue` class. Is only needed when trying to assign integer values to UDMF fields.
 		/// ```js
-		/// s.fields.user_myintfield = new UDB.UniValue(0, 25);
+		/// s.fields.user_myintfield = new UZB.UniValue(0, 25);
 		/// ```
 		/// </summary>
 		public TypeReference UniValue
@@ -177,7 +177,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <summary>
 		/// Instantiable class that contains methods related to two-dimensional vectors. See [Vector2D](Vector2D.md) for more information.
 		/// ```js
-		/// let v = new UDB.Vector2D(32, 64);
+		/// let v = new UZB.Vector2D(32, 64);
 		/// ```
 		/// </summary>
 		public TypeReference Vector2D
@@ -191,7 +191,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <summary>
 		/// Instantiable class that contains methods related to three-dimensional vectors. See [Vector3D](Vector3D.md) for more information.
 		/// ```js
-		/// let v = new UDB.Vector3D(32, 64, 128);
+		/// let v = new UZB.Vector3D(32, 64, 128);
 		/// ```
 		/// </summary>
 		public TypeReference Vector3D
@@ -211,7 +211,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <summary>
 		/// Instantiable class that contains methods related to a three-dimensional Plane. See [Plane](Plane.md) for more information.
 		/// </summary>
-		[UDBScriptSettings(MinVersion = 5)]
+		[UZBScriptSettings(MinVersion = 5)]
 		public TypeReference Plane
 		{
 			get
@@ -223,7 +223,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 		/// <summary>
 		/// Instantiable class that contains methods related to blockmaps. See [BlockMap][BlockMap.md) for more information.
 		/// </summary>
-		[UDBScriptSettings(MinVersion = 5)]
+		[UZBScriptSettings(MinVersion = 5)]
 		public TypeReference BlockMap
 		{
 			get
@@ -236,7 +236,7 @@ namespace CodeImp.DoomBuilder.UDBScript.Wrapper
 
 		#region ================== Constructors
 
-		internal UDBWrapper(Engine engine, ScriptInfo scriptinfo, IProgress<int> progress, IProgress<string> status, IProgress<string> logger)
+		internal UZBWrapper(Engine engine, ScriptInfo scriptinfo, IProgress<int> progress, IProgress<string> status, IProgress<string> logger)
 		{
 			gameconfiguration = new GameConfigurationWrapper();
 			queryoptions = TypeReference.CreateTypeReference(engine, typeof(QueryOptions));

@@ -27,7 +27,7 @@ using System;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript
+namespace CodeImp.DoomBuilder.UZBScript
 {
 	[Serializable]
 	public class UserScriptAbortException : Exception

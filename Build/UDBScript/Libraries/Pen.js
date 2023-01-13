@@ -10,9 +10,9 @@ class Pen
 
     makevector(pos)
     {
-        if(typeof UDB == 'undefined')
+        if(typeof UZB == 'undefined')
             return new Vector2D(pos);
-        return new UDB.Vector2D(pos);
+        return new UZB.Vector2D(pos);
     }    
 
     moveTo(pos)
@@ -100,10 +100,10 @@ class Pen
 
         var result;
         
-        if(typeof UDB == 'undefined')
+        if(typeof UZB == 'undefined')
             result = Map.drawLines(this.vertices);
         else
-            result = UDB.Map.drawLines(this.vertices);
+            result = UZB.Map.drawLines(this.vertices);
 
         this.vertices = [];
 

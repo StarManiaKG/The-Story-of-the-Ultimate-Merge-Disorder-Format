@@ -169,7 +169,7 @@ topics = {
     'Sector': { 'files': [ '../API/SectorWrapper.cs', '../API/MapElementWrapper.cs' ] },
     'Sidedef': { 'files': [ '../API/SidedefWrapper.cs', '../API/MapElementWrapper.cs' ] },
     'Thing': { 'files': [ '../API/ThingWrapper.cs', '../API/MapElementWrapper.cs' ] },
-    'UDB': { 'files': [ '../API/UDBWrapper.cs' ] },
+    'UZB': { 'files': [ '../API/UZBWrapper.cs' ] },
     'Vector2D': { 'files': [ '../API/Vector2DWrapper.cs' ] },
     'Vector3D': { 'files': [ '../API/Vector3DWrapper.cs' ] },
     'Vertex': { 'files': [ '../API/VertexWrapper.cs', '../API/MapElementWrapper.cs' ] },
@@ -262,8 +262,8 @@ for topic in topics:
                         commenttext += '\n---\n'
                         if 'version' in d:
                             commenttext += f'<span style="float:right;font-weight:normal;font-size:66%">Version: {d["version"]}</span>\n'
-                        if 'UDBScriptSettings' in memberattributes:
-                            commenttext += f'<span style="float:right;font-weight:normal;font-size:66%">Version: {memberattributes["UDBScriptSettings"]["MinVersion"]}</span>\n'
+                        if 'UZBScriptSettings' in memberattributes:
+                            commenttext += f'<span style="float:right;font-weight:normal;font-size:66%">Version: {memberattributes["UZBScriptSettings"]["MinVersion"]}</span>\n'
                         commenttext += f'### {signature}'
                         if parameters is not None:
                             commenttext += '('
@@ -334,9 +334,9 @@ for topic in topics:
 
 
 # Create the .d.ts file
-dtsoutstr = 'declare namespace UDB {\n'
+dtsoutstr = 'declare namespace UZB {\n'
 for key in dtsdata:
-    if key == 'UDB':
+    if key == 'UZB':
         for m in dtsdata[key]['methods']:
             dtsoutstr += (gen_dts_function(m, False) + '\n')[1:]
     else:
@@ -376,7 +376,7 @@ for key in dtsdata:
             dtsoutstr += '\t}\n'
 dtsoutstr += '}\n'
 
-dtsfile = Path('../../../../Build/UDBScript/udbscript.d.ts')
+dtsfile = Path('../../../../Build/UZBScript/uzbscript.d.ts')
 
 if not dtsfile.parent.exists():
     dtsfile.mkdir(parents=True, exist_ok=True)

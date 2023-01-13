@@ -1,4 +1,4 @@
-/// <reference path="../../../udbscript.d.ts" />
+/// <reference path="../../../uzbscript.d.ts" />
 
 `#version 4`;
 
@@ -28,21 +28,21 @@ ceilingtexture {
 
 `;
 
-let sectors = UDB.Map.getSelectedOrHighlightedSectors();
+let sectors = UZB.Map.getSelectedOrHighlightedSectors();
 
 if(sectors.length == 0)
-    UDB.die('You need to select at least one sector!');
+    UZB.die('You need to select at least one sector!');
 
 sectors.forEach(s => {
     s.ceilingHeight = s.floorHeight;
-    s.ceilingTexture = UDB.ScriptOptions.ceilingtexture;
+    s.ceilingTexture = UZB.ScriptOptions.ceilingtexture;
 
     s.getSidedefs().forEach(sd => {
         if(sd.other == null) // 1-sided lines
         {
-            sd.middleTexture = UDB.ScriptOptions.doortrack;
+            sd.middleTexture = UZB.ScriptOptions.doortrack;
 
-            if(UDB.Map.isUDMF)
+            if(UZB.Map.isUDMF)
                 sd.line.flags.dontpegbottom = true;
             else
                 sd.line.flags['16'] = true;
@@ -54,10 +54,10 @@ sectors.forEach(s => {
             if(sd.isFront)
                 sd.line.flip();
 
-            sd.other.upperTexture = UDB.ScriptOptions.doortexture;
+            sd.other.upperTexture = UZB.ScriptOptions.doortexture;
 
             // Set the action
-            if(UDB.Map.isDoom)
+            if(UZB.Map.isDoom)
                 sd.line.action = 1;
             else
             {
@@ -67,7 +67,7 @@ sectors.forEach(s => {
                 sd.line.args[2] = 150; // Close delay
                 sd.line.args[3] = 0; // Light tag
                 
-                if(UDB.Map.isHexen)
+                if(UZB.Map.isHexen)
                 {
                     sd.line.activate = 1024; // Player presses use
                     sd.line.flags['512'] = true; // Can be used repeatedly

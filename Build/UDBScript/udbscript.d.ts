@@ -1,4 +1,4 @@
-declare namespace UDB {
+declare namespace UZB {
 	namespace GameConfiguration {
 		/**
 		 * Engine name, like `doom`, `boom`, `zdoom` etc. Used for the namespace in UDMF maps. Read-only.

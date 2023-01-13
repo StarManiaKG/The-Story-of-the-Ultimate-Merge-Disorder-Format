@@ -37,7 +37,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BuilderNative", "Source\Nat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreeDFloorMode", "Source\Plugins\3DFloorMode\ThreeDFloorMode.csproj", "{88CFD996-027B-4CBE-9828-26B2728B6127}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UDBScript", "Source\Plugins\UDBScript\UDBScript.csproj", "{3088C327-5FFB-49A0-8D40-58E92D89DF07}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UZBScript", "Source\Plugins\UZBScript\UZBScript.csproj", "{3088C327-5FFB-49A0-8D40-58E92D89DF07}"
 	ProjectSection(ProjectDependencies) = postProject
 		{818B3D10-F791-4C3F-9AF5-BB2D0079B63C} = {818B3D10-F791-4C3F-9AF5-BB2D0079B63C}
 	EndProjectSection

@@ -30,7 +30,7 @@ using System.Reflection;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript.Wrapper
+namespace CodeImp.DoomBuilder.UZBScript.Wrapper
 {
 	abstract class BlockMapContentBase
 	{

@@ -35,7 +35,7 @@ using Jint;
 
 #endregion
 
-namespace CodeImp.DoomBuilder.UDBScript
+namespace CodeImp.DoomBuilder.UZBScript
 {
 	class RuntimeConstraint : Constraint
 	{

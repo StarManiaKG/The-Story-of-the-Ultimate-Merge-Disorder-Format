@@ -47,7 +47,7 @@ There are some restrictions, though:
 
 * it only works for fields that are not in the base UDMF standard, since those are handled directly in the respective class
 * it does not work for flags. While they are technically also UDMF fields, they are handled in the `flags` field of the respective class (where applicable)
-* JavaScript does not distinguish between integer and floating point numbers, it only has floating point numbers (of double precision). For fields where UDB knows that they are integers this it not a problem, since it'll automatically convert the floating point numbers to integers (dropping the fractional part). However, if you need to specify an integer value for an unknown or custom field you have to work around this limitation:
+* JavaScript does not distinguish between integer and floating point numbers, it only has floating point numbers (of double precision). For fields where UZB knows that they are integers this it not a problem, since it'll automatically convert the floating point numbers to integers (dropping the fractional part). However, if you need to specify an integer value for an unknown or custom field you have to work around this limitation:
 Version 5 and later:
 You can use a `BigInt`. This is done by appending a `n` to the number. Note that this is just a convenient way to define whole numbers, it still only supports 32 bit integers:
 
@@ -57,7 +57,7 @@ s.fields.user_myintfield = 25n; // Sets the 'user_myintfield' field to an intege
 In version 4 and earlier you have to use the `UniValue` class:
 
 ```js
-s.fields.user_myintfield = new UDB.UniValue(0, 25); // Sets the 'user_myintfield' field to an integer value of 25
+s.fields.user_myintfield = new UZB.UniValue(0, 25); // Sets the 'user_myintfield' field to an integer value of 25
 ```
 To remove a field you have to assign `null` to it:
 
@@ -161,10 +161,10 @@ Returns an `Array` of `Vector2D` of label positions for the `Sector`. This are t
 This example adds an imp to the label position of each sector in the map:
 
 ```js
-UDB.Map.getSectors().forEach(s => {
+UZB.Map.getSectors().forEach(s => {
 	const positions = s.getLabelPositions();
 	if(positions.length > 0)
-		UDB.Map.createThing(positions[0], 3001);
+		UZB.Map.createThing(positions[0], 3001);
 });
 ```
 #### Return value
@@ -194,10 +194,10 @@ Checks if the given point is in this `Sector` or not. The given point can be a `
 
 ```js
 if(s.intersect(new Vector2D(32, 64)))
-	UDB.showMessage('Point is in the sector!');
+	UZB.showMessage('Point is in the sector!');
 
 if(s.intersect([ 32, 64 ]))
-	UDB.showMessage('Point is in the sector!');
+	UZB.showMessage('Point is in the sector!');
 ```
 #### Parameters
 * p: Point to test
